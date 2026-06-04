@@ -1,0 +1,344 @@
+QuestaSim vlog 10.6b Compiler 2017.05 May 25 2017
+Start time: 07:38:20 on May 25,2026
+vlog -sv "+incdir+/cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src" -L mtiUvm "+acc" "+cover" "+fcover" -l ahb_compile.log -f ahb_compile.f 
+-- Compiling package ahb_global_pkg
+-- Compiling package ahb_base_pkg
+-- Importing package uvm_pkg (uvm-1.1c Built-in)
+-- Importing package ahb_global_pkg
+** Error: ../src/ahb_base/ahb_base_pkg.sv(9): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** at ../src/ahb_base//ahb_base_tx.sv(5): (vlog-2163) Macro `uvm_object_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** at ../src/ahb_base//ahb_base_tx.sv(5): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_interface_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** at ../src/interface/ahb_interface_pkg.sv(9): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** at ../src/interface//ahb_if.sv(4): near "ahb_if": syntax error, unexpected IDENTIFIER, expecting class.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** at ../src/interface//ahb_if.sv(4): near "(": syntax error, unexpected '(', expecting class.
+-- Compiling package ahb_slave_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** at ../src/slave/ahb_slave_pkg.sv(10): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** at ../src/slave//ahb_slave_tx.sv(3): near "ahb_base_tx": syntax error, unexpected IDENTIFIER.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** at ../src/slave//ahb_slave_tx.sv(3): Error in class extension specification.
+-- Compiling package ahb_env_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** at ../src/slave//ahb_slave_tx.sv(11): (vlog-13006) Could not find the package (ahb_master_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** at ../src/slave//ahb_slave_tx.sv(12): (vlog-13006) Could not find the package (ahb_slave_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** at ../src/slave//ahb_slave_tx.sv(14): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** at ../src/env//ahb_virtual_seqr.sv(5): (vlog-2163) Macro `uvm_component_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** at ../src/env//ahb_virtual_seqr.sv(5): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_master_sequence_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(9): (vlog-13006) Could not find the package (ahb_master_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(11): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** at ../src/test/sequence/master_sequence//ahb_master_base_seq.sv(5): (vlog-2730) Undefined variable: 'ahb_master_tx'.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** at ../src/test/sequence/master_sequence//ahb_master_base_seq.sv(6): (vlog-2163) Macro `uvm_object_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** at ../src/test/sequence/master_sequence//ahb_master_base_seq.sv(6): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_slave_sequence_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(9): (vlog-13006) Could not find the package (ahb_slave_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(11): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** at ../src/test/sequence/slave_sequence//ahb_slave_base_seq.sv(11): (vlog-2163) Macro `uvm_object_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** at ../src/test/sequence/slave_sequence//ahb_slave_base_seq.sv(11): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_virtual_sequence_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(9): (vlog-13006) Could not find the package (ahb_master_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(10): (vlog-13006) Could not find the package (ahb_slave_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(12): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/virtual_sequence//ahb_virtual_base_seq.sv(5): (vlog-2163) Macro `uvm_component_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/virtual_sequence//ahb_virtual_base_seq.sv(5): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_testcase_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(9): (vlog-13006) Could not find the package (ahb_interface_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(10): (vlog-13006) Could not find the package (ahb_master_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(11): (vlog-13006) Could not find the package (ahb_slave_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(12): (vlog-13006) Could not find the package (ahb_env_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(13): (vlog-13006) Could not find the package (ahb_master_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(14): (vlog-13006) Could not find the package (ahb_slave_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(15): (vlog-13006) Could not find the package (ahb_virtual_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** at ../src/test/testcase/ahb_testcase_pkg.sv(17): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/testcase//ahb_test_base.sv(5): (vlog-2163) Macro `uvm_component_utils is undefined.
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/testcase//ahb_test_base.sv(5): near "(": syntax error, unexpected '(', expecting function or task or "SystemVerilog keyword 'pure'".
+-- Compiling package ahb_test_pkg
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(9): (vlog-13006) Could not find the package (ahb_interface_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(10): (vlog-13006) Could not find the package (ahb_master_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(11): (vlog-13006) Could not find the package (ahb_slave_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(12): (vlog-13006) Could not find the package (ahb_env_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(13): (vlog-13006) Could not find the package (ahb_master_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(14): (vlog-13006) Could not find the package (ahb_slave_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(15): (vlog-13006) Could not find the package (ahb_virtual_sequence_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(16): (vlog-13006) Could not find the package (ahb_testcase_pkg).  Design read will continue, but expect a cascade of errors after this failure.  Furthermore if you experience a vopt-7 error immediately before this error then please check the package names or the library search paths on the command line.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(19)
+** at ../src/test/ahb_test_pkg.sv(18): Cannot find `include file "uvm_macros.svh" in directories:
+    /cadtools/mentor/Questa_10.6b/questasim/uvm-1.1c/src, ../src/globals/, ../src/ahb_base/, ../src/interface/, ../src/master/, ../src/slave/, ../src/env/, ../src/test/, ../src/test/sequence/master_sequence/, ../src/test/sequence/slave_sequence/, ../src/test/virtual_sequence/, ../src/test/testcase/, /cadtools/mentor/Questa_10.6b/questasim/ovm-2.1.2/../verilog_src/ovm-2.1.2/src
+** Error: (vlog-13069) ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(20)
+** at ../src/test/testcase//ahb_basic_single_rw_test.sv(3): near "class": syntax error, unexpected class.
+** Error: ** while parsing file included at ../src/ahb_base/ahb_base_pkg.sv(11)
+** while parsing file included at ../src/interface/ahb_interface_pkg.sv(11)
+** while parsing file included at ../src/slave/ahb_slave_pkg.sv(12)
+** while parsing file included at ../src/slave//ahb_slave_tx.sv(16)
+** while parsing file included at ../src/test/sequence/master_sequence/ahb_master_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/sequence/slave_sequence/ahb_slave_sequence_pkg.sv(13)
+** while parsing file included at ../src/test/virtual_sequence/ahb_virtual_sequence_pkg.sv(14)
+** while parsing file included at ../src/test/testcase/ahb_testcase_pkg.sv(20)
+** at ../src/test/testcase//ahb_test_base.sv(5): (vlog-13205) Syntax error found in the scope following 'a'. Is there a missing '::'?
+End time: 07:38:20 on May 25,2026, Elapsed time: 0:00:00
+Errors: 49, Warnings: 0
