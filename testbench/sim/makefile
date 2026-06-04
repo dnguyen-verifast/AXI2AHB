@@ -81,7 +81,7 @@ compile:
 	+cover \
 	+fcover \
 	-l x2h_compile.log \
-	-f axi2ahb_compile.f
+	-F axi2ahb_compile.f
 
 	# -s means silent mode
 	#  The command executed along with the output will be displayed on the terminal
