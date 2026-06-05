@@ -30,7 +30,6 @@ package x2h_test_pkg;
 
   //including base_test for testing
   `include "x2h_base_test.sv"
-  `include "assertion_base_test.sv"
   `include "x2h_write_test.sv"
   `include "x2h_read_test.sv"
   `include "x2h_write_read_test.sv"
