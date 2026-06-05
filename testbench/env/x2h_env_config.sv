@@ -3,14 +3,14 @@
 
 class x2h_env_config extends uvm_object;
     `uvm_object_utils(x2h_env_config)
-    bit has_scoreboard_ahb = 1;
-    bit has_virtual_seqr_ahb = 1;
+    bit has_scoreboard_ahb = 0;
+    bit has_virtual_seqr_ahb = 0;
     int no_of_slaves_ahb = 1;
-    int no_of_masters_ahb = 1;
+    int no_of_masters_ahb = 0;
 
-    bit has_scoreboard_axi = 1;
-    bit has_virtual_seqr_axi = 1;
-    int no_of_slaves_axi = 1;
+    bit has_scoreboard_axi = 0;
+    bit has_virtual_seqr_axi = 0;
+    int no_of_slaves_axi = 0;
     int no_of_masters_axi = 1;
 
 
