@@ -19,7 +19,7 @@ class x2h_env extends uvm_scoreboard;
     extern virtual function void connect_phase(uvm_phase phase);
 endclass : x2h_env
 
-function x2h_env::new(string name = "axi4_env",uvm_component parent = null);
+function x2h_env::new(string name = "x2h_env",uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
 
@@ -31,12 +31,12 @@ function void x2h_env::build_phase(uvm_phase phase);
     if(!uvm_config_db #(axi4_env_config)::get(this,"","axi4_env_config",axi4_env_cfg_h)) begin
     `uvm_fatal("FATAL_ENV_AGENT_CONFIG", $sformatf("Couldn't get the env_agent_config from config_db"))
     end else begin  
-      uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h)
+      uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
     end
     if(!uvm_config_db #(ahb_env_config)::get(this,"","ahb_env_config",ahb_env_config_h)) begin
         `uvm_fatal("FATAL_ENV_AGENT_CONFIG", $sformatf("Couldn't get the env_agent_config from config_db"))
     end else begin  
-      uvm_config_db #(ahb_env_config)::set(this,"*","ahb_env_config",ahb_env_config_h)
+      uvm_config_db #(ahb_env_config)::set(this,"*","ahb_env_config",ahb_env_config_h);
     end
 
     x2h_scoreboard_h = x2h_scoreboard::type_id::create("x2h_scoreboard_h",this);
