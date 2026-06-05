@@ -103,7 +103,7 @@ endfunction: setup_axi4_env_cfg
 // Setup the x2h_master agent configuration with the required values
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
-function void axi4_base_test::setup_axi4_master_agent_cfg();
+function void x2h_base_test::setup_axi4_master_agent_cfg();
   bit [63:0]local_min_address;
   bit [63:0]local_max_address;
   axi4_env_cfg_h.axi4_master_agent_cfg_h = new[axi4_env_cfg_h.no_of_masters];
@@ -138,7 +138,7 @@ endfunction: setup_axi4_master_agent_cfg
 // Setup the x2h_slave agent(s) configuration with the required values
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
-function void axi4_base_test::setup_axi4_slave_agent_cfg();
+function void x2h_base_test::setup_axi4_slave_agent_cfg();
   axi4_env_cfg_h.axi4_slave_agent_cfg_h = new[axi4_env_cfg_h.no_of_slaves];
   foreach(axi4_env_cfg_h.axi4_slave_agent_cfg_h[i])begin
     axi4_env_cfg_h.axi4_slave_agent_cfg_h[i] =
