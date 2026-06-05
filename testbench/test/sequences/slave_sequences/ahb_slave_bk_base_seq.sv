@@ -8,7 +8,7 @@
 class ahb_slave_bk_base_seq extends uvm_sequence #(ahb_slave_tx);
   //factory registration
   `uvm_object_utils(ahb_slave_bk_base_seq)
-  
+  ahb_slave_tx req_slv;
   //-------------------------------------------------------
   // Externally defined Function
   //-------------------------------------------------------

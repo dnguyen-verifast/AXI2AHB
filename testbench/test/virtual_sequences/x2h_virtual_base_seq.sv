@@ -10,9 +10,7 @@ class x2h_virtual_base_seq extends uvm_sequence;
   `uvm_object_utils(x2h_virtual_base_seq)
 
    //p sequencer macro declaration 
-   `uvm_declare_p_sequencer(axi2ahb_virtual_sequencer)
- 
-   x2h_env_config env_cfg_h;
+   `uvm_declare_p_sequencer(x2h_virtual_sequencer)
 
   //--------------------------------------------------------------------------------------------
   // Externally defined tasks and functions

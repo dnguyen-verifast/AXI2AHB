@@ -15,7 +15,7 @@ package ahb_slave_seq_pkg;
   import uvm_pkg::*;
   import ahb_slave_pkg::*;
   import axi4_globals_pkg::*;
-  import ahb_globals_pkg::*;
+  import ahb_global_pkg::*;
   //-------------------------------------------------------
   // Importing the required packages
   //-------------------------------------------------------
