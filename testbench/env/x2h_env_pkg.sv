@@ -14,7 +14,7 @@ package x2h_env_pkg;
     import ahb_env_pkg::*;
 
     `include "uvm_macros.svh"
-    
+    `include "x2h_env_config.sv"
     `include "x2h_virtual_sequencer.sv"
     `include "x2h_scoreboard.sv"
     `include "x2h_env.sv"
