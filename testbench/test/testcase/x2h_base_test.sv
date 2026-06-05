@@ -115,7 +115,7 @@ function void x2h_base_test::setup_axi4_master_agent_cfg();
     uvm_config_db#(axi4_master_agent_config)::set(this,"*env*",$sformatf("axi4_master_agent_config[%0d]",i),axi4_env_cfg_h.axi4_master_agent_cfg_h[i]);
   end
 
-  for(int i =0; i<NO_OF_SLAVES; i++) begin
+  for(int i =0; i<axi4_env_cfg_h.no_of_masters; i++) begin
     if(i == 0) begin  
       axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_min_addr_range(i,0);
       local_min_address = axi4_env_cfg_h.axi4_master_agent_cfg_h[i].master_min_addr_range_array[i];
