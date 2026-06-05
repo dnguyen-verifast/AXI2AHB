@@ -371,8 +371,8 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
 
   axi4_master_tx_wdata_count++;
   `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel count \n %0d", axi4_master_tx_wdata_count), UVM_HIGH)
-  axi4_master_tx_wresp_count++;
-  `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel count \n %0d", axi4_master_tx_wresp_count), UVM_HIGH)
+  axi4_master_tx_bresp_count++;
+  `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel count \n %0d", axi4_master_tx_bresp_count), UVM_HIGH)
 
   while(expect_queue_w.size() > 0) begin
     exp_tx = expect_queue_w.pop_front();
