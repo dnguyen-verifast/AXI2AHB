@@ -46,13 +46,13 @@ endfunction : build_phase
 function void x2h_env::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
   if(axi4_env_cfg_h.has_virtual_seqr) begin
-    foreach(axi4_master_agent_h[i]) begin
+    foreach(axi4_env_h.axi4_master_agent_h[i]) begin
       x2h_virtual_sequencer_h.axi4_master_write_seqr_h = axi4_env_h.axi4_master_agent_h[i].axi4_master_write_seqr_h;
       x2h_virtual_sequencer_h.axi4_master_read_seqr_h = axi4_env_h.axi4_master_agent_h[i].axi4_master_read_seqr_h;
     end
   end
   
-  foreach(axi4_master_agent_h[i]) begin
+  foreach(axi4_env_h.axi4_master_agent_h[i]) begin
     axi4_env_h.axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_read_address_analysis_port.connect(x2h_scoreboard_h.axi4_master_read_address_analysis_fifo.analysis_export);
     axi4_env_h.axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_read_data_analysis_port.connect(x2h_scoreboard_h.axi4_master_read_data_analysis_fifo.analysis_export);
     axi4_env_h.axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_write_address_analysis_port.connect(x2h_scoreboard_h.axi4_master_write_address_analysis_fifo.analysis_export);
@@ -61,11 +61,11 @@ function void x2h_env::connect_phase(uvm_phase phase);
   end
 
   if(ahb_env_config.has_virtual_seqr) begin
-    foreach(ahb_slave_agent_h[i]) begin
+    foreach(ahb_env_h.ahb_slave_agent_h[i]) begin
       x2h_virtual_sequencer_h.ahb_slave_sequencer_h = ahb_env_h.ahb_slave_agent_h[i].ahb_slave_sequencer_h;
     end
   end
-  foreach(ahb_slave_agent_h[i]) begin
+  foreach(ahb_env_h.ahb_slave_agent_h[i]) begin
     ahb_env_h.ahb_master_agent_h[i].ahb_master_monitor_h.ahb_master_data_analysis_port.connect(x2h_scoreboard_h.ahb_master_data_phase_analysis_fifo.analysis_export);
     ahb_env_h.ahb_master_agent_h[i].ahb_master_monitor_h.ahb_master_addr_analysis_port.connect(x2h_scoreboard_h.ahb_master_addr_phase_analysis_fifo.analysis_export);
     ahb_env_h.ahb_master_agent_h[i].ahb_master_sequencer_h.seq_expect_item_port.connect(x2h_scoreboard_h.ahb_addr_phase_analysis_fifo_expect.analysis_export);
