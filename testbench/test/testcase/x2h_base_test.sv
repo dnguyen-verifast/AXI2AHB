@@ -72,16 +72,16 @@ endfunction : build_phase
 function void x2h_base_test:: setup_axi4_env_cfg();
   axi4_env_cfg_h = x2h_env_config::type_id::create("axi4_env_cfg_h");
  
-  axi4_env_cfg_h.has_scoreboard = x2h_env_h.has_scoreboard_axi;
-  axi4_env_cfg_h.has_virtual_seqr =  x2h_env_h.has_virtual_seqr_axi;
-  axi4_env_cfg_h.no_of_masters =  x2h_env_h.no_of_slaves_axi;
-  axi4_env_cfg_h.no_of_slaves =  x2h_env_h.no_of_masters_axi;
+  axi4_env_cfg_h.has_scoreboard = x2h_env_config_h.has_scoreboard_axi;
+  axi4_env_cfg_h.has_virtual_seqr =  x2h_env_config_h.has_virtual_seqr_axi;
+  axi4_env_cfg_h.no_of_masters =  x2h_env_config_h.no_of_slaves_axi;
+  axi4_env_cfg_h.no_of_slaves =  x2h_env_config_h.no_of_masters_axi;
 
   ahb_env_config_h = ahb_env_config::type_id::create("ahb_env_config_h");
-  ahb_env_config_h.has_scoreboard =  x2h_env_h.has_scoreboard_ahb;
-  ahb_env_config_h.has_virtual_seqr =  x2h_env_h.has_virtual_seqr_ahb;
-  ahb_env_config_h.no_of_slaves =  x2h_env_h.no_of_slaves_ahb;
-  ahb_env_config_h.no_of_masters =  x2h_env_h.no_of_masters_ahb;
+  ahb_env_config_h.has_scoreboard =  x2h_env_config_h.has_scoreboard_ahb;
+  ahb_env_config_h.has_virtual_seqr =  x2h_env_config_h.has_virtual_seqr_ahb;
+  ahb_env_config_h.no_of_slaves =  x2h_env_config_h.no_of_slaves_ahb;
+  ahb_env_config_h.no_of_masters =  x2h_env_config_h.no_of_masters_ahb;
   // Setup the x2h_master agent cfg 
   setup_axi4_master_agent_cfg();
   setup_axi4_slave_agent_cfg();

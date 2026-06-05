@@ -45,7 +45,7 @@ task x2h_write_test::run_phase(uvm_phase phase);
   `uvm_info(get_type_name(),$sformatf("x2h_write_test"),UVM_LOW);
 	phase.get_objection().set_drain_time(this, 3000ns);
   phase.raise_objection(this);
-  x2h_virtual_write_seq_h.start(x2h_env_h.x2h_virtual_seqr_h);
+  x2h_virtual_write_seq_h.start(x2h_env_h.x2h_virtual_sequencer_h);
   `uvm_info(get_type_name(),$sformatf("out_x2h_write_test"),UVM_LOW);
   phase.drop_objection(this);
 

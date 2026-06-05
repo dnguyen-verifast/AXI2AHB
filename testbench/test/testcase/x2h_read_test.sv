@@ -44,7 +44,7 @@ task x2h_read_test::run_phase(uvm_phase phase);
   x2h_virtual_read_seq_h =x2h_virtual_read_seq::type_id::create("x2h_virtual_read_seq_h");
   `uvm_info(get_type_name(),$sformatf("x2h_read_test"),UVM_LOW);
   phase.raise_objection(this);
-  x2h_virtual_read_seq_h.start(x2h_env_h.x2h_virtual_seqr_h);
+  x2h_virtual_read_seq_h.start(x2h_env_h.x2h_virtual_sequencer_h);
   phase.drop_objection(this);
 
 endtask : run_phase
