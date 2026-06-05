@@ -26,7 +26,7 @@ module top;
     .aresetn(aresetn)
   );
 
-  ahb_if ahb_if (
+  ahb_if ahb_vif (
     .clk(hclk), 
     .resetn(hresetn)
   );
@@ -72,20 +72,20 @@ module top;
     .rvalid(axi_vif.rvalid),
     .rready(axi_vif.rready),
 
-    .haddr(ahb_if.haddr),
-    .htrans(ahb_if.htrans),
-    .hwrite(ahb_if.hwrite),
-    .hsize(ahb_if.hsize),
-    .hburst(ahb_if.hburst),
-    .hwdata(ahb_if.hwdata),
+    .haddr(ahb_vif.haddr),
+    .htrans(ahb_vif.htrans),
+    .hwrite(ahb_vif.hwrite),
+    .hsize(ahb_vif.hsize),
+    .hburst(ahb_vif.hburst),
+    .hwdata(ahb_vif.hwdata),
     .hbusreq(hbusreq_dummy),
     .hlock(hlock_dummy),
 
-    .hrdata(ahb_if.hrdata),
-    .hready(ahb_if.hready),
-    .hresp(ahb_if.hresp),
+    .hrdata(ahb_vif.hrdata),
+    .hready(ahb_vif.hready),
+    .hresp(ahb_vif.hresp),
     .hgrant(hgrant_dummy),
-    .hmaster(ahb_if.hmaster)
+    .hmaster(ahb_vif.hmaster)
   );
 
   initial begin
@@ -120,7 +120,7 @@ module top;
     end
   endgenerate
   initial begin
-    uvm_config_db#(virtual ahb_if)::set(null, "uvm_test_top.*", "ahb_if", ahb_if);
+    uvm_config_db#(virtual ahb_vif)::set(null, "uvm_test_top.*", "ahb_if", ahb_vif);
   end
   initial begin
     run_test();
