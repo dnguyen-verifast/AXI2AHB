@@ -121,10 +121,9 @@ module top;
   endgenerate
   initial begin
     uvm_config_db#(virtual ahb_if)::set(null, "*", "ahb_if", ahb_vif);
-  end
-  initial begin
     run_test();
   end
+
 endmodule
 
 `endif
