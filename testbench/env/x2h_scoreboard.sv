@@ -610,5 +610,3 @@ function void x2h_scoreboard::report_phase(uvm_phase phase);
 endfunction : report_phase
 
 `endif
-
-`endif

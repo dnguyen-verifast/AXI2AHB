@@ -6,7 +6,8 @@ module top;
 
   import axi4_global_pkg::*;
   import ahb_global_pkg::*;
-  import ahb_testcase_pkg::*;
+
+  import x2h_test_pkg::*;
 
   logic aclk;
   logic aresetn;
