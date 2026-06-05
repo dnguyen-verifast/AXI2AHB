@@ -4,6 +4,16 @@ typedef ahb_slave_tx queue_convert_w_axi2ahb[$];
 typedef ahb_slave_tx queue_convert_r_axi2ahb[$];
 class x2h_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(x2h_scoreboard)
+
+    int ahb_data_phase_comparer_count = 0;
+    int ahb_data_phase_comparer_count_pass = 0;
+    int ahb_data_phase_comparer_count_failed = 0;
+
+    int ahb_addr_phase_comparer_count = 0;
+    int ahb_addr_phase_comparer_count_pass = 0;
+    int ahb_addr_phase_comparer_count_failed = 0;
+
+
     axi4_master_tx axi4_master_tx_h1;
     axi4_master_tx axi4_master_tx_h2;
     axi4_master_tx axi4_master_tx_h3;
@@ -31,13 +41,35 @@ class x2h_scoreboard extends uvm_scoreboard;
     uvm_tlm_analysis_fifo #(ahb_slave_tx) ahb_data_phase_analysis_fifo_expect;
     uvm_tlm_analysis_fifo #(ahb_master_tx) ahb_data_phase_for_write_analysis_fifo_expect;
   
-      //master tx_count
-    int axi4_master_tx_awaddr_count;
-    int axi4_master_tx_wdata_count;
-    int axi4_master_tx_bresp_count;
-    int axi4_master_tx_araddr_count;
-    int axi4_master_tx_rdata_count;
-    int axi4_master_tx_rresp_count;
+  //master tx_count
+  int axi4_master_tx_awaddr_count;
+  //slave tx count
+  int axi4_slave_tx_awaddr_count;
+  
+  //master tx_count
+  int axi4_master_tx_wdata_count;
+  //slave tx count
+  int axi4_slave_tx_wdata_count;
+  
+  //master tx_count
+  int axi4_master_tx_bresp_count;
+  //slave tx count
+  int axi4_slave_tx_bresp_count;
+  
+  //master tx_count
+  int axi4_master_tx_araddr_count;
+  //slave tx count
+  int axi4_slave_tx_araddr_count;
+  
+  //master tx_count
+  int axi4_master_tx_rdata_count;
+  //slave tx count
+  int axi4_slave_tx_rdata_count;
+  
+  //master tx_count
+  int axi4_master_tx_rresp_count;
+  //slave tx count
+  int axi4_slave_tx_rresp_count;
 
     semaphore write_address_key;
     semaphore write_data_key;
@@ -158,10 +190,9 @@ endtask : run_phase
 // Gets the master and slave write address and send it to the write address comparision task
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::predict_result_write_axi2ahb();
-
   forever begin
-    write_address_key.get(1);
     queue_convert_w_axi2ahb expect_queue_w;
+    write_address_key.get(1);
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_LOW)
     axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
@@ -188,10 +219,9 @@ endtask : predict_result_write_axi2ahb
 // Gets the master and slave write response and send it to the write response comparision task
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::predict_result_read_axi2ahb();
-
   forever begin
-    write_response_key.get(1);
     queue_convert_r_axi2ahb expect_queue_r;
+    write_response_key.get(1);
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
@@ -263,9 +293,9 @@ function queue_convert_w_axi2ahb x2h_scoreboard::convert_write_axi_packet_2_ahb_
     end
 
     if (axi4_aw_tx.awburst == WRITE_FIXED) begin
-      convert_ahb.htrans = NONSEQ; 
+      convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
-      convert_ahb.htrans = (i == 0) ? NONSEQ : SEQ;
+      convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ;
     end
     convert_queue.push_back(convert_ahb);
   end
@@ -320,9 +350,9 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     convert_ahb.hrdata = axi4_r_tx.hrdata;
 
     if (axi4_ar_tx.arburst == READ_FIXED) begin
-      convert_ahb.htrans = NONSEQ; 
+      convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
-      convert_ahb.htrans = (i == 0) ? NONSEQ : SEQ;
+      convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ;
     end
 
     convert_queue.push_back(convert_ahb);
