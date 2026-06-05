@@ -17,6 +17,8 @@ package x2h_test_pkg;
   import axi4_globals_pkg::*;
   import ahb_global_pkg::*;
   import axi4_master_pkg::*;
+  import axi4_slave_pkg::*;
+  import ahb_master_pkg::*;
   import ahb_slave_pkg::*;
   import axi4_env_pkg::*;
   import ahb_env_pkg::*;
