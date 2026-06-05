@@ -22,7 +22,7 @@ endfunction : new
 
 function void ahb_slave_agent::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(ahb_slave_config_h.is_active = UVM_ACTIVE) begin
+    if(ahb_slave_config_h.is_active == UVM_ACTIVE) begin
         ahb_slave_driver_h = ahb_slave_driver::type_id::create("ahb_slave_driver_h",this);
         ahb_slave_sequencer_h = ahb_slave_sequencer::type_id::create("ahb_slave_sequencer_h",this);
     end
@@ -34,7 +34,7 @@ endfunction : build_phase
 
 function void ahb_slave_agent::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    if(ahb_slave_config_h.is_active = UVM_ACTIVE) begin
+    if(ahb_slave_config_h.is_active == UVM_ACTIVE) begin
         ahb_slave_driver_h.ahb_slave_config_h = ahb_slave_config_h;
         ahb_slave_driver_h.ahb_slave_seq_item_port.connect(ahb_slave_sequencer_h.seq_item_export);
     end

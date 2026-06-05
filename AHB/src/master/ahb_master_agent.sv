@@ -22,7 +22,7 @@ endfunction : new
 
 function void ahb_master_agent::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(ahb_master_config_h.is_active = UVM_ACTIVE) begin
+    if(ahb_master_config_h.is_active == UVM_ACTIVE) begin
         ahb_master_driver_h = ahb_master_driver::type_id::create("ahb_master_driver_h",this);
         ahb_master_sequencer_h = ahb_master_sequencer::type_id::create("ahb_master_sequencer_h",this);
     end
@@ -36,7 +36,7 @@ endfunction : build_phase
 
 function void ahb_master_agent::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    if(ahb_master_config_h.is_active = UVM_ACTIVE) begin
+    if(ahb_master_config_h.is_active == UVM_ACTIVE) begin
         ahb_master_driver_h.ahb_master_config_h = ahb_master_config_h;
         ahb_master_driver_h.ahb_master_seq_item_port.connect(ahb_master_sequencer_h.seq_item_export);
     end
