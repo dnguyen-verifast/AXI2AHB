@@ -13,6 +13,10 @@ package ahb_slave_seq_pkg;
   //-------------------------------------------------------
   `include "uvm_macros.svh"
   import uvm_pkg::*;
+  import ahb_master_pkg::*;
+  import ahb_slave_pkg::*;
+  import axi4_master_pkg::*;
+  import axi4_slave_pkg::*;
   import ahb_slave_pkg::*;
   import axi4_globals_pkg::*;
   import ahb_global_pkg::*;
