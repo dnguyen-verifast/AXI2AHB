@@ -22,20 +22,25 @@ endfunction : new
 
 function void ahb_slave_agent::build_phase(uvm_phase phase);
     super.build_phase(phase);
-
-    ahb_slave_driver_h = ahb_slave_driver::type_id::create("ahb_slave_driver_h",this);
-    ahb_slave_sequencer_h = ahb_slave_sequencer::type_id::create("ahb_slave_sequencer_h",this);
+    if(ahb_slave_config_h.is_active = UVM_ACTIVE) begin
+        ahb_slave_driver_h = ahb_slave_driver::type_id::create("ahb_slave_driver_h",this);
+        ahb_slave_sequencer_h = ahb_slave_sequencer::type_id::create("ahb_slave_sequencer_h",this);
+    end
     ahb_slave_monitor_h = ahb_slave_monitor::type_id::create("ahb_slave_monitor_h",this);
-    ahb_slave_coverage_h = ahb_slave_coverage::type_id::create("ahb_slave_coverage_h",this);
+    if(ahb_slave_config_h.has_coverage) begin
+        ahb_slave_coverage_h = ahb_slave_coverage::type_id::create("ahb_slave_coverage_h",this);
+    end
 endfunction : build_phase
 
 function void ahb_slave_agent::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-
-    ahb_slave_driver_h.ahb_slave_config_h = ahb_slave_config_h;
-
-    ahb_slave_driver_h.ahb_slave_seq_item_port.connect(ahb_slave_sequencer_h.seq_item_export);
-    ahb_slave_monitor_h.ahb_slave_data_analysis_port.connect(ahb_slave_coverage_h.analysis_export);
-    ahb_slave_monitor_h.ahb_slave_coverage_analysis_port.connect(ahb_slave_coverage_h.analysis_export);
+    if(ahb_slave_config_h.is_active = UVM_ACTIVE) begin
+        ahb_slave_driver_h.ahb_slave_config_h = ahb_slave_config_h;
+        ahb_slave_driver_h.ahb_slave_seq_item_port.connect(ahb_slave_sequencer_h.seq_item_export);
+    end
+    if(ahb_slave_config_h.has_coverage) begin
+        ahb_slave_monitor_h.ahb_slave_data_analysis_port.connect(ahb_slave_coverage_h.analysis_export);
+        ahb_slave_monitor_h.ahb_slave_coverage_analysis_port.connect(ahb_slave_coverage_h.analysis_export);
+    end
 endfunction : connect_phase
 `endif
