@@ -120,7 +120,7 @@ module top;
     end
   endgenerate
   initial begin
-    uvm_config_db#(virtual ahb_if)::set(null, "uvm_test_top.*", "ahb_if", ahb_vif);
+    uvm_config_db#(virtual ahb_if)::set(null, "*", "ahb_if", ahb_vif);
   end
   initial begin
     run_test();
