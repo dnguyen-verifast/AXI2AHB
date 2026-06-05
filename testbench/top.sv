@@ -4,7 +4,7 @@ module top;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
-  import axi4_global_pkg::*;
+  import axi4_globals_pkg::*;
   import ahb_global_pkg::*;
 
   import x2h_test_pkg::*;
