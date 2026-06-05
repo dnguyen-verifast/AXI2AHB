@@ -25,9 +25,9 @@ package x2h_virtual_seq_pkg;
   // Importing the required packages
   //-------------------------------------------------------
   `include "x2h_virtual_base_seq.sv"
-  `include "x2h_virtual_write_seq.sv"
-  `include "x2h_virtual_read_seq.sv"
-  `include "x2h_virtual_write_read_seq.sv"
+  // `include "x2h_virtual_write_seq.sv"
+  // `include "x2h_virtual_read_seq.sv"
+  // `include "x2h_virtual_write_read_seq.sv"
   `include "x2h_virtual_bk_8b_write_data_seq.sv"
   `include "x2h_virtual_bk_16b_write_data_seq.sv"
   `include "x2h_virtual_bk_32b_write_data_seq.sv"
