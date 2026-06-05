@@ -1,5 +1,7 @@
 `ifndef X2H_SCOREBOARD_INCLUDE_
 `define X2H_SCOREBOARD_INCLUDE_
+typedef ahb_slave_tx queue_convert_w_axi2ahb[$];
+typedef ahb_slave_tx queue_convert_r_axi2ahb[$];
 class x2h_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(x2h_scoreboard)
     axi4_master_tx axi4_master_tx_h1;

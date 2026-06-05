@@ -7,8 +7,6 @@ package ahb_global_pkg;
     parameter int DATA_WIDTH = 32;
     parameter int HWSTRB = DATA_WIDTH/8;
 
-    typedef ahb_slave_tx queue_convert_w_axi2ahb[$];
-    typedef ahb_slave_tx queue_convert_r_axi2ahb[$];
     // typedef enum bit {
     //     UVM_PASSTIVE = 1'b0,
     //     UVM_ACTIVE = 1'b1
