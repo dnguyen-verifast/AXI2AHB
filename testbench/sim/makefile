@@ -138,7 +138,7 @@ simulate:
 
 	# For checking and reporting simulation errors
 	make simulate_war_err
-	make merge_cov_report
+	# make merge_cov_report
 
 	## TODO(mshariff): 
 	## # For coverage report in text format 
@@ -147,7 +147,7 @@ simulate:
 	# vcover report -file  -byfile -detail -noannotate -option -cvg
 
 	# For coverage report in HTML format 
-	vcover report -html $(test_folder)/$(test)_coverage.ucdb -htmldir $(test_folder)/html_cov_report -details
+	# vcover report -html $(test_folder)/$(test)_coverage.ucdb -htmldir $(test_folder)/html_cov_report -details
 
 	# To open the html coverage report
 	# firefox test_folder/html_cov_report/index.html &
