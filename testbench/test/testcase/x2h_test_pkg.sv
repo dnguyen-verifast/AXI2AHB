@@ -13,12 +13,12 @@ package x2h_test_pkg;
   //-------------------------------------------------------
   `include "uvm_macros.svh"
   import uvm_pkg::*;
-  import x2h_globals_pkg::*;
-  import x2h_master_pkg::*;
-  import x2h_slave_pkg::*;
+
+  import axi_globals_pkg::*;
+  import ahb_global_pkg::*;
+  import axi_master_pkg::*;
+  import ahb_slave_pkg::*;
   import x2h_env_pkg::*;
-  import x2h_master_seq_pkg::*;
-  import x2h_slave_seq_pkg::*;
   import x2h_virtual_seq_pkg::*;
 
   //import fifo_bfm_test_pkg::*;

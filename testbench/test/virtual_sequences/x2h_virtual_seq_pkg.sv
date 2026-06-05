@@ -19,6 +19,7 @@ package x2h_virtual_seq_pkg;
   import axi4_master_seq_pkg::*; 
   import ahb_slave_seq_pkg::*; 
   import axi4_env_pkg::*; 
+  import x2h_env_pkg::*;
 
   //-------------------------------------------------------
   // Importing the required packages
