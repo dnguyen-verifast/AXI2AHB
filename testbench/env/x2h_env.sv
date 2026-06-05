@@ -60,7 +60,7 @@ function void x2h_env::connect_phase(uvm_phase phase);
     axi4_env_h.axi4_master_agent_h[i].axi4_master_mon_proxy_h.axi4_master_write_response_analysis_port.connect(x2h_scoreboard_h.axi4_master_write_response_analysis_fifo.analysis_export);
   end
 
-  if(ahb_env_config.has_virtual_seqr) begin
+  if(ahb_env_config_h.has_virtual_seqr) begin
     foreach(ahb_env_h.ahb_slave_agent_h[i]) begin
       x2h_virtual_sequencer_h.ahb_slave_sequencer_h = ahb_env_h.ahb_slave_agent_h[i].ahb_slave_sequencer_h;
     end
