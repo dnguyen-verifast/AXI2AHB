@@ -31,14 +31,16 @@ endfunction : new
 //Creates the req of type slave transaction and randomises the req.
 //-------------------------------------------------------
 task ahb_slave_write_seq::body();
-  req=ahb_slave_tx::type_id::create("req");
-
-  start_item(req);
-  if(!req.randomize() with {req.bresp == WRITE_OKAY;}) begin
-    `uvm_error(get_type_name(),"randomization failed");
-  end
-  req.print();
-  finish_item(req);
+     super.body();
+    start_item(req_slv);
+    if(!req_slv.randomize() with {
+        hresp == HRESP_OKAY;
+        wait_state == 0;
+    }) 
+    begin
+        `uvm_fatal("ahb_slave","Rand failed");
+    end
+    finish_item(req_slv);
 endtask :body
 
 `endif

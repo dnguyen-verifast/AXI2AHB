@@ -31,18 +31,16 @@ endfunction : new
 // Creates the req of type slave_bk transaction and randomises the req
 //--------------------------------------------------------------------------------------------
 task ahb_slave_bk_read_8b_transfer_seq::body();
-  super.body();
-  
-  start_item(req_slv);
-  if(!req_slv.randomize() with {
+    super.body();
+    start_item(req_slv);
+    if(!req_slv.randomize() with {
         hresp == HRESP_OKAY;
         wait_state == 0;
-  }) 
-  begin
-      `uvm_fatal("ahb_slave","Rand failed");
-  end
-  `uvm_info("AHB_SLAVE_BASIC_SINGLE_BURST_SEQ",$sformatf("req_slv = %s \n",req_slv.sprint()),UVM_LOW)
-  finish_item(req_slv);
+    }) 
+    begin
+        `uvm_fatal("ahb_slave","Rand failed");
+    end
+    finish_item(req_slv);
 endtask : body
 
 `endif
