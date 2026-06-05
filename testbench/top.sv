@@ -30,7 +30,7 @@ module top;
     .ADDR_WIDTH(ADDR_WIDTHS), 
     .DATA_WIDTH(DATA_WIDTHS), 
     .HWSTRB(HWSTRB)
-  ) ahb_vif (
+  ) ahb_if (
     .clk(hclk), 
     .resetn(hresetn)
   );
