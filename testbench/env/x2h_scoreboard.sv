@@ -349,7 +349,7 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     convert_ahb.hsize  = hsize_e'(size_bit);
     convert_ahb.hwrite = HWRITE_READ; 
     convert_ahb.hwdata = 32'h0;
-    convert_ahb.hrdata = axi4_r_tx.hrdata;
+    convert_ahb.hrdata = axi4_r_tx.rdata;
 
     if (axi4_ar_tx.arburst == READ_FIXED) begin
       convert_ahb.htrans = HTRANS_NONSEQ; 
