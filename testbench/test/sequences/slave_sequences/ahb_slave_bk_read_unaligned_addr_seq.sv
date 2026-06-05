@@ -40,7 +40,7 @@ task ahb_slave_bk_read_unaligned_addr_seq::body();
   begin
       `uvm_fatal("ahb_slave","Rand failed");
   end
-  `uvm_info("AHB_SLAVE_BASIC_SINGLE_BURST_SEQ",$sformatf("cloned_req = %s \n",cloned_req.sprint()),UVM_LOW)
+  `uvm_info("AHB_SLAVE_BASIC_SINGLE_BURST_SEQ",$sformatf("req_slv = %s \n",req_slv.sprint()),UVM_LOW)
   finish_item(req_slv);
 endtask : body
 
