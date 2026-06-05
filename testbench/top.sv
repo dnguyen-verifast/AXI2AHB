@@ -6,9 +6,9 @@ module top;
 
   import axi4_globals_pkg::*;
   import ahb_global_pkg::*;
-
   import x2h_test_pkg::*;
-
+  parameter  ADDR_WIDTHS = 32;
+  parameter DATA_WIDTHS = 32;
   logic aclk;
   logic aresetn;
   logic hclk;
@@ -19,16 +19,16 @@ module top;
   logic        hgrant_dummy;
 
   axi4_if #(
-    .ADDRESS_WIDTH(ADDR_WIDTH), 
-    .DATA_WIDTH(DATA_WIDTH)
+    .ADDRESS_WIDTH(ADDR_WIDTHS), 
+    .DATA_WIDTH(DATA_WIDTHS)
   ) axi_vif (
     .aclk(aclk), 
     .aresetn(aresetn)
   );
 
   ahb_if #(
-    .ADDR_WIDTH(ADDR_WIDTH), 
-    .DATA_WIDTH(DATA_WIDTH), 
+    .ADDR_WIDTH(ADDR_WIDTHS), 
+    .DATA_WIDTH(DATA_WIDTHS), 
     .HWSTRB(HWSTRB)
   ) ahb_vif (
     .clk(hclk), 
