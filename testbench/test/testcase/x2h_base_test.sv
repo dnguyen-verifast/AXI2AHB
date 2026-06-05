@@ -70,7 +70,7 @@ endfunction : build_phase
 // and store the handle into the config_db
 //--------------------------------------------------------------------------------------------
 function void x2h_base_test:: setup_axi4_env_cfg();
-  axi4_env_cfg_h = x2h_env_config::type_id::create("axi4_env_cfg_h");
+  axi4_env_cfg_h = axi4_env_config::type_id::create("axi4_env_cfg_h");
  
   axi4_env_cfg_h.has_scoreboard = x2h_env_config_h.has_scoreboard_axi;
   axi4_env_cfg_h.has_virtual_seqr =  x2h_env_config_h.has_virtual_seqr_axi;
@@ -90,7 +90,7 @@ function void x2h_base_test:: setup_axi4_env_cfg();
   setup_ahb_slave_agent_cfg();
 
   // set method for x2h_env_cfg
-  uvm_config_db #(x2h_env_config)::set(this,"*","x2h_env_config",axi4_env_cfg_h);
+  uvm_config_db #(axi4_env_config)::set(this,"*","axi4_env_config",axi4_env_cfg_h);
   `uvm_info(get_type_name(),$sformatf("\nx2h_ENV_CONFIG\n%s",axi4_env_cfg_h.sprint()),UVM_LOW);
   uvm_config_db #(ahb_env_config)::set(this,"*","ahb_env_config",ahb_env_config_h);
   `uvm_info(get_type_name(),$sformatf("\nAHB_ENV_CONFIG\n%s",ahb_env_config_h.sprint()),UVM_LOW);
