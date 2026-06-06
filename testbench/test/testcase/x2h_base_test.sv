@@ -94,8 +94,6 @@ function void x2h_base_test:: setup_axi4_env_cfg();
   `uvm_info(get_type_name(),$sformatf("\nx2h_ENV_CONFIG\n%s",axi4_env_cfg_h.sprint()),UVM_LOW);
   uvm_config_db #(ahb_env_config)::set(this,"*","ahb_env_config",ahb_env_config_h);
   `uvm_info(get_type_name(),$sformatf("\nAHB_ENV_CONFIG\n%s",ahb_env_config_h.sprint()),UVM_LOW);
-
-  x2h_env_h = x2h_env::type_id::create("x2h_env_h",this);
 endfunction: setup_axi4_env_cfg
 
 //--------------------------------------------------------------------------------------------
