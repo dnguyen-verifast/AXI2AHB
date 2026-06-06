@@ -113,6 +113,7 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 function void axi4_master_driver_proxy::build_phase(uvm_phase phase);
   super.build_phase(phase);
+  `uvm_info("GET_AXI4_MASTER_DRIVER_BFM","axi4_master_drv_bfm_h", UVM_MEDIUM);
   if(!uvm_config_db #(virtual axi4_master_driver_bfm)::get(this,"","axi4_master_driver_bfm",axi4_master_drv_bfm_h)) begin
     `uvm_fatal("FATAL_MDP_CANNOT_GET_AXI4_MASTER_DRIVER_BFM","cannot get() axi4_master_drv_bfm_h");
   end
@@ -140,6 +141,7 @@ endfunction : end_of_elaboration_phase
 task axi4_master_driver_proxy::run_phase(uvm_phase phase);
 
   //waiting for system reset
+  `uvm_info("AXI4_MASTER_DRIVER","waiting for system reset", UVM_MEDIUM);
   axi4_master_drv_bfm_h.wait_for_aresetn();
 
   fork 
