@@ -96,6 +96,8 @@ module top;
   end
 
   initial begin
+    aresetn = 1;
+    hresetn = 1;
     #10
     aresetn = 0;
     hresetn = 0;
