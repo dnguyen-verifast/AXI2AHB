@@ -66,9 +66,9 @@ function void x2h_env::connect_phase(uvm_phase phase);
     end
   end
   foreach(ahb_env_h.ahb_slave_agent_h[i]) begin
-    ahb_slave_agent_h[i].ahb_slave_monitor_h.ahb_slave_data_analysis_port.connect(x2h_scoreboard_h.ahb_slave_data_phase_analysis_fifo.analysis_export);
-    ahb_slave_agent_h[i].ahb_slave_monitor_h.ahb_slave_addr_analysis_port.connect(x2h_scoreboard_h.ahb_slave_addr_phase_analysis_fifo.analysis_export);
-    ahb_slave_agent_h[i].ahb_slave_sequencer_h.seq_expect_item_port.connect(x2h_scoreboard_h.ahb_data_phase_analysis_fifo_expect.analysis_export);
+    ahb_env_h.ahb_slave_agent_h[i].ahb_slave_monitor_h.ahb_slave_data_analysis_port.connect(x2h_scoreboard_h.ahb_slave_data_phase_analysis_fifo.analysis_export);
+    ahb_env_h.ahb_slave_agent_h[i].ahb_slave_monitor_h.ahb_slave_addr_analysis_port.connect(x2h_scoreboard_h.ahb_slave_addr_phase_analysis_fifo.analysis_export);
+    ahb_env_h.ahb_slave_agent_h[i].ahb_slave_sequencer_h.seq_expect_item_port.connect(x2h_scoreboard_h.ahb_data_phase_analysis_fifo_expect.analysis_export);
   end
 endfunction : connect_phase
 `endif
