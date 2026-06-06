@@ -112,7 +112,7 @@ module top;
       defparam axi4_master_agent_bfm[i].axi4_master_agent_bfm_h.MASTER_ID = i;
     end
     for (i=0; i<NO_OF_SLAVES; i++) begin : axi4_slave_agent_bfm
-      axi4_slave_agent_bfm #(.SLAVE_ID(i)) axi4_slave_agent_bfm_h(intf);
+      axi4_slave_agent_bfm #(.SLAVE_ID(i)) axi4_slave_agent_bfm_h(axi_vif);
       defparam axi4_slave_agent_bfm[i].axi4_slave_agent_bfm_h.SLAVE_ID = i;
     end
   endgenerate
