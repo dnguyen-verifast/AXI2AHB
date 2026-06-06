@@ -9,9 +9,9 @@
 import axi4_globals_pkg::*;
 interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 //Write_address_channel
-                                input [3:0]awid    ,
+                                input [AWID_WIDTH -1:0]               awid,
                                 input [ADDRESS_WIDTH-1:0]awaddr  ,
-                                input [3: 0]awlen   ,
+                                input [7: 0]awlen   ,
                                 input [2: 0]awsize  ,
                                 input [1: 0]awburst ,
                                 input [1: 0]awlock  ,
@@ -32,16 +32,16 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 input wready ,
 
                                 //Write Response Channel
-                                input  [3:0]bid    ,
+                                input  [AWID_WIDTH -1:0]bid    ,
                                 input  [1:0]bresp  ,
                                 input  [3:0]buser  ,
                                 input bvalid ,
                                 input bready ,
 
                                 //Read Address Channel
-                                input [3: 0] arid    ,
+                                input [ARID_WIDTH -1: 0] arid    ,
                                 input [ADDRESS_WIDTH-1: 0]araddr  ,
-                                input [3:0]arlen   ,
+                                input [7:0]arlen   ,
                                 input [2:0]arsize  ,
                                 input [1:0]arburst ,
                                 input [1:0]arlock  ,
@@ -54,7 +54,7 @@ interface axi4_slave_monitor_bfm(input aclk, input aresetn,
                                 input arready ,
 
                                 //Read Data Channel
-                                input  [3:0]rid    ,
+                                input  [ARID_WIDTH -1:0]rid    ,
                                 input  [DATA_WIDTH-1: 0]rdata  ,
                                 input  [1:0]rresp  ,
                                 input  rlast  ,

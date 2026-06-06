@@ -30,6 +30,10 @@ package axi4_globals_pkg;
   //Used to set the address width to the address bus
   parameter int ADDRESS_WIDTH = 32;
 
+  parameter int AWID_WIDTH = 8;
+
+  parameter int ARID_WIDTH = 8;
+
   //Parameter: DATA_WIDTH
   //Used to set the data width 
   parameter int DATA_WIDTH = 64;
@@ -215,86 +219,86 @@ package axi4_globals_pkg;
 
   //Enum: awid_e
   //Used to declare the enum type of write address id
-  typedef enum bit [3:0] {
-    AWID_0  = 4'd0,
-    AWID_1  = 4'd1,
-    AWID_2  = 4'd2,
-    AWID_3  = 4'd3,
-    AWID_4  = 4'd4,
-    AWID_5  = 4'd5,
-    AWID_6  = 4'd6,
-    AWID_7  = 4'd7,
-    AWID_8  = 4'd8,
-    AWID_9  = 4'd9,
-    AWID_10 = 4'd10,
-    AWID_11 = 4'd11,
-    AWID_12 = 4'd12,
-    AWID_13 = 4'd13,
-    AWID_14 = 4'd14,
-    AWID_15 = 4'd15
+  typedef enum bit [7:0] {
+    AWID_0  = 8'd0,
+    AWID_1  = 8'd1,
+    AWID_2  = 8'd2,
+    AWID_3  = 8'd3,
+    AWID_4  = 8'd4,
+    AWID_5  = 8'd5,
+    AWID_6  = 8'd6,
+    AWID_7  = 8'd7,
+    AWID_8  = 8'd8,
+    AWID_9  = 8'd9,
+    AWID_10 = 8'd10,
+    AWID_11 = 8'd11,
+    AWID_12 = 8'd12,
+    AWID_13 = 8'd13,
+    AWID_14 = 8'd14,
+    AWID_15 = 8'd15
   } awid_e;
 
   //Enum: bid_e
   //Used to declare the enum type of write response id
-  typedef enum bit [3:0] {
-    BID_0  = 4'd0,
-    BID_1  = 4'd1,
-    BID_2  = 4'd2,
-    BID_3  = 4'd3,
-    BID_4  = 4'd4,
-    BID_5  = 4'd5,
-    BID_6  = 4'd6,
-    BID_7  = 4'd7,
-    BID_8  = 4'd8,
-    BID_9  = 4'd9,
-    BID_10 = 4'd10,
-    BID_11 = 4'd11,
-    BID_12 = 4'd12,
-    BID_13 = 4'd13,
-    BID_14 = 4'd14,
-    BID_15 = 4'd15
+  typedef enum bit [7:0] {
+    BID_0  = 8'd0,
+    BID_1  = 8'd1,
+    BID_2  = 8'd2,
+    BID_3  = 8'd3,
+    BID_4  = 8'd4,
+    BID_5  = 8'd5,
+    BID_6  = 8'd6,
+    BID_7  = 8'd7,
+    BID_8  = 8'd8,
+    BID_9  = 8'd9,
+    BID_10 = 8'd10,
+    BID_11 = 8'd11,
+    BID_12 = 8'd12,
+    BID_13 = 8'd13,
+    BID_14 = 8'd14,
+    BID_15 = 8'd15
   } bid_e;
 
   //Enum: arid_e
   //Used to declare the enum type of read address id
-  typedef enum bit [3:0] {
-    ARID_0  = 4'd0,
-    ARID_1  = 4'd1,
-    ARID_2  = 4'd2,
-    ARID_3  = 4'd3,
-    ARID_4  = 4'd4,
-    ARID_5  = 4'd5,
-    ARID_6  = 4'd6,
-    ARID_7  = 4'd7,
-    ARID_8  = 4'd8,
-    ARID_9  = 4'd9,
-    ARID_10 = 4'd10,
-    ARID_11 = 4'd11,
-    ARID_12 = 4'd12,
-    ARID_13 = 4'd13,
-    ARID_14 = 4'd14,
-    ARID_15 = 4'd15
+  typedef enum bit [7:0] {
+    ARID_0  = 8'd0,
+    ARID_1  = 8'd1,
+    ARID_2  = 8'd2,
+    ARID_3  = 8'd3,
+    ARID_4  = 8'd4,
+    ARID_5  = 8'd5,
+    ARID_6  = 8'd6,
+    ARID_7  = 8'd7,
+    ARID_8  = 8'd8,
+    ARID_9  = 8'd9,
+    ARID_10 = 8'd10,
+    ARID_11 = 8'd11,
+    ARID_12 = 8'd12,
+    ARID_13 = 8'd13,
+    ARID_14 = 8'd14,
+    ARID_15 = 8'd15
   } arid_e;
 
   //Enum: rid_e
   //Used to declare the enum type of read data/response id
-  typedef enum bit [3:0] {
-    RID_0  = 4'd0,
-    RID_1  = 4'd1,
-    RID_2  = 4'd2,
-    RID_3  = 4'd3,
-    RID_4  = 4'd4,
-    RID_5  = 4'd5,
-    RID_6  = 4'd6,
-    RID_7  = 4'd7,
-    RID_8  = 4'd8,
-    RID_9  = 4'd9,
-    RID_10 = 4'd10,
-    RID_11 = 4'd11,
-    RID_12 = 4'd12,
-    RID_13 = 4'd13,
-    RID_14 = 4'd14,
-    RID_15 = 4'd15
+  typedef enum bit [7:0] {
+    RID_0  = 8'd0,
+    RID_1  = 8'd1,
+    RID_2  = 8'd2,
+    RID_3  = 8'd3,
+    RID_4  = 8'd4,
+    RID_5  = 8'd5,
+    RID_6  = 8'd6,
+    RID_7  = 8'd7,
+    RID_8  = 8'd8,
+    RID_9  = 8'd9,
+    RID_10 = 8'd10,
+    RID_11 = 8'd11,
+    RID_12 = 8'd12,
+    RID_13 = 8'd13,
+    RID_14 = 8'd14,
+    RID_15 = 8'd15
   } rid_e;
 
   //Enum: bresp_e
@@ -375,9 +379,9 @@ package axi4_globals_pkg;
   //This struct datatype consists of all write signals which are used for seq item conversion
   typedef struct {
     //Write Address Channel Signals
-    bit [3:0]               awid;
+    bit [AWID_WIDTH -1:0]               awid;
     bit [ADDRESS_WIDTH-1:0] awaddr;
-    bit [3:0]               awlen;
+    bit [7:0]               awlen;
     bit [2:0]               awsize;
     bit [1:0]               awburst;
     bit [1:0]               awlock; //john changed from bit to bit[1:0]
@@ -394,7 +398,7 @@ package axi4_globals_pkg;
     bit                     [2**LENGTH:0] wuser;
     bit                                   wlast;
     //Write Response Channel Signals
-    bit [3:0] bid;
+    bit [AWID_WIDTH -1:0] bid;
     bit [1:0] bresp;
     bit       buser;
     bit       bvalid;
@@ -410,9 +414,9 @@ package axi4_globals_pkg;
   //This struct datatype consists of all read signals which are used for seq item conversion
   typedef struct {
     //Read Address Channel Signals
-    bit               [3:0] arid;
+    bit               [ARID_WIDTH -1:0] arid;
     bit [ADDRESS_WIDTH-1:0] araddr;
-    bit               [3:0] arlen;
+    bit               [7:0] arlen;
     bit               [2:0] arsize;
     bit               [1:0] arburst;
     bit               [1:0] arcache;
@@ -422,7 +426,7 @@ package axi4_globals_pkg;
     bit               [3:0] aruser;
     bit               [1:0] arlock;//john changed from bit to bit[1:0]
     //Read Data Channel Signals
-    bit                         [3:0] rid;
+    bit                         [ARID_WIDTH -1:0] rid;
     bit [2**LENGTH:0][DATA_WIDTH-1:0] rdata;
     bit            [2**LENGTH:0][1:0] rresp; 
     bit            [2**LENGTH:0][3:0] ruser;
@@ -451,8 +455,8 @@ package axi4_globals_pkg;
   } axi4_transfer_cfg_s;
  
   typedef struct {
-    bit [ADDRESS_WIDTH-1:0] addr;
-    bit [3:0]               id;
+    bit [ADDRESS_WIDTH-1:0]             addr;
+    bit [AWID_WIDTH -1:0]               id;
   } queue_info_ctrl_s;
 endpackage : axi4_globals_pkg
 

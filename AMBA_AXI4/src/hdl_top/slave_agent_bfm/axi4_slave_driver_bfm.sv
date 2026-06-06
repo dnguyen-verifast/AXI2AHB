@@ -10,9 +10,9 @@ import axi4_globals_pkg::*;
 interface axi4_slave_driver_bfm(input                     aclk    , 
                                 input                     aresetn ,
                                 //Write_address_channel
-                                input [3:0]               awid    ,
+                                input [AWID_WIDTH -1:0]               awid ,
                                 input [ADDRESS_WIDTH-1:0] awaddr  ,
-                                input [3: 0]              awlen   ,
+                                input [7: 0]              awlen   ,
                                 input [2: 0]              awsize  ,
                                 input [1: 0]              awburst ,
                                 input [1: 0]              awlock  ,
@@ -32,16 +32,16 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
                                 output reg	                wready ,
 
                                 //Write Response Channel
-                                output reg [3:0]            bid    ,
+                                output reg [AWID_WIDTH -1:0]            bid    ,
                                 output reg [1:0]            bresp  ,
                                 output reg [3:0]            buser  ,
                                 output reg                  bvalid ,
                                 input		                    bready ,
 
                                 //Read Address Channel
-                                input [3: 0]                arid    ,
+                                input [ARID_WIDTH -1: 0]                arid    ,
                                 input [ADDRESS_WIDTH-1: 0]  araddr  ,
-                                input [3:0]                 arlen   ,
+                                input [7:0]                 arlen   ,
                                 input [2:0]                 arsize  ,
                                 input [1:0]                 arburst ,
                                 input [1:0]                 arlock  ,
@@ -54,7 +54,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
                                 output reg                  arready ,
 
                                 //Read Data Channel
-                                output reg [3:0]                rid    ,
+                                output reg [ARID_WIDTH -1:0]                rid    ,
                                 output reg [DATA_WIDTH-1: 0]    rdata  ,
                                 output reg [1:0]                rresp  ,
                                 output reg                      rlast  ,
@@ -90,7 +90,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
 
   // Creating Memories for each signal to store each transaction attributes
 
-  reg [	3 : 0] 	            mem_awid	  [2**LENGTH];
+  reg [AWID_WIDTH -1 : 0] 	            mem_awid	  [2**LENGTH];
   reg [	ADDRESS_WIDTH-1: 0]	mem_waddr	  [2**LENGTH];
   reg [	7 : 0]	            mem_wlen	  [2**LENGTH];
   reg [	2 : 0]	            mem_wsize	  [2**LENGTH];
@@ -102,7 +102,7 @@ interface axi4_slave_driver_bfm(input                     aclk    ,
   reg [	3 : 0]	            mem_awqos	   [2**LENGTH];
   bit                       mem_wlast   [2**LENGTH];
   
-  reg [	3 : 0]	            mem_arid	  [2**LENGTH];
+  reg [ARID_WIDTH -1: 0]	            mem_arid	  [2**LENGTH];
   reg [	ADDRESS_WIDTH-1: 0]	mem_raddr	  [2**LENGTH];
   reg [	7	: 0]	            mem_rlen	  [2**LENGTH];
   reg [	2	: 0]	            mem_rsize	  [2**LENGTH];
