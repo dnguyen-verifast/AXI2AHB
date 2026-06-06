@@ -50,7 +50,7 @@ function void ahb_slave_driver::end_of_elaboration_phase(uvm_phase phase);
 endfunction : end_of_elaboration_phase
 
 task ahb_slave_driver::run_phase(uvm_phase phase);
-    `uvm_info("DRIVER_SLAVE", "Inside run_phase of AHB Driver master", UVM_LOW)
+    `uvm_info("DRIVER_SLAVE", "Inside run_phase of AHB Driver slave", UVM_LOW)
 
     wait_ahb_for_resetn();
     fork

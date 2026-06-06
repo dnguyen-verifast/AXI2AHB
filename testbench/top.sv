@@ -96,6 +96,7 @@ module top;
   end
 
   initial begin
+    #10
     aresetn = 0;
     hresetn = 0;
     hgrant_dummy = 1;
