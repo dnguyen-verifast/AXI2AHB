@@ -92,15 +92,16 @@ interface axi4_master_driver_bfm(input bit                      aclk,
   // Waiting for the system reset to be active low
   //-------------------------------------------------------
   task wait_for_aresetn();
+    `uvm_info(name,$sformatf("WAITING SYSTEM RESET DETECTED"),UVM_LOW)
     @(negedge aresetn);
-    `uvm_info(name,$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH)
+    `uvm_info(name,$sformatf("SYSTEM RESET DETECTED"),UVM_LOW)
     awvalid <= 1'b0;
     wvalid  <= 1'b0;
     bready  <= 1'b0;
     arvalid <= 1'b0;
     rready  <= 1'b0;
     @(posedge aresetn);
-    `uvm_info(name,$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
+    `uvm_info(name,$sformatf("SYSTEM RESET DEACTIVATED"),UVM_LOW)
   endtask : wait_for_aresetn
 
   //--------------------------------------------------------------------------------------------
