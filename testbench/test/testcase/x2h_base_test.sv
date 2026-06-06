@@ -74,8 +74,8 @@ function void x2h_base_test:: setup_axi4_env_cfg();
  
   axi4_env_cfg_h.has_scoreboard = x2h_env_config_h.has_scoreboard_axi;
   axi4_env_cfg_h.has_virtual_seqr =  x2h_env_config_h.has_virtual_seqr_axi;
-  axi4_env_cfg_h.no_of_masters =  x2h_env_config_h.no_of_slaves_axi;
-  axi4_env_cfg_h.no_of_slaves =  x2h_env_config_h.no_of_masters_axi;
+  axi4_env_cfg_h.no_of_masters =  x2h_env_config_h.no_of_masters_axi;
+  axi4_env_cfg_h.no_of_slaves =  x2h_env_config_h.no_of_slaves_axi;
 
   ahb_env_config_h = ahb_env_config::type_id::create("ahb_env_config_h");
   ahb_env_config_h.has_scoreboard =  x2h_env_config_h.has_scoreboard_ahb;
