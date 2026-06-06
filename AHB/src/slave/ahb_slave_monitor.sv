@@ -73,7 +73,7 @@ task ahb_slave_monitor::ahb_slave_addr_phase();
         slv_tx_add.htrans    = ahb_if_h.htrans;
         slv_tx_add.hwrite    = ahb_if_h.hwrite;
         slv_tx_add.hsel      = ahb_if_h.hsel;
-        `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in addr phase"),UVM_LOW)
+        `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in addr phase"),UVM_HIGH)
         ahb_slave_seq_item_converter::to_class(slv_tx_add,mon_tx_add);
         ahb_slave_coverage_analysis_port.write(mon_tx_add);
         if(ahb_if_h.hreadyout == 1) begin
@@ -86,7 +86,7 @@ task ahb_slave_monitor::ahb_slave_addr_phase();
             end
 
             if(ahb_if_h.htrans == HTRANS_NONSEQ || ahb_if_h.htrans == HTRANS_IDLE) begin
-                `uvm_info("SLAVE MON", $sformatf("Start new sequence"), UVM_LOW)
+                `uvm_info("SLAVE MON", $sformatf("Start new sequence"), UVM_HIGH)
             end else begin
                 if(ahb_if_h.haddr[31:10] != pre_haddr[31:10]) begin
                     `uvm_error("MON_CHK_1KB", $sformatf("FATAL! Burst crossed 1KB boundary. Prev: %0h, Curr: %0h", pre_haddr, ahb_if_h.haddr))
@@ -110,7 +110,7 @@ task ahb_slave_monitor::ahb_slave_data_phase();
                 slv_tx_data.hresp   = ahb_if_h.hresp;
                 slv_tx_data.hrdata   = ahb_if_h.hrdata;
                 slv_tx_data.hexokay   = ahb_if_h.hexokay;
-                `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in data_phase"),UVM_LOW)
+                `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in data_phase"),UVM_HIGH)
                 ahb_slave_seq_item_converter::to_class(slv_tx_data,mon_tx_data);
                 ahb_slave_data_analysis_port.write(mon_tx_data);
                 `uvm_info("SLAVE MON",$sformatf("data_phase write object to scoreboard mon_tx_data = %s \n",mon_tx_data.sprint()),UVM_HIGH)
