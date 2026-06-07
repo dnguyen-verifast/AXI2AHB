@@ -76,7 +76,7 @@ module top;
     .hburst(ahb_vif.hburst),
     .hwdata(ahb_vif.hwdata),
     .hbusreq(hbusreq_dummy),
-    .hlock(hlock_dummy),
+    .hlock(ahb_vif.hmastlock),
 
     .hrdata(ahb_vif.hrdata),
     .hready(ahb_vif.hready),
