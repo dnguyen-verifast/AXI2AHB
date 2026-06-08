@@ -81,7 +81,7 @@ module top;
     .hlock(ahb_vif.hmastlock),
 
     .hrdata(ahb_vif.hrdata),
-    .hready(ahb_vif.hready),
+    .hready(ahb_vif.hreadyout),
     .hresp(ahb_vif.hresp),
     .hgrant(hgrant_dummy),
     .hmaster(ahb_vif.hmaster)
