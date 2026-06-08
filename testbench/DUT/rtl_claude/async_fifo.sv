@@ -14,7 +14,6 @@
 //      full/empty flags)
 // ============================================================
 
-`timescale 1ns/1ps
 
 module async_fifo #(
     parameter int WIDTH = 8,

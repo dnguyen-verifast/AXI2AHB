@@ -11,8 +11,6 @@
 //    6. HREADY=0 (wait-state) stall handling
 // ============================================================
 
-`timescale 1ns/1ps
-
 module bridge_controller #(
     parameter int DATA_WIDTH      = 32,
     parameter int ADDR_WIDTH      = 32,

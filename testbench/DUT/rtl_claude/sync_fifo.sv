@@ -9,8 +9,6 @@
 //    - Simultaneous read+write supported (no bubble)
 // ============================================================
 
-`timescale 1ns/1ps
-
 module sync_fifo #(
     parameter int WIDTH = 8,
     parameter int DEPTH = 8   // must be power-of-2

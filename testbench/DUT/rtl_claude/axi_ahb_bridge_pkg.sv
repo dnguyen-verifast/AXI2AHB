@@ -4,7 +4,6 @@
 //  for the AXI-to-AHB bridge.
 // ============================================================
 
-`timescale 1ns/1ps
 
 package axi_ahb_bridge_pkg;
 
