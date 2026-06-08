@@ -13,23 +13,10 @@
 ../test/virtual_sequences/x2h_virtual_seq_pkg.sv
 ../test/testcase/x2h_test_pkg.sv
 
-${DUT_PATH}/axi_frontend/axi_frontend_pkg.sv
-${DUT_PATH}/axi_frontend/axi_req_capture.sv
-${DUT_PATH}/axi_frontend/axi_bresp_gen.sv
-${DUT_PATH}/axi_frontend/axi_rresp_gen.sv
-${DUT_PATH}/axi_frontend/axi_frontend.sv
-
-${DUT_PATH}/fifo/sync_fifo.sv
-${DUT_PATH}/fifo/fifo_wrapper.sv
-
-${DUT_PATH}/bridge_core/bridge_fifo_ctrl.sv
-${DUT_PATH}/bridge_core/bridge_arbiter.sv
-${DUT_PATH}/bridge_core/bridge_controller.sv
-${DUT_PATH}/bridge_core/bridge_core.sv
-
-${DUT_PATH}/ahb_backend/ahb_beat_executor.sv
-${DUT_PATH}/ahb_backend/ahb_backend.sv
-
-${DUT_PATH}/axi2ahb_bridge_top.sv
+${DUT_PATH}/axi_ahb_bridge_pkg.sv
+${DUT_PATH}/async_fifo.sv
+${DUT_PATH}/sync_fifo.sv
+${DUT_PATH}/bridge_controller.sv
+${DUT_PATH}/axi_ahb_bridge_top.sv
 
 ../top.sv
