@@ -7,6 +7,8 @@ module top;
   import ahb_global_pkg::*;
   import x2h_test_pkg::*;
 
+  import axi_ahb_bridge_pkg::*;
+
   parameter  ADDR_WIDTHS = 32;
   parameter DATA_WIDTHS = 32;
   logic aclk;
