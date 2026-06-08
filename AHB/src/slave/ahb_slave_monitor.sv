@@ -76,7 +76,7 @@ task ahb_slave_monitor::ahb_slave_addr_phase();
         `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in addr phase"),UVM_HIGH)
         ahb_slave_seq_item_converter::to_class(slv_tx_add,mon_tx_add);
         ahb_slave_coverage_analysis_port.write(mon_tx_add);
-        if(ahb_if_h.hreadyout == 1) begin
+        if(ahb_if_h.hready == 1 && ahb_if_h.hsel == 1) begin
             pre_haddr = mon_tx_add.haddr;
             pre_htrans = mon_tx_add.htrans;
             if (mon_tx_add.htrans == HTRANS_NONSEQ || mon_tx_add.htrans == HTRANS_SEQ) begin

@@ -72,10 +72,11 @@ task ahb_master_monitor::ahb_master_addr_phase();
         m_tx_add.hwrite    = ahb_if_h.hwrite;
         m_tx_add.hsel       = ahb_if_h.hsel;
         m_tx_add.hreadyout = ahb_if_h.hreadyout;
+        m_tx_add.hready = ahb_if_h.hready;
         `uvm_info("MASTER MON",$sformatf("Capture signal from interface in addr phase"),UVM_LOW)
         ahb_master_seq_item_converter::to_class(m_tx_add,mon_tx_add);
         ahb_master_coverage_analysis_port.write(mon_tx_add);
-        if(ahb_if_h.hreadyout == 1) begin
+        if(ahb_if_h.hready == 1) begin
             if (mon_tx_add.htrans == HTRANS_NONSEQ || mon_tx_add.htrans == HTRANS_SEQ) begin
                 pipeline_monitor.push_back(m_tx_add);
                 ahb_master_addr_analysis_port.write(mon_tx_add);
@@ -92,7 +93,7 @@ task ahb_master_monitor::ahb_master_data_phase();
         wait(pipeline_monitor.size() > 0);
 //        if(pipeline_monitor.size() > 0) begin
             @(posedge ahb_if_h.clk);
-            if(ahb_if_h.hreadyout == 1) begin
+            if(ahb_if_h.hready == 1) begin
              m_tx_data = pipeline_monitor.pop_front();
              m_tx_data.hwdata  = ahb_if_h.hwdata;
              m_tx_data.hwstrb  = ahb_if_h.hwstrb ;

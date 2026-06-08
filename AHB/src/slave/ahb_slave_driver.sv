@@ -78,7 +78,7 @@ task ahb_slave_driver::wr_addr_phase();
     ahb_slave_tx slv_tx_add;
     forever begin
         @(posedge ahb_if_h.clk);
-        if (ahb_if_h.hsel == 1'b1 && ahb_if_h.hreadyout == 1'b1) begin
+        if (ahb_if_h.hsel == 1'b1 && ahb_if_h.hready == 1'b1) begin
             slv_struct_add.haddr     = ahb_if_h.haddr;
             slv_struct_add.hburst    = ahb_if_h.hburst;
             slv_struct_add.hmastlock = ahb_if_h.hmastlock;

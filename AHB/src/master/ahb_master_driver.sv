@@ -100,19 +100,19 @@ task ahb_master_driver::wr_addr_phase();
             ahb_if_h.hsel       <= m_tx_addr.hsel;
             @(posedge ahb_if_h.clk);
             if(ahb_master_config_h.has_convert_waitstate == 1) begin
-                if(ahb_if_h.hreadyout == 0 && (m_tx.htrans == HTRANS_IDLE || (m_tx.htrans == HTRANS_BUSY && (m_tx.hburst != SINGLE)))) begin
+                if(ahb_if_h.hready == 0 && (m_tx.htrans == HTRANS_IDLE || (m_tx.htrans == HTRANS_BUSY && (m_tx.hburst != SINGLE)))) begin
                     `uvm_info("MASTER_DRIVER",$sformatf("Transfer type changes during wait states"),UVM_LOW)                        
                 end else begin
                     ahb_master_fifo.put(m_tx);
                     `uvm_info("MASTER_DRIVER",$sformatf("Finished send information address"),UVM_LOW)
-                    while(ahb_if_h.hreadyout == 0) begin
+                    while(ahb_if_h.hready == 0) begin
                         @(posedge ahb_if_h.clk);
                     end
                 end
             end else begin
                 ahb_master_fifo.put(m_tx);
                 `uvm_info("MASTER_DRIVER",$sformatf("Finished send information address"),UVM_LOW)
-                while(ahb_if_h.hreadyout == 0) begin
+                while(ahb_if_h.hready == 0) begin
                     @(posedge ahb_if_h.clk);
                 end
             end
@@ -133,7 +133,7 @@ task ahb_master_driver::wr_data_phase();
             ahb_if_h.hwstrb    <= m_tx_data.hwstrb;
             `uvm_info("MASTER_DRIVER",$sformatf("Send data to slave hwdata = %h    hwstrb = %h \n",m_tx_data.hwdata,m_tx_data.hwstrb),UVM_LOW)
             @(posedge ahb_if_h.clk);
-            while(ahb_if_h.hreadyout == 0) begin
+            while(ahb_if_h.hready == 0) begin
                 @(posedge ahb_if_h.clk);
             end
             `uvm_info("MASTER_DRIVER",$sformatf("Get response from slave for write transaction"),UVM_LOW)
@@ -142,7 +142,7 @@ task ahb_master_driver::wr_data_phase();
         end else if(m_tx.hwrite == HWRITE_READ)begin
             ahb_if_h.hwstrb    <= m_tx_data.hwstrb;
             @(posedge ahb_if_h.clk);
-            while(ahb_if_h.hreadyout == 0) begin
+            while(ahb_if_h.hready == 0) begin
                 @(posedge ahb_if_h.clk);
             end
             `uvm_info("MASTER_DRIVER",$sformatf("Get response from slave for read transaction"),UVM_LOW)
