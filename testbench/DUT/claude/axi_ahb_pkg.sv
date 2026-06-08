@@ -37,20 +37,26 @@ package axi_ahb_pkg;
   endfunction
 
   // Map AXI burst (type, len) -> AHB HBURST.
-  // Returns SINGLE for len0; INCR4/8/16 or WRAP4/8/16 for matching power-of-two
-  // counts; INCR (undefined length) otherwise.
+  //   FIXED : AHB-Lite has no fixed-burst concept. Each beat re-accesses the
+  //           same address and is issued as an independent SINGLE transfer
+  //           (and HTRANS must be NONSEQ on every beat, see engines).
+  //   WRAP  : WRAP4/8/16 for matching counts, else fall back to INCR.
+  //   INCR  : SINGLE for len0; INCR4/8/16 for matching counts; INCR otherwise.
   function automatic logic [2:0] map_hburst(
       input logic [1:0] axburst, input logic [7:0] axlen);
     logic [8:0] nb;
     nb = beats_of(axlen);
-    if (axburst == AXI_BURST_WRAP) begin
+    if (axburst == AXI_BURST_FIXED) begin
+      // every beat is a standalone single transfer to the same address
+      map_hburst = HBURST_SINGLE;
+    end else if (axburst == AXI_BURST_WRAP) begin
       unique case (nb)
         9'd4 : map_hburst = HBURST_WRAP4;
         9'd8 : map_hburst = HBURST_WRAP8;
         9'd16: map_hburst = HBURST_WRAP16;
         default: map_hburst = HBURST_INCR; // unusual wrap len -> treat as incr
       endcase
-    end else begin // INCR or FIXED
+    end else begin // INCR
       unique case (nb)
         9'd1 : map_hburst = HBURST_SINGLE;
         9'd4 : map_hburst = HBURST_INCR4;

@@ -139,7 +139,10 @@ module axi_read_engine #(
   assign rd_haddr  = cur_addr;
   assign rd_hsize  = cur_size;
   assign rd_hburst = cur_hburst;
-  assign rd_htrans = first_beat ? HTRANS_NONSEQ : HTRANS_SEQ;
+  // FIXED burst: each beat is a standalone SINGLE -> always NONSEQ.
+  // INCR/WRAP : first beat NONSEQ, subsequent beats SEQ (contiguous).
+  assign rd_htrans = (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
+                   : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin

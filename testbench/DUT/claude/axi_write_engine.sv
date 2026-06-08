@@ -202,7 +202,10 @@ module axi_write_engine #(
   assign wr_haddr  = cur_addr + (cur_illegal ? '0 : strb_off);
   assign wr_hsize  = cur_size;
   assign wr_hburst = cur_hburst;
-  assign wr_htrans = first_beat ? HTRANS_NONSEQ : HTRANS_SEQ;
+  // FIXED burst: each beat is a standalone SINGLE -> always NONSEQ.
+  // INCR/WRAP : first beat NONSEQ, subsequent beats SEQ (contiguous).
+  assign wr_htrans = (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
+                   : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
   assign wr_hwdata = wd_dout.data;
 
   always_ff @(posedge clk or negedge rstn) begin
