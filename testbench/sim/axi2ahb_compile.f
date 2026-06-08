@@ -13,20 +13,23 @@
 ../test/virtual_sequences/x2h_virtual_seq_pkg.sv
 ../test/testcase/x2h_test_pkg.sv
 
-${DUT_PATH}/addr_fifo.v
-${DUT_PATH}/data_fifo.v
-${DUT_PATH}/write_fifo.v
-${DUT_PATH}/id_send_fifo.v
-${DUT_PATH}/size_fifo.v
-${DUT_PATH}/rdata_fifo.v
-${DUT_PATH}/resp_fifo.v
-${DUT_PATH}/id_resp_fifo.v
-${DUT_PATH}/axi2fifo.v
-${DUT_PATH}/fifo2axi.v
+${DUT_PATH}/axi_frontend/axi_frontend_pkg.sv
+${DUT_PATH}/axi_frontend/axi_req_capture.sv
+${DUT_PATH}/axi_frontend/axi_bresp_gen.sv
+${DUT_PATH}/axi_frontend/axi_rresp_gen.sv
+${DUT_PATH}/axi_frontend/axi_frontend.sv
 
-${DUT_PATH}/fifo_wrapper.v
-${DUT_PATH}/axi_controller.v
-${DUT_PATH}/ahb_controller.v
-${DUT_PATH}/axi2ahb_bridge_top.v
+${DUT_PATH}/fifo/sync_fifo.sv
+${DUT_PATH}/fifo/fifo_wrapper.sv
+
+${DUT_PATH}/bridge_core/bridge_fifo_ctrl.sv
+${DUT_PATH}/bridge_core/bridge_arbiter.sv
+${DUT_PATH}/bridge_core/bridge_controller.sv
+${DUT_PATH}/bridge_core/bridge_core.sv
+
+${DUT_PATH}/ahb_backend/ahb_beat_executor.sv
+${DUT_PATH}/ahb_backend/ahb_backend.sv
+
+${DUT_PATH}/axi2ahb_bridge_top.sv
 
 ../top.sv
