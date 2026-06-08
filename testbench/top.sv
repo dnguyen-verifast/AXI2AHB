@@ -94,7 +94,7 @@ axi_ahb_bridge_top #(
     .m_ahb_hmastlock(ahb_vif.hmastlock),
 
     .m_ahb_hrdata   (ahb_vif.hrdata),
-    .m_ahb_hready   (ahb_vif.hready),
+    .m_ahb_hready   (ahb_vif.hreadyout),
     .m_ahb_hresp    (ahb_vif.hresp)
 );
   initial begin
