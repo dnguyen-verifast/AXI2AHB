@@ -8,6 +8,7 @@ module top;
   import x2h_test_pkg::*;
 
   import axi_ahb_bridge_pkg::*;
+  import axi_ahb_pkg::*;
 
   parameter  ADDR_WIDTHS = 32;
   parameter DATA_WIDTHS = 32;
@@ -30,62 +31,68 @@ module top;
     .resetn(hresetn)
   );
 
-  axi2ahb_bridge_top dut (
-    .aclk(aclk),
-    .aresetn(aresetn),
-    .hclk(hclk),
-    .hresetn(hresetn),
+axi4_to_ahb_lite #(
+    .AXI_ADDR_WIDTH (32),
+    .AXI_DATA_WIDTH (32),
+    .AXI_ID_WIDTH   (4)
+) dut (
 
-    .awid(axi_vif.awid),
-    .awaddr(axi_vif.awaddr),
-    .awlen(axi_vif.awlen),
-    .awsize(axi_vif.awsize),
-    .awburst(axi_vif.awburst),
-    .awvalid(axi_vif.awvalid),
-    .awready(axi_vif.awready),
+    //=================================================
+    // AXI
+    //=================================================
+    .ACLK       (axi_clk),
+    .ARESETn    (axi_rstn),
 
-    .wid(axi_vif.awid), 
-    .wdata(axi_vif.wdata),
-    .wstrb(axi_vif.wstrb),
-    .wlast(axi_vif.wlast),
-    .wvalid(axi_vif.wvalid),
-    .wready(axi_vif.wready),
+    .AWID       (axi_if.awid),
+    .AWADDR     (axi_if.awaddr),
+    .AWLEN      (axi_if.awlen),
+    .AWSIZE     (axi_if.awsize),
+    .AWBURST    (axi_if.awburst),
+    .AWVALID    (axi_if.awvalid),
+    .AWREADY    (axi_if.awready),
 
-    .arid(axi_vif.arid),
-    .araddr(axi_vif.araddr),
-    .arlen(axi_vif.arlen),
-    .arsize(axi_vif.arsize),
-    .arburst(axi_vif.arburst),
-    .arvalid(axi_vif.arvalid),
-    .arready(axi_vif.arready),
+    .WDATA      (axi_if.wdata),
+    .WSTRB      (axi_if.wstrb),
+    .WLAST      (axi_if.wlast),
+    .WVALID     (axi_if.wvalid),
+    .WREADY     (axi_if.wready),
 
-    .bid(axi_vif.bid),
-    .bresp(axi_vif.bresp),
-    .bvalid(axi_vif.bvalid),
-    .bready(axi_vif.bready),
+    .BID        (axi_if.bid),
+    .BRESP      (axi_if.bresp),
+    .BVALID     (axi_if.bvalid),
+    .BREADY     (axi_if.bready),
 
-    .rid(axi_vif.rid),
-    .rdata(axi_vif.rdata),
-    .rresp(axi_vif.rresp),
-    .rlast(axi_vif.rlast),
-    .rvalid(axi_vif.rvalid),
-    .rready(axi_vif.rready),
+    .ARID       (axi_if.arid),
+    .ARADDR     (axi_if.araddr),
+    .ARLEN      (axi_if.arlen),
+    .ARSIZE     (axi_if.arsize),
+    .ARBURST    (axi_if.arburst),
+    .ARVALID    (axi_if.arvalid),
+    .ARREADY    (axi_if.arready),
 
-    .haddr(ahb_vif.haddr),
-    .htrans(ahb_vif.htrans),
-    .hwrite(ahb_vif.hwrite),
-    .hsize(ahb_vif.hsize),
-    .hburst(ahb_vif.hburst),
-    .hwdata(ahb_vif.hwdata),
-    .hbusreq(hbusreq_dummy),
-    .hlock(ahb_vif.hmastlock),
+    .RID        (axi_if.rid),
+    .RDATA      (axi_if.rdata),
+    .RRESP      (axi_if.rresp),
+    .RLAST      (axi_if.rlast),
+    .RVALID     (axi_if.rvalid),
+    .RREADY     (axi_if.rready),
 
-    .hrdata(ahb_vif.hrdata),
-    .hready(ahb_vif.hreadyout),
-    .hresp(ahb_vif.hresp),
-    .hgrant(hgrant_dummy),
-    .hmaster(ahb_vif.hmaster)
-  );
+    //=================================================
+    // AHB-Lite
+    //=================================================
+    .HADDR      (ahb_if_h.haddr),
+    .HBURST     (ahb_if_h.hburst),
+    .HMASTLOCK  (ahb_if_h.hmastlock),
+    .HPROT      (ahb_if_h.hprot),
+    .HSIZE      (ahb_if_h.hsize),
+    .HTRANS     (ahb_if_h.htrans),
+    .HWDATA     (ahb_if_h.hwdata),
+    .HWRITE     (ahb_if_h.hwrite),
+
+    .HRDATA     (ahb_if_h.hrdata),
+    .HREADY     (ahb_if_h.hreadyout),
+    .HRESP      (ahb_if_h.hresp)
+);
   
   initial begin
     aclk = 0;
