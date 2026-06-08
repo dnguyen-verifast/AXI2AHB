@@ -18,8 +18,6 @@
 //    - In-order per ID: each ID has its own 4-entry request queue
 // ============================================================
 
-`timescale 1ns/1ps
-
 module axi_ahb_bridge_top #(
     parameter int DATA_WIDTH      = 32,
     parameter int ADDR_WIDTH      = 32,
