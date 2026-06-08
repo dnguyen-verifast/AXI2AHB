@@ -27,7 +27,7 @@
 # Add .git rules to ignore log files, basically the sim folder except makefile and scripts
 
 
-export DUT_PATH := $(PWD)/../DUT/rtl_claude
+export DUT_PATH := $(PWD)/../DUT/simple-AXI2AHB-bridge-main/simple-AXI2AHB-bridge-main
 export AXIVIP_PATH :=$(PWD)/../../AMBA_AXI4
 export AHBVIP_PATH :=$(PWD)/../../AHB
 
