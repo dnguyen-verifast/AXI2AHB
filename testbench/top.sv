@@ -30,62 +30,62 @@ module top;
     .resetn(hresetn)
   );
 
-axi2ahb_bridge_top #(
-    .ADDR_WIDTH (32),
-    .DATA_WIDTH (32)
-) dut (
+  axi2ahb_bridge_top dut (
+    .aclk(aclk),
+    .aresetn(aresetn),
+    .hclk(hclk),
+    .hresetn(hresetn),
 
-    .clk        (aclk),
-    .rstn       (aresetn),
+    .awid(axi_vif.awid),
+    .awaddr(axi_vif.awaddr),
+    .awlen(axi_vif.awlen),
+    .awsize(axi_vif.awsize),
+    .awburst(axi_vif.awburst),
+    .awvalid(axi_vif.awvalid),
+    .awready(axi_vif.awready),
 
-    //================ AXI WRITE ADDRESS =================
-    .awvalid    (axi_vif.awvalid),
-    .awready    (axi_vif.awready),
-    .awaddr     (axi_vif.awaddr),
-    .awlen      (axi_vif.awlen[3:0]),
-    .awsize     (axi_vif.awsize),
-    .awburst    (axi_vif.awburst),
+    .wid(axi_vif.awid), 
+    .wdata(axi_vif.wdata),
+    .wstrb(axi_vif.wstrb),
+    .wlast(axi_vif.wlast),
+    .wvalid(axi_vif.wvalid),
+    .wready(axi_vif.wready),
 
-    //================ AXI WRITE DATA =================
-    .wvalid     (axi_vif.wvalid),
-    .wready     (axi_vif.wready),
-    .wdata      (axi_vif.wdata),
-    .wstrb      (axi_vif.wstrb),
-    .wlast      (axi_vif.wlast),
+    .arid(axi_vif.arid),
+    .araddr(axi_vif.araddr),
+    .arlen(axi_vif.arlen),
+    .arsize(axi_vif.arsize),
+    .arburst(axi_vif.arburst),
+    .arvalid(axi_vif.arvalid),
+    .arready(axi_vif.arready),
 
-    //================ AXI WRITE RESP =================
-    .bvalid     (axi_vif.bvalid),
-    .bready     (axi_vif.bready),
-    .bresp      (axi_vif.bresp),
+    .bid(axi_vif.bid),
+    .bresp(axi_vif.bresp),
+    .bvalid(axi_vif.bvalid),
+    .bready(axi_vif.bready),
 
-    //================ AXI READ ADDRESS =================
-    .arvalid    (axi_vif.arvalid),
-    .arready    (axi_vif.arready),
-    .araddr     (axi_vif.araddr),
-    .arlen      (axi_vif.arlen[3:0]),
-    .arsize     (axi_vif.arsize),
-    .arburst    (axi_vif.arburst),
+    .rid(axi_vif.rid),
+    .rdata(axi_vif.rdata),
+    .rresp(axi_vif.rresp),
+    .rlast(axi_vif.rlast),
+    .rvalid(axi_vif.rvalid),
+    .rready(axi_vif.rready),
 
-    //================ AXI READ DATA =================
-    .rvalid     (axi_vif.rvalid),
-    .rready     (axi_vif.rready),
-    .rdata      (axi_vif.rdata),
-    .rresp      (axi_vif.rresp),
-    .rlast      (axi_vif.rlast),
+    .haddr(ahb_vif.haddr),
+    .htrans(ahb_vif.htrans),
+    .hwrite(ahb_vif.hwrite),
+    .hsize(ahb_vif.hsize),
+    .hburst(ahb_vif.hburst),
+    .hwdata(ahb_vif.hwdata),
+    .hbusreq(hbusreq_dummy),
+    .hlock(ahb_vif.hmastlock),
 
-    //================ AHB =================
-    .haddr      (ahb_vif.haddr),
-    .htrans     (ahb_vif.htrans),
-    .hwrite     (ahb_vif.hwrite),
-    .hsize      (ahb_vif.hsize),
-    .hburst     (ahb_vif.hburst),
-    .hwdata     (ahb_vif.hwdata),
-    .hstrb      (ahb_vif.hwstrb),
-
-    .hrdata     (ahb_vif.hrdata),
-    .hready     (ahb_vif.hreadyout),
-    .hresp      (ahb_vif.hresp)
-);
+    .hrdata(ahb_vif.hrdata),
+    .hready(ahb_vif.hreadyout),
+    .hresp(ahb_vif.hresp),
+    .hgrant(hgrant_dummy),
+    .hmaster(ahb_vif.hmaster)
+  );
   
   initial begin
     aclk = 0;
