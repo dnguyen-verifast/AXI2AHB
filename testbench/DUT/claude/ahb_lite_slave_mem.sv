@@ -12,6 +12,7 @@ module ahb_lite_slave_mem #(
 )(
   input  wire                   HCLK,
   input  wire                   HRESETn,
+  input  wire                   HSEL,        // slave-select from decoder/bridge
   input  wire [ADDR_WIDTH-1:0]  HADDR,
   input  wire [2:0]             HBURST,
   input  wire                   HMASTLOCK,
@@ -20,8 +21,9 @@ module ahb_lite_slave_mem #(
   input  wire [1:0]             HTRANS,
   input  wire [DATA_WIDTH-1:0]  HWDATA,
   input  wire                   HWRITE,
+  input  wire                   HREADY,       // global bus ready (data-phase qualifier)
   output reg  [DATA_WIDTH-1:0]  HRDATA,
-  output wire                   HREADY,
+  output wire                   HREADYOUT,    // this slave's ready
   output wire                   HRESP
 );
   localparam logic [1:0] HTRANS_NONSEQ=2'b10, HTRANS_SEQ=2'b11;
@@ -34,10 +36,13 @@ module ahb_lite_slave_mem #(
   logic [ADDR_WIDTH-1:0] ap_addr;
   logic [2:0]            ap_size;
 
-  assign HREADY = 1'b1;
-  assign HRESP  = 1'b0;
+  assign HREADYOUT = 1'b1;   // zero wait state
+  assign HRESP     = 1'b0;   // always OKAY
 
-  wire trans_active = (HTRANS==HTRANS_NONSEQ)||(HTRANS==HTRANS_SEQ);
+  // Only respond to address phases when actually selected (HSEL) and the bus
+  // is ready (HREADY) -- this is the standard AHB-Lite slave qualifier.
+  wire trans_active = HSEL && HREADY &&
+                      ((HTRANS==HTRANS_NONSEQ)||(HTRANS==HTRANS_SEQ));
 
   function automatic [DATA_WIDTH-1:0] merge_bytes(
       input [DATA_WIDTH-1:0] old_w,

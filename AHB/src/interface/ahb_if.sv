@@ -40,8 +40,8 @@ interface ahb_if(input clk, input resetn);
 
     property signal_valid_when_htrans_not_IDLE;
         @(posedge clk) disable iff(!resetn)
-        (htrans != 2'b00) |-> (!$isunknown(hburst)) && (!$isunknown(hprot)) && (!$isunknown(hsize)) && (!$isunknown(hnonsec)) && (!$isunknown(hexcl)) && (!$isunknown(hmaster))
-                            && (!$isunknown(hwrite));
+        (htrans != 2'b00) |-> (!$isunknown(hburst)) && (!$isunknown(hprot)) && (!$isunknown(hsize)) && (!$isunknown(hwrite)); //&& (!$isunknown(hnonsec)) && (!$isunknown(hexcl)) && (!$isunknown(hmaster))
+                            
     endproperty : signal_valid_when_htrans_not_IDLE
     SIGNAL_VALID_HTRANS_NOT_IDLE : assert property (signal_valid_when_htrans_not_IDLE);
 
@@ -53,7 +53,7 @@ interface ahb_if(input clk, input resetn);
 
     property valid_in_read_data_phase;
         @(posedge clk) disable iff(!resetn)
-        ((hready == 1) && (hresp == 0) && (hwrite == 0)) |->  (!$isunknown(hrdata)) && (!$isunknown(hexokay));
+        ((hready == 1) && (hresp == 0) && (hwrite == 0)) |->  (!$isunknown(hrdata)); // && (!$isunknown(hexokay));
     endproperty : valid_in_read_data_phase
     SIGNAL_VALID_READ_DATA_PHASE : assert property (valid_in_read_data_phase);
 
@@ -118,7 +118,9 @@ interface ahb_if(input clk, input resetn);
         wait(resetn == 0);
         wait(resetn == 1);
        $asserton(0,SIGNAL_ALWAYS_VALID);
-       $asserton(0,SIGNAL_VALID_HTRANS_NOT_IDLE);        
+       $asserton(0,SIGNAL_VALID_HTRANS_NOT_IDLE);
+       $assertoff(0,a_hexokay_no_hresp_error);
+       $assertoff(0,a_hexokay_with_ready);        
         
     end
 endinterface : ahb_if

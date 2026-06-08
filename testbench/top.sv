@@ -80,6 +80,7 @@ axi4_to_ahb_lite #(
     //=================================================
     // AHB-Lite
     //=================================================
+    .HSEL       (ahb_vif.hsel),
     .HADDR      (ahb_vif.haddr),
     .HBURST     (ahb_vif.hburst),
     .HMASTLOCK  (ahb_vif.hmastlock),
@@ -90,7 +91,8 @@ axi4_to_ahb_lite #(
     .HWRITE     (ahb_vif.hwrite),
 
     .HRDATA     (ahb_vif.hrdata),
-    .HREADY     (ahb_vif.hreadyout),
+    .HREADYOUT  (ahb_vif.hreadyout),
+    .HREADY     (ahb_vif.hready),
     .HRESP      (ahb_vif.hresp)
 );
   

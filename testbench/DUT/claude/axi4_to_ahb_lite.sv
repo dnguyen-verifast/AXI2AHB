@@ -68,6 +68,7 @@ module axi4_to_ahb_lite #(
   input  wire                         RREADY,
 
   // ---- AHB-Lite master ----
+  output wire                         HSEL,       // slave-select (active on a real transfer)
   output reg  [AXI_ADDR_WIDTH-1:0]    HADDR,
   output reg  [2:0]                   HBURST,
   output reg                          HMASTLOCK,
@@ -77,9 +78,19 @@ module axi4_to_ahb_lite #(
   output reg  [AXI_DATA_WIDTH-1:0]    HWDATA,
   output reg                          HWRITE,
   input  wire [AXI_DATA_WIDTH-1:0]    HRDATA,
-  input  wire                         HREADY,
+  input  wire                         HREADYOUT,  // ready FROM the slave
+  output wire                         HREADY,     // ready TO the master (= HREADYOUT for 1 slave)
   input  wire                         HRESP
 );
+
+  // In a single-slave system HREADY simply mirrors the slave's HREADYOUT.
+  // (With a decoder/mux this would combine HREADYOUT of all slaves.)
+  assign HREADY = HREADYOUT;
+
+  // HSEL: the bridge selects the slave whenever it drives a real (non-IDLE)
+  // address phase. A decoder would normally produce this from HADDR; with one
+  // slave covering the whole map, "any active transfer" == "select the slave".
+  assign HSEL = (HTRANS != HTRANS_IDLE);
 
   // engine <-> arbiter wires
   wire                       wr_req, wr_grant;
