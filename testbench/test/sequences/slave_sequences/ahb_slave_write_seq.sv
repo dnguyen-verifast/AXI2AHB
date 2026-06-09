@@ -32,15 +32,15 @@ endfunction : new
 //-------------------------------------------------------
 task ahb_slave_write_seq::body();
      super.body();
-    start_item(req_slv);
-    if(!req_slv.randomize() with {
+    start_item(req);
+    if(!req.randomize() with {
         hresp == HRESP_OKAY;
         wait_state == 0;
     }) 
     begin
         `uvm_fatal("ahb_slave","Rand failed");
     end
-    finish_item(req_slv);
+    finish_item(req);
 endtask :body
 
 `endif
