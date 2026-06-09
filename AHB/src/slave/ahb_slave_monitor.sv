@@ -113,7 +113,7 @@ task ahb_slave_monitor::ahb_slave_data_phase();
                 `uvm_info("SLAVE MON",$sformatf("Capture signal from interface in data_phase"),UVM_HIGH)
                 ahb_slave_seq_item_converter::to_class(slv_tx_data,mon_tx_data);
                 ahb_slave_data_analysis_port.write(mon_tx_data);
-                `uvm_info("SLAVE MON",$sformatf("data_phase write object to scoreboard mon_tx_data = %s \n",mon_tx_data.sprint()),UVM_HIGH)
+                `uvm_info("SLAVE MON",$sformatf("data_phase write object to scoreboard mon_tx_data = %s \n",mon_tx_data.sprint()),UVM_LOW)
             end
 //        end else begin @(posedge ahb_if_h.clk); end
     end
