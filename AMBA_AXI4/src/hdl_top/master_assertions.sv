@@ -101,13 +101,6 @@ interface master_assertions (input                     aclk,
   endproperty : axi_write_address_channel_valid_stable_check
   AXI_WA_VALID_STABLE_CHECK : assert property (axi_write_address_channel_valid_stable_check);
 
-  property debug_ready_value;
-  @(posedge aclk) disable iff (!aresetn)
-  (awvalid == 1) |-> 
-    (1, $display("[SVA DEBUG] Time: %0t | SVA thay awvalid = %b | SVA thay awready = %b", 
-                 $time, $sampled(awvalid), $sampled(awready)));
-  endproperty
-  assert property (debug_ready_value);
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write data channel
   //--------------------------------------------------------------------------------------------
