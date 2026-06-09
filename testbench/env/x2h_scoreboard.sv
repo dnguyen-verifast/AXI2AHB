@@ -284,8 +284,7 @@ function queue_convert_w_axi2ahb x2h_scoreboard::convert_write_axi_packet_2_ahb_
     end
 
     convert_ahb.haddr  = current_addr;
-    size_bit           = bit'(axi4_aw_tx.awsize);
-    convert_ahb.hsize  = hsize_e'(size_bit);
+    convert_ahb.hsize  = hsize_e'(axi4_aw_tx.awsize);
     convert_ahb.hwrite = HWRITE_WRITE;
     
     if (i < axi4_w_tx.wdata.size()) begin
@@ -346,8 +345,7 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     end
 
     convert_ahb.haddr  = current_addr;
-    size_bit           = bit'(axi4_ar_tx.arsize);
-    convert_ahb.hsize  = hsize_e'(size_bit);
+    convert_ahb.hsize  = hsize_e'(axi4_ar_tx.arsize);
     convert_ahb.hwrite = HWRITE_READ; 
     convert_ahb.hwdata = 32'h0;
     convert_ahb.hrdata = axi4_r_tx.rdata[i];
