@@ -1,12 +1,12 @@
-`ifndef AXI4_MASTER_SEQ_PKG_INCLUDED_
-`define AXI4_MASTER_SEQ_PKG_INCLUDED_
+`ifndef x2h_master_seq_pkg_INCLUDED_
+`define x2h_master_seq_pkg_INCLUDED_
 
 //-----------------------------------------------------------------------------------------
-// Package: axi4_master_seq_pkg
+// Package: x2h_master_seq_pkg
 // Description:
 // Includes all the files written to run the simulation
 //-------------------------------------------------------------------------------------------
-package axi4_master_seq_pkg;
+package x2h_master_seq_pkg;
 
   //-------------------------------------------------------
   // Import uvm package
@@ -88,7 +88,7 @@ package axi4_master_seq_pkg;
   `include "axi4_master_nbk_read_slave_error_seq.sv"
   `include "axi4_master_nbk_read_rand_seq.sv"
 
-endpackage : axi4_master_seq_pkg
+endpackage : x2h_master_seq_pkg
 
 `endif
 

@@ -8,8 +8,8 @@
 +incdir+${DUT_PATH}/
 +incdir+../
 ../env/x2h_env_pkg.sv
-../test/sequences/master_sequences/axi4_master_seq_pkg.sv
-../test/sequences/slave_sequences/ahb_slave_seq_pkg.sv
+../test/sequences/master_sequences/x2h_master_seq_pkg.sv
+../test/sequences/slave_sequences/x2h_slave_seq_pkg.sv
 ../test/virtual_sequences/x2h_virtual_seq_pkg.sv
 ../test/testcase/x2h_test_pkg.sv
 ${DUT_PATH}/axi_ahb_pkg.sv      

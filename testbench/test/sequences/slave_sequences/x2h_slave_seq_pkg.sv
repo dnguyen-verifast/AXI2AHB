@@ -1,12 +1,12 @@
-`ifndef ahb_SLAVE_SEQ_PKG_INCLUDED_
-`define ahb_SLAVE_SEQ_PKG_INCLUDED_
+`ifndef x2h_slave_seq_pkg_INCLUDED_
+`define x2h_slave_seq_pkg_INCLUDED_
 
 //-----------------------------------------------------------------------------------------
-// Package: ahb_slave_seq_pkg
+// Package: x2h_slave_seq_pkg
 // Description:
 // Includes all the files written to run the simulation
 //-------------------------------------------------------------------------------------------
-package ahb_slave_seq_pkg;
+package x2h_slave_seq_pkg;
 
   //-------------------------------------------------------
   // Import uvm package
@@ -94,7 +94,7 @@ package ahb_slave_seq_pkg;
 
 
 
-endpackage : ahb_slave_seq_pkg
+endpackage : x2h_slave_seq_pkg
 
 `endif
 
