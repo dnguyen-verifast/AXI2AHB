@@ -97,11 +97,9 @@ interface master_assertions (input                     aclk,
   //Assertion stays asserted from the time awvalid becomes high and till awready becomes high using s_until_with keyword
   property axi_write_address_channel_valid_stable_check;
     @(posedge aclk) disable iff (!aresetn)
-    (awvalid && !awready) |=> awvalid s_until_with awready;  // !!!! $rose(awvalid) |->  -> (awvalid && !awready) |=> (error when awready alway = 1)
+    (awvalid==1 && awready==0) |=> awvalid s_until_with awready;  // !!!! $rose(awvalid) |->  -> (awvalid && !awready) |=> (error when awready alway = 1)
   endproperty : axi_write_address_channel_valid_stable_check
   AXI_WA_VALID_STABLE_CHECK : assert property (axi_write_address_channel_valid_stable_check);
-
-
   //--------------------------------------------------------------------------------------------
   // Assertion properties written for various checks in write data channel
   //--------------------------------------------------------------------------------------------
