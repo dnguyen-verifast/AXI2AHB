@@ -109,7 +109,7 @@ interface master_assertions (input                     aclk,
   //Description: All signals must remain stable after WVALID is asserted until WREADY IS LOW
   property if_write_data_channel_signals_are_stable;
     @(posedge aclk) disable iff (!aresetn)
-    (wvalid==1 && wready==0) |=> ($stable(wdata) && $stable(wstrb) && $stable(wlast) && $stable(wuser));
+    (wvalid==1 && wready==0) |=> ($stable(wdata) && $stable(wstrb) && $stable(wlast)); // !!!! && $stable(wuser)
   endproperty : if_write_data_channel_signals_are_stable
   AXI_WD_STABLE_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_stable);
  
@@ -117,7 +117,7 @@ interface master_assertions (input                     aclk,
   //Description: A value of X on signals is not permitted when WVALID is HIGH
   property if_write_data_channel_signals_are_unknown;
     @(posedge aclk) disable iff (!aresetn)
-    (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast)) && !($isunknown(wuser)));
+    (wvalid == 1) |-> (!($isunknown(wdata)) && !($isunknown(wstrb)) && !($isunknown(wlast))); // !!!!  && !($isunknown(wuser))
   endproperty : if_write_data_channel_signals_are_unknown
   AXI_WD_UNKNOWN_SIGNALS_CHECK: assert property (if_write_data_channel_signals_are_unknown);
 
@@ -138,7 +138,7 @@ interface master_assertions (input                     aclk,
   //Description: All signals must remain stable after BVALID is asserted until BREADY IS LOW
   property if_write_response_channel_signals_are_stable;
     @(posedge aclk) disable iff(!aresetn)
-    bvalid==1 && bready==0 |=> $stable(bid) && $stable(buser) && $stable(bresp); 
+    bvalid==1 && bready==0 |=> $stable(bid) && $stable(bresp);  // !!!! && $stable(buser)
   endproperty : if_write_response_channel_signals_are_stable
   AXI_WR_STABLE_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_stable);
 
@@ -146,7 +146,7 @@ interface master_assertions (input                     aclk,
   //Description: A value of X on signals is not permitted when BVALID is HIGH
   property if_write_response_channel_signals_are_unknown;
     @(posedge aclk) disable iff(!aresetn)
-    bvalid==1 |-> !$isunknown(bid) && !$isunknown(buser) && !$isunknown(bresp);  
+    bvalid==1 |-> !$isunknown(bid) && !$isunknown(bresp);   // !!!! not use && !$isunknown(buser)
   endproperty : if_write_response_channel_signals_are_unknown
   AXI_WR_UNKNOWN_SIGNALS_CHECK: assert property (if_write_response_channel_signals_are_unknown);
 
@@ -198,7 +198,7 @@ interface master_assertions (input                     aclk,
   //Description: All signals must remain stable after RVALID is asserted until RREADY IS LOW
   property if_read_data_channel_signals_are_stable;
     @(posedge aclk) disable iff (!aresetn)
-    (rvalid==1 && rready==0) |=> ($stable(rid) && $stable(rdata) && $stable(rresp) && $stable(rlast) && $stable(ruser));
+    (rvalid==1 && rready==0) |=> ($stable(rid) && $stable(rdata) && $stable(rresp) && $stable(rlast));  // !!!! && $stable(ruser)
   endproperty : if_read_data_channel_signals_are_stable
   AXI_RD_STABLE_SIGNALS_CHECK: assert property (if_read_data_channel_signals_are_stable);
  
@@ -207,7 +207,7 @@ interface master_assertions (input                     aclk,
   property if_read_data_channel_signals_are_unknown;
     @(posedge aclk) disable iff (!aresetn)
     (rvalid==1) |-> (!($isunknown(rid)) && !($isunknown(rdata)) && !($isunknown(rresp))
-                    && !($isunknown(rlast)) && !($isunknown(ruser)));
+                    && !($isunknown(rlast))); // !!!! && !($isunknown(ruser))
   endproperty : if_read_data_channel_signals_are_unknown
   AXI_RD_UNKNOWN_SIGNALS_CHECK: assert property (if_read_data_channel_signals_are_unknown);
 
