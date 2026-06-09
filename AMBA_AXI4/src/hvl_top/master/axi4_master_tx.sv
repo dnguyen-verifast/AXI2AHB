@@ -84,7 +84,7 @@ class axi4_master_tx extends axi4_base_tx;
 
   //Constraint : arlength_c2
   //Adding constraint for restricting read trasnfers
-  constraint arlength_c2 { if(arburst==READ_FIXED || READ_WRAP)
+  constraint arlength_c2 { if(arburst==READ_FIXED || arburst == READ_WRAP)
                             arlen inside {[0:15]};
                            else if(arburst == READ_INCR) 
                             arlen inside {[0:255]};
