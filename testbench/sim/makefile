@@ -179,7 +179,7 @@ regression:
 	# Run simualtion - regression 
 	python regression_handling.py $(testlist_name)
 	#	# Get the tests from regression list
-	#	grep "_test" ../../src/hvl_top/testlists/axi4_simple_fd_regression.list | grep -v "\#" > reg_list
+	#	grep "_test" ../test/axi2ahb_bridge.list | grep -v "\#" > reg_list
 	#	make simulate test=value #Get the name from regression list
 	#	Merge coverage
 	make merge_cov_report
