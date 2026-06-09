@@ -56,7 +56,7 @@ task x2h_virtual_bk_wrap_burst_read_seq::body();
 
   fork 
     begin: T2_READ
-      repeat(3) begin
+      repeat(1) begin
       axi4_master_bk_read_wrap_burst_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
       end
     end

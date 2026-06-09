@@ -1,3 +1,3 @@
-x2h_blocking_incr_burst_write_test
-x2h_blocking_wrap_burst_write_test
+x2h_blocking_incr_burst_read_test
+x2h_blocking_wrap_burst_read_test
 x2h_blocking_fixed_burst_write_read_test

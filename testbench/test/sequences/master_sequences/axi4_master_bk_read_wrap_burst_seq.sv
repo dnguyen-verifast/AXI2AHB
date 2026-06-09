@@ -32,11 +32,44 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_read_wrap_burst_seq::body();
   super.body();
-  req.transfer_type=BLOCKING_READ;
   
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.arlen  == 1;
+                            req.arburst == READ_WRAP;
+                            req.transfer_type == BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);
+    start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.tx_type == READ;
+                            req.arlen  == 3;
+                            req.arburst == READ_WRAP;
+                            req.transfer_type == BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);
+    start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.tx_type == READ;
+                            req.arlen  == 7;
+                            req.arburst == READ_WRAP;
+                            req.transfer_type == BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);  
+  start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.tx_type == READ;
+                            req.arlen  == 15;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
 
