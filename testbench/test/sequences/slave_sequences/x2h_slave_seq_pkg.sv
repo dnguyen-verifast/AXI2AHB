@@ -20,6 +20,7 @@ package x2h_slave_seq_pkg;
   import ahb_slave_pkg::*;
   import axi4_globals_pkg::*;
   import ahb_global_pkg::*;
+  import ahb_base_pkg::*;
   //-------------------------------------------------------
   // Importing the required packages
   //-------------------------------------------------------

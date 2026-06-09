@@ -19,6 +19,7 @@ package x2h_master_seq_pkg;
   import ahb_slave_pkg::*;
   import axi4_master_pkg::*;
   import axi4_slave_pkg::*;
+  import axi4_base_tx_pkg::*;
 
   //-------------------------------------------------------
   // Importing the required packages
