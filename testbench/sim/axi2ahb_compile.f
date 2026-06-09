@@ -1,5 +1,5 @@
--F $(AXIVIP_PATH)/sim/axi4_compile.f
--F $(AHBVIP_PATH)/sim/ahb_compile.f
+-F $(AXIVIP_PATH)/sim/axi4_compile_vip.f
+-F $(AHBVIP_PATH)/sim/ahb_compile_vip.f
 +incdir+../env/
 +incdir+../test/sequences/master_sequences/
 +incdir+../test/sequences/slave_sequences/
