@@ -53,7 +53,6 @@ task x2h_virtual_bk_incr_burst_write_seq::body();
     end
   join_none
 
-
   fork 
     begin: T1_WRITE
       repeat(2) begin
