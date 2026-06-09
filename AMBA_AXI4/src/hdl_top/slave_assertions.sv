@@ -127,7 +127,7 @@ interface slave_assertions (input                     aclk,
   //Assertion stays asserted from the time wvalid becomes high and till wready becomes high using s_until_with keyword
   property axi_write_data_channel_valid_stable_check;
     @(posedge aclk) disable iff (!aresetn)
-    $rose(wvalid) |-> wvalid s_until_with wready;
+    (wvalid == 1 && wready == 0) |-> wvalid s_until_with wready;  //  !!!!
   endproperty : axi_write_data_channel_valid_stable_check
   AXI_WD_VALID_STABLE_CHECK : assert property (axi_write_data_channel_valid_stable_check);
   
@@ -156,7 +156,7 @@ interface slave_assertions (input                     aclk,
   //Assertion stays asserted from the time bvalid becomes high and till bready becomes high using s_until_with keyword
   property axi_write_response_channel_valid_stable_check;
     @(posedge aclk) disable iff(!aresetn)
-    $rose(bvalid) |-> bvalid s_until_with bready;
+    (bvalid == 1 && bready == 0) |-> bvalid s_until_with bready; // !!!!
   endproperty : axi_write_response_channel_valid_stable_check
   AXI_WR_VALID_STABLE_CHECK : assert property (axi_write_response_channel_valid_stable_check);
  
@@ -187,7 +187,7 @@ interface slave_assertions (input                     aclk,
   //Assertion stays asserted from the time arvalid becomes high and till arready becomes high using s_until_with keyword
   property axi_read_address_channel_valid_stable_check;
     @(posedge aclk) disable iff (!aresetn)
-    $rose(arvalid) |-> arvalid s_until_with arready;
+    (arvalid == 1 && arready == 0) |-> arvalid s_until_with arready; //!!!! $rose(arvalid) |->  -> (arvalid && !arready) |=> (error when arready alway = 1)
   endproperty : axi_read_address_channel_valid_stable_check
   AXI_RA_VALID_STABLE_CHECK : assert property (axi_read_address_channel_valid_stable_check);
 
@@ -217,7 +217,7 @@ interface slave_assertions (input                     aclk,
   //Assertion stays asserted from the time rvalid becomes high and till rready becomes high using s_until_with keyword
   property axi_read_data_channel_valid_stable_check;
     @(posedge aclk) disable iff (!aresetn)
-    $rose(rvalid) |-> rvalid s_until_with rready;
+    (rvalid == 1 && rready == 0) |-> rvalid s_until_with rready; // !!!!
   endproperty : axi_read_data_channel_valid_stable_check
   AXI_RD_VALID_STABLE_CHECK : assert property (axi_read_data_channel_valid_stable_check);
 
