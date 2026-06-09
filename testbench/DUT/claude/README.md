@@ -149,3 +149,11 @@ outstanding khác ID.
 - Mô hình slave là **zero wait-state**; muốn stress backpressure thì thêm
   HREADY ngẫu nhiên — read engine đã sẵn sàng nhờ cơ chế FIFO + backpressure.
 - Có thể bổ sung **SVA assertions** cho luật AXI/AHB để verify mạnh hơn.
+
+
+Giai đoạn 1 — FIXED burst sai HBURST/HTRANS
+#LỗiBản chấtCách sửa9FIXED → HBURST=INCR + HTRANS NONSEQ→SEQFIXED bị gộp chung nhánh với INCR, báo địa chỉ tăng dần và liên tiếp (sai ngữ nghĩa)map_hburst: FIXED → SINGLE riêng; HTRANS: FIXED luôn NONSEQ
+Giai đoạn 2 — Timing pipeline sai
+#LỗiBản chấtCách sửa10Chèn HTRANS=IDLE giữa các beatFSM tách ADDR/DATA thành 2 state (2 cycle/beat) + arbiter quay về IDLE → data phase kéo dài gấp đôi, monitor bắt trùng data beat đầuArbiter đổi sang grant-lock cả burst (qua wr_busy/rd_busy); FSM gộp thành pipeline đúng AHB (address N+1 chồng data N)11HWDATA trễ 1 cycle (phát hiện khi trace lỗi 10)wd_pop registered làm FIFO head cập nhật trễ → HWDATA lệch beatĐổi wd_pop thành tổ hợp; hwdata_q giữ đúng data của beat trong data phase
+Giai đoạn 3 — FIXED + sub-bus size sai địa chỉ
+#LỗiBản chấtCách sửa12Địa chỉ FIXED nhảy lung tung (0x19E → 0x1A0 → 0x19E)wr_haddr = cur_addr + strb_off — cộng offset suy từ WSTRB vào địa chỉ là sai thiết kếwr_haddr = cur_addr (lấy thẳng địa chỉ AXI); thay strb_decode bằng strb_legal_for chỉ để kiểm tra strobe khớp offset địa chỉ, không sinh offset

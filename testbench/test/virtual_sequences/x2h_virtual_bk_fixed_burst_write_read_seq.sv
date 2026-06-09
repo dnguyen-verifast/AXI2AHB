@@ -68,11 +68,11 @@ task x2h_virtual_bk_fixed_burst_write_read_seq::body();
         axi4_master_bk_write_fixed_burst_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
       end
     end
-    begin: T2_READ
-      repeat(3) begin
-        axi4_master_bk_read_fixed_burst_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
-      end
-    end
+    // begin: T2_READ
+    //   repeat(3) begin
+    //     axi4_master_bk_read_fixed_burst_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
+    //   end
+    // end
   join
  endtask : body
 

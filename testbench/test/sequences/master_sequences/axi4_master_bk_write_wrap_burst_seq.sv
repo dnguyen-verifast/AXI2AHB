@@ -37,6 +37,7 @@ task axi4_master_bk_write_wrap_burst_seq::body();
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
+                              req.awlen   == 1;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
   `uvm_fatal("axi4","Rand failed");
@@ -45,6 +46,39 @@ task axi4_master_bk_write_wrap_burst_seq::body();
  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
 
+  start_item(req);
+  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+                              req.tx_type == WRITE;
+                              req.awlen   == 3;
+                              req.transfer_type == BLOCKING_WRITE;
+                              req.awburst == WRITE_WRAP;}) begin
+  `uvm_fatal("axi4","Rand failed");
+ end
+ 
+ `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+  start_item(req);
+  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+                              req.tx_type == WRITE;
+                              req.awlen   == 7;
+                              req.transfer_type == BLOCKING_WRITE;
+                              req.awburst == WRITE_WRAP;}) begin
+  `uvm_fatal("axi4","Rand failed");
+ end
+ 
+ `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+  start_item(req);
+  if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
+                              req.tx_type == WRITE;
+                              req.awlen   == 15;
+                              req.transfer_type == BLOCKING_WRITE;
+                              req.awburst == WRITE_WRAP;}) begin
+  `uvm_fatal("axi4","Rand failed");
+ end
+ 
+ `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req); 
 endtask : body
 
 `endif
