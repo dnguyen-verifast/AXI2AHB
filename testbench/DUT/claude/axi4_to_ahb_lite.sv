@@ -93,13 +93,13 @@ module axi4_to_ahb_lite #(
   assign HSEL = (HTRANS != HTRANS_IDLE);
 
   // engine <-> arbiter wires
-  wire                       wr_req, wr_grant;
+  wire                       wr_req, wr_busy, wr_grant;
   wire [AXI_ADDR_WIDTH-1:0]  wr_haddr;
   wire [2:0]                 wr_hsize, wr_hburst;
   wire [1:0]                 wr_htrans;
   wire [AXI_DATA_WIDTH-1:0]  wr_hwdata;
 
-  wire                       rd_req, rd_grant;
+  wire                       rd_req, rd_busy, rd_grant;
   wire [AXI_ADDR_WIDTH-1:0]  rd_haddr;
   wire [2:0]                 rd_hsize, rd_hburst;
   wire [1:0]                 rd_htrans;
@@ -113,7 +113,7 @@ module axi4_to_ahb_lite #(
     .AWID, .AWADDR, .AWLEN, .AWSIZE, .AWBURST, .AWVALID, .AWREADY,
     .WDATA, .WSTRB, .WLAST, .WVALID, .WREADY,
     .BID, .BRESP, .BVALID, .BREADY,
-    .wr_req, .wr_grant, .wr_haddr, .wr_hsize, .wr_hburst, .wr_htrans, .wr_hwdata,
+    .wr_req, .wr_busy, .wr_grant, .wr_haddr, .wr_hsize, .wr_hburst, .wr_htrans, .wr_hwdata,
     .ahb_hready(HREADY), .ahb_hresp(HRESP)
   );
 
@@ -125,43 +125,49 @@ module axi4_to_ahb_lite #(
     .clk(ACLK), .rstn(ARESETn),
     .ARID, .ARADDR, .ARLEN, .ARSIZE, .ARBURST, .ARVALID, .ARREADY,
     .RID, .RDATA, .RRESP, .RLAST, .RVALID, .RREADY,
-    .rd_req, .rd_grant, .rd_haddr, .rd_hsize, .rd_hburst, .rd_htrans,
+    .rd_req, .rd_busy, .rd_grant, .rd_haddr, .rd_hsize, .rd_hburst, .rd_htrans,
     .ahb_hrdata(HRDATA), .ahb_hready(HREADY), .ahb_hresp(HRESP)
   );
 
   //==========================================================================
-  // AHB arbiter
-  //   - Tracks which engine owns the current data phase ("owner").
-  //   - Grants per beat. While an address phase is presented and HREADY=1, the
-  //     transfer moves to data phase next cycle and ownership is recorded so
-  //     the data-phase HRDATA/HRESP route to the correct engine (handled
-  //     directly: read engine samples HRDATA only when it was the granted one).
-  //   - Round-robin fairness: alternate priority each completed beat.
+  // AHB arbiter (burst-lock)
+  //   - A "holder" owns the AHB bus for an entire burst. While the holder is
+  //     busy (mid-burst) it keeps the grant, so address phases stream back-to
+  //     -back and data phases overlap them -- no HTRANS=IDLE is inserted
+  //     between beats.
+  //   - When no one holds the bus, arbitrate by round-robin priority.
+  //   - HWDATA is driven by the write engine and is already aligned to the data
+  //     phase (the engine registers it one cycle behind its HADDR).
   //==========================================================================
-  typedef enum logic [1:0] { ARB_IDLE, ARB_WR, ARB_RD } arb_e;
-  arb_e arb_owner;       // who is in data phase now
-  logic prefer_read;     // round-robin toggle
+  typedef enum logic [1:0] { HOLD_NONE, HOLD_WR, HOLD_RD } hold_e;
+  hold_e holder;
+  logic  prefer_read;
 
-  // grant decisions (combinational): only one engine may drive address phase
+  // grant: combinational. The holder keeps its grant; if free, pick by priority.
   logic grant_wr_c, grant_rd_c;
   always_comb begin
     grant_wr_c = 1'b0;
     grant_rd_c = 1'b0;
-    if (arb_owner == ARB_IDLE) begin
-      if (prefer_read) begin
-        if (rd_req)      grant_rd_c = 1'b1;
-        else if (wr_req) grant_wr_c = 1'b1;
-      end else begin
-        if (wr_req)      grant_wr_c = 1'b1;
-        else if (rd_req) grant_rd_c = 1'b1;
+    unique case (holder)
+      HOLD_WR: grant_wr_c = 1'b1;
+      HOLD_RD: grant_rd_c = 1'b1;
+      default: begin // HOLD_NONE -> arbitrate
+        if (prefer_read) begin
+          if (rd_req)      grant_rd_c = 1'b1;
+          else if (wr_req) grant_wr_c = 1'b1;
+        end else begin
+          if (wr_req)      grant_wr_c = 1'b1;
+          else if (rd_req) grant_rd_c = 1'b1;
+        end
       end
-    end
+    endcase
   end
 
   assign wr_grant = grant_wr_c;
   assign rd_grant = grant_rd_c;
 
-  // AHB address-phase mux
+  // AHB address-phase mux. HTRANS comes straight from the granted engine, which
+  // drives NONSEQ/SEQ continuously through the burst (IDLE only when idle).
   always_comb begin
     HADDR     = '0;
     HSIZE     = 3'd0;
@@ -179,33 +185,30 @@ module axi4_to_ahb_lite #(
     end
   end
 
-  // HWDATA belongs to the engine that owns the *data* phase (one cycle after
-  // its address phase). The write engine drives wr_hwdata and the arbiter
-  // forwards it during ARB_WR ownership.
-  always_comb begin
-    HWDATA = wr_hwdata;   // only meaningful while a write is in data phase
-  end
+  // HWDATA: only a write supplies data; the write engine already aligns it to
+  // the data phase, so forward it whenever a write currently holds the bus.
+  always_comb HWDATA = wr_hwdata;
 
-  // ownership tracking
+  // holder tracking
   always_ff @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) begin
-      arb_owner   <= ARB_IDLE;
+      holder      <= HOLD_NONE;
       prefer_read <= 1'b0;
     end else begin
-      unique case (arb_owner)
-        ARB_IDLE: begin
-          if (grant_wr_c && HREADY)      arb_owner <= ARB_WR;
-          else if (grant_rd_c && HREADY) arb_owner <= ARB_RD;
+      unique case (holder)
+        HOLD_NONE: begin
+          if (grant_wr_c)      holder <= HOLD_WR;
+          else if (grant_rd_c) holder <= HOLD_RD;
         end
-        ARB_WR: if (HREADY) begin
-          arb_owner   <= ARB_IDLE;
-          prefer_read <= 1'b1;   // give read a turn
+        HOLD_WR: if (!wr_busy) begin
+          holder      <= HOLD_NONE;
+          prefer_read <= 1'b1;     // alternate to read next
         end
-        ARB_RD: if (HREADY) begin
-          arb_owner   <= ARB_IDLE;
+        HOLD_RD: if (!rd_busy) begin
+          holder      <= HOLD_NONE;
           prefer_read <= 1'b0;
         end
-        default: arb_owner <= ARB_IDLE;
+        default: holder <= HOLD_NONE;
       endcase
     end
   end

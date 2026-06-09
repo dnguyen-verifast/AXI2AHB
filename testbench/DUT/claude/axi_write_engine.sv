@@ -69,7 +69,8 @@ module axi_write_engine #(
 
   // ---- request to shared AHB arbiter ----
   output wire                 wr_req,        // engine wants the AHB bus
-  input  wire                 wr_grant,      // arbiter granted this beat-group
+  output wire                 wr_busy,       // engine is mid-burst (hold grant)
+  input  wire                 wr_grant,      // arbiter granted the bus
   output wire [ADDR_W-1:0]    wr_haddr,
   output wire [2:0]           wr_hsize,
   output wire [2:0]           wr_hburst,
@@ -117,7 +118,8 @@ module axi_write_engine #(
   } wdat_t;
 
   wdat_t wd_din, wd_dout;
-  logic  wd_push, wd_pop, wd_full, wd_empty;
+  logic  wd_push, wd_full, wd_empty;
+  logic  wd_pop;   // combinational: advances head when a beat is consumed
 
   assign wd_din.data = WDATA;
   assign wd_din.strb = WSTRB;
@@ -178,45 +180,95 @@ module axi_write_engine #(
   endfunction
 
   // ============== Write issue FSM ==============
-  typedef enum logic [1:0] { WS_IDLE, WS_ADDR, WS_DATA, WS_RESP } ws_e;
+  // AHB-Lite pipeline: the address phase of beat N+1 overlaps the data phase
+  // of beat N. We present a new address every cycle HREADY=1, and HWDATA is
+  // naturally one cycle behind HADDR (data phase). No IDLE is inserted between
+  // beats; HTRANS goes NONSEQ (first) -> SEQ (rest) for INCR/WRAP, or NONSEQ
+  // every beat for FIXED.
+  //
+  // States:
+  //   WS_IDLE  : no active write; pull next AW.
+  //   WS_RUN   : streaming address phases of the burst onto AHB.
+  //   WS_LAST  : address phase done, waiting for the final data phase to retire.
+  //   WS_ILLEG : illegal AxSIZE; drain W beats, no AHB access.
+  //   WS_RESP  : push B response.
+  typedef enum logic [2:0] { WS_IDLE, WS_RUN, WS_LAST, WS_ILLEG, WS_RESP } ws_e;
   ws_e ws;
 
   logic [ID_W-1:0]   cur_id;
-  logic [ADDR_W-1:0] cur_addr;
+  logic [ADDR_W-1:0] cur_addr;     // address of the beat currently in ADDR phase
   logic [7:0]        cur_len;
   logic [2:0]        cur_size;
   logic [1:0]        cur_burst;
-  logic [8:0]        cur_beat, cur_nbeats;
-  logic [1:0]        cur_resp;     // accumulated response
+  logic [8:0]        cur_abeat;     // index of beat being presented (addr phase)
+  logic [8:0]        cur_nbeats;
+  logic [1:0]        cur_resp;
   logic              cur_illegal;
   logic [2:0]        cur_hburst;
   logic              first_beat;
+
+  // outstanding data-phase tracker: number of address phases accepted but whose
+  // data phase has not yet completed. For AHB-Lite this is 0 or 1.
+  logic              dphase_pend;
 
   // strobe decode for the current W beat
   logic              strb_legal;
   logic [ADDR_W-1:0] strb_off;
   always_comb strb_decode(wd_dout.strb, cur_size, strb_legal, strb_off);
 
-  // AHB drive (only meaningful while granted in ADDR phase)
-  assign wr_req    = (ws == WS_ADDR);
+  // we can present an address-phase beat when we have its W data available
+  wire addr_beat_ready = (ws == WS_RUN) && !wd_empty;
+
+  // request / busy to arbiter
+  assign wr_req  = (ws == WS_RUN) && !wd_empty && !cur_illegal;
+  assign wr_busy = (ws == WS_RUN) || (ws == WS_LAST);
+
+  // AHB address-phase drive (valid while granted & presenting)
   assign wr_haddr  = cur_addr + (cur_illegal ? '0 : strb_off);
   assign wr_hsize  = cur_size;
   assign wr_hburst = cur_hburst;
-  // FIXED burst: each beat is a standalone SINGLE -> always NONSEQ.
-  // INCR/WRAP : first beat NONSEQ, subsequent beats SEQ (contiguous).
-  assign wr_htrans = (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
+  // HTRANS: only drive a real (NONSEQ/SEQ) transfer while we are actually
+  // presenting a beat in WS_RUN with its W data available; otherwise IDLE so
+  // we never present a spurious extra address (e.g. during WS_LAST while the
+  // final data phase drains).
+  wire present_beat = (ws == WS_RUN) && !wd_empty && !cur_illegal;
+  assign wr_htrans = !present_beat ? HTRANS_IDLE
+                   : (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
                    : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
-  assign wr_hwdata = wd_dout.data;
+  // HWDATA: in AHB-Lite the write data is presented during the DATA phase,
+  // one cycle after the matching address phase. We keep the W beat at the FIFO
+  // head during its data phase and present it combinationally; the beat is
+  // popped only when its data phase retires. To line HWDATA up with the data
+  // phase we register the head into hwdata_q at address-accept time and hold it.
+  logic [DATA_W-1:0] hwdata_q;
+  assign wr_hwdata = hwdata_q;
+
+  // an address phase is "accepted" this cycle when presenting, granted, ready
+  wire addr_accept = wr_req && wr_grant && ahb_hready;
+  // a data phase retires this cycle when one was pending and the bus is ready
+  wire data_retire = dphase_pend && ahb_hready;
+
+  // W data FIFO advances: on a legal address accept, or while draining an
+  // illegal transaction. Combinational so the head is ready for the next beat.
+  assign wd_pop = (ws == WS_RUN)   ? addr_accept :
+                  (ws == WS_ILLEG) ? !wd_empty   : 1'b0;
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       ws <= WS_IDLE;
       cur_id<='0; cur_addr<='0; cur_len<='0; cur_size<='0; cur_burst<='0;
-      cur_beat<=9'd0; cur_nbeats<=9'd0; cur_resp<=AXI_RESP_OKAY;
+      cur_abeat<=9'd0; cur_nbeats<=9'd0; cur_resp<=AXI_RESP_OKAY;
       cur_illegal<=1'b0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1;
-      awc_pop<=1'b0; wd_pop<=1'b0; br_push<=1'b0; br_din<='0;
+      dphase_pend<=1'b0; hwdata_q<='0;
+      awc_pop<=1'b0; br_push<=1'b0; br_din<='0;
     end else begin
-      awc_pop<=1'b0; wd_pop<=1'b0; br_push<=1'b0;
+      awc_pop<=1'b0; br_push<=1'b0;
+
+      // ----- retire a data phase (capture HRESP) -----
+      if (data_retire) begin
+        if (ahb_hresp) cur_resp <= AXI_RESP_SLVERR;
+        dphase_pend <= 1'b0;
+      end
 
       unique case (ws)
         // ---- pull next AW command ----
@@ -228,47 +280,54 @@ module axi_write_engine #(
             cur_size    <= awc_dout.size;
             cur_burst   <= awc_dout.burst;
             cur_nbeats  <= beats_of(awc_dout.len);
-            cur_beat    <= 9'd0;
+            cur_abeat   <= 9'd0;
             cur_resp    <= awc_dout.illegal ? AXI_RESP_SLVERR : AXI_RESP_OKAY;
             cur_illegal <= awc_dout.illegal;
             cur_hburst  <= map_hburst(awc_dout.burst, awc_dout.len);
             first_beat  <= 1'b1;
             awc_pop     <= 1'b1;
-            ws          <= WS_ADDR;
+            ws          <= awc_dout.illegal ? WS_ILLEG : WS_RUN;
           end
         end
 
-        // ---- AHB address phase for current beat (or skip if illegal) ----
-        WS_ADDR: begin
-          if (cur_illegal) begin
-            // do not touch AHB; just consume the W beats then respond SLVERR
-            if (!wd_empty) begin
-              wd_pop <= 1'b1;
-              if (wd_dout.last) ws <= WS_RESP;
-            end
-          end else if (!wd_empty) begin
-            // sub-word strobe legality
-            if (!strb_legal) cur_resp <= AXI_RESP_SLVERR;
-            if (wr_grant && ahb_hready) begin
-              // address accepted -> data phase next
-              wd_pop     <= 1'b1;       // consume the W beat used for HWDATA
-              first_beat <= 1'b0;
-              ws         <= WS_DATA;
-            end
-          end
-        end
+        // ---- stream address phases; data phases overlap automatically ----
+        WS_RUN: begin
+          // sub-word strobe legality (per beat being presented)
+          if (!wd_empty && !strb_legal) cur_resp <= AXI_RESP_SLVERR;
 
-        // ---- AHB data phase: capture HRESP, advance burst ----
-        WS_DATA: begin
-          if (ahb_hready) begin
-            if (ahb_hresp) cur_resp <= AXI_RESP_SLVERR;
-            if (cur_beat + 9'd1 >= cur_nbeats) begin
-              ws <= WS_RESP;
+          if (addr_accept) begin
+            // this beat's address was latched; present its data next cycle.
+            // wd_pop (combinational) advances the FIFO head this cycle so the
+            // next beat's data is ready; hwdata_q holds THIS beat's data for
+            // its data phase.
+            hwdata_q    <= wd_dout.data;
+            dphase_pend <= 1'b1;
+            first_beat  <= 1'b0;
+            cur_addr    <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
+
+            if (cur_abeat + 9'd1 >= cur_nbeats) begin
+              // last address phase presented; wait for its data phase
+              ws <= WS_LAST;
             end else begin
-              cur_addr <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
-              cur_beat <= cur_beat + 9'd1;
-              ws       <= WS_ADDR;
+              cur_abeat <= cur_abeat + 9'd1;
             end
+          end
+        end
+
+        // ---- final beat: address phase already done; HTRANS must go IDLE so
+        //      we don't present a spurious next address while the last data
+        //      phase completes. Retire then respond. ----
+        WS_LAST: begin
+          // when the pending (last) data phase retires, finish.
+          if (data_retire || !dphase_pend) begin
+            ws <= WS_RESP;
+          end
+        end
+
+        // ---- illegal AxSIZE: drain the W beats, no AHB access ----
+        WS_ILLEG: begin
+          if (!wd_empty) begin
+            if (wd_dout.last) ws <= WS_RESP;
           end
         end
 

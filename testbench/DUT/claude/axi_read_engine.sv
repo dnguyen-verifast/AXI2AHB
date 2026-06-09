@@ -55,6 +55,7 @@ module axi_read_engine #(
 
   // ---- request to shared AHB arbiter ----
   output wire                 rd_req,
+  output wire                 rd_busy,       // engine is mid-burst (hold grant)
   input  wire                 rd_grant,
   output wire [ADDR_W-1:0]    rd_haddr,
   output wire [2:0]           rd_hsize,
@@ -120,7 +121,17 @@ module axi_read_engine #(
   assign rd_pop = RVALID & RREADY;
 
   // ============== Read issue FSM ==============
-  typedef enum logic [1:0] { RS_IDLE, RS_ADDR, RS_DATA, RS_ILLEGAL } rs_e;
+  // AHB-Lite pipeline: address phase of beat N+1 overlaps data phase of beat N.
+  // HRDATA for a beat returns one cycle after its address phase is accepted.
+  // We register the beat's metadata (id/last/resp-context) so the returning
+  // HRDATA can be pushed into the R FIFO correctly. No IDLE between beats.
+  //
+  // States:
+  //   RS_IDLE  : pull next AR.
+  //   RS_RUN   : stream address phases; collect returning data phases.
+  //   RS_LAST  : last address presented; wait for its data phase.
+  //   RS_ILLEGAL: illegal AxSIZE; emit SLVERR beats, no AHB access.
+  typedef enum logic [1:0] { RS_IDLE, RS_RUN, RS_LAST, RS_ILLEGAL } rs_e;
   rs_e rs;
 
   logic [ID_W-1:0]   cur_id;
@@ -128,30 +139,52 @@ module axi_read_engine #(
   logic [7:0]        cur_len;
   logic [2:0]        cur_size;
   logic [1:0]        cur_burst;
-  logic [8:0]        cur_beat, cur_nbeats;
+  logic [8:0]        cur_abeat, cur_nbeats;
   logic [2:0]        cur_hburst;
   logic              first_beat;
 
-  // space guard: only proceed if R FIFO can accept one more beat
+  // pending data-phase tracker (one outstanding on AHB-Lite)
+  logic              dphase_pend;
+  logic [ID_W-1:0]   dphase_id;
+  logic              dphase_last;
+
+  // space guard: only present a new address if R FIFO can accept the beat that
+  // will return for it. We reserve space for the currently pending data phase
+  // too, so we never overflow.
   wire fifo_has_space = (rd_count < R_FIFO_DEPTH[$clog2(R_FIFO_DEPTH):0]) && ~rd_full;
 
-  assign rd_req    = (rs == RS_ADDR) && fifo_has_space;
+  assign rd_req  = (rs == RS_RUN) && fifo_has_space;
+  assign rd_busy = (rs == RS_RUN) || (rs == RS_LAST);
   assign rd_haddr  = cur_addr;
   assign rd_hsize  = cur_size;
   assign rd_hburst = cur_hburst;
-  // FIXED burst: each beat is a standalone SINGLE -> always NONSEQ.
-  // INCR/WRAP : first beat NONSEQ, subsequent beats SEQ (contiguous).
-  assign rd_htrans = (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
+  wire present_beat = (rs == RS_RUN) && fifo_has_space;
+  assign rd_htrans = !present_beat ? HTRANS_IDLE
+                   : (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
                    : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
+
+  wire addr_accept = rd_req && rd_grant && ahb_hready;
+  wire data_retire = dphase_pend && ahb_hready;
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       rs <= RS_IDLE;
       cur_id<='0; cur_addr<='0; cur_len<='0; cur_size<='0; cur_burst<='0;
-      cur_beat<=9'd0; cur_nbeats<=9'd0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1;
+      cur_abeat<=9'd0; cur_nbeats<=9'd0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1;
+      dphase_pend<=1'b0; dphase_id<='0; dphase_last<=1'b0;
       arc_pop<=1'b0; rd_push<=1'b0; rd_din<='0;
     end else begin
       arc_pop<=1'b0; rd_push<=1'b0;
+
+      // ----- a data phase returns: push HRDATA into R FIFO -----
+      if (data_retire) begin
+        rd_din.id   <= dphase_id;
+        rd_din.data <= ahb_hrdata;
+        rd_din.resp <= ahb_hresp ? AXI_RESP_SLVERR : AXI_RESP_OKAY;
+        rd_din.last <= dphase_last;
+        rd_push     <= 1'b1;
+        dphase_pend <= 1'b0;
+      end
 
       unique case (rs)
         // ---- pull next AR command ----
@@ -163,38 +196,32 @@ module axi_read_engine #(
             cur_size   <= arc_dout.size;
             cur_burst  <= arc_dout.burst;
             cur_nbeats <= beats_of(arc_dout.len);
-            cur_beat   <= 9'd0;
+            cur_abeat  <= 9'd0;
             cur_hburst <= map_hburst(arc_dout.burst, arc_dout.len);
             first_beat <= 1'b1;
             arc_pop    <= 1'b1;
-            rs         <= arc_dout.illegal ? RS_ILLEGAL : RS_ADDR;
+            rs         <= arc_dout.illegal ? RS_ILLEGAL : RS_RUN;
           end
         end
 
-        // ---- AHB address phase ----
-        RS_ADDR: begin
-          if (fifo_has_space && rd_grant && ahb_hready) begin
-            first_beat <= 1'b0;
-            rs         <= RS_DATA;
+        // ---- stream address phases; data phases overlap ----
+        RS_RUN: begin
+          if (addr_accept) begin
+            // register metadata for the data phase that returns next cycle
+            dphase_pend <= 1'b1;
+            dphase_id   <= cur_id;
+            dphase_last <= (cur_abeat + 9'd1 >= cur_nbeats);
+            first_beat  <= 1'b0;
+            cur_addr    <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
+
+            if (cur_abeat + 9'd1 >= cur_nbeats) rs <= RS_LAST;
+            else cur_abeat <= cur_abeat + 9'd1;
           end
         end
 
-        // ---- AHB data phase: push returned beat into R FIFO ----
-        RS_DATA: begin
-          if (ahb_hready) begin
-            rd_din.id   <= cur_id;
-            rd_din.data <= ahb_hrdata;
-            rd_din.resp <= ahb_hresp ? AXI_RESP_SLVERR : AXI_RESP_OKAY;
-            rd_din.last <= (cur_beat + 9'd1 >= cur_nbeats);
-            rd_push     <= 1'b1;
-            if (cur_beat + 9'd1 >= cur_nbeats) begin
-              rs <= RS_IDLE;
-            end else begin
-              cur_addr <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
-              cur_beat <= cur_beat + 9'd1;
-              rs       <= RS_ADDR;
-            end
-          end
+        // ---- last address presented; wait for final data phase ----
+        RS_LAST: begin
+          if (data_retire || !dphase_pend) rs <= RS_IDLE;
         end
 
         // ---- illegal AxSIZE: emit SLVERR beats, no AHB access ----
@@ -203,10 +230,10 @@ module axi_read_engine #(
             rd_din.id   <= cur_id;
             rd_din.data <= '0;
             rd_din.resp <= AXI_RESP_SLVERR;
-            rd_din.last <= (cur_beat + 9'd1 >= cur_nbeats);
+            rd_din.last <= (cur_abeat + 9'd1 >= cur_nbeats);
             rd_push     <= 1'b1;
-            if (cur_beat + 9'd1 >= cur_nbeats) rs <= RS_IDLE;
-            else cur_beat <= cur_beat + 9'd1;
+            if (cur_abeat + 9'd1 >= cur_nbeats) rs <= RS_IDLE;
+            else cur_abeat <= cur_abeat + 9'd1;
           end
         end
 
