@@ -194,10 +194,11 @@ task x2h_scoreboard::predict_result_write_axi2ahb();
     queue_convert_w_axi2ahb expect_queue_w;
     write_address_key.get(1);
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_LOW)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
     axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel \n%s",axi4_master_tx_h2.sprint()),UVM_HIGH)
     expect_queue_w = convert_write_axi_packet_2_ahb_packet(axi4_master_tx_h1,axi4_master_tx_h2);
+    `uvm_info(get_type_name(),$sformatf("scoreboard's expect_queue_w = \n%p",expect_queue_w),UVM_LOW)
     axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
 
@@ -227,7 +228,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
     expect_queue_r = convert_read_axi_packet_2_ahb_packet(axi4_master_tx_h4,axi4_master_tx_h5);
-
+    `uvm_info(get_type_name(),$sformatf("scoreboard's expect_queue_r = \n%p",expect_queue_r),UVM_LOW)
     compare_r(expect_queue_r);
 
     axi4_master_tx_araddr_count++;
