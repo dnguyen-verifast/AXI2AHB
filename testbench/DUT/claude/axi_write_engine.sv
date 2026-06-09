@@ -149,33 +149,36 @@ module axi_write_engine #(
   assign BRESP  = br_dout.resp;
   assign br_pop = BVALID & BREADY;
 
-  // ============== Convert WSTRB -> (size, byte offset) ==============
-  // Returns: legal (contiguous & size-aligned), the implied size, and the
-  // byte address offset of the active lane group.
-  function automatic void strb_decode(
-      input  logic [DATA_BYTES-1:0] strb,
-      input  logic [2:0]            axsize,
-      output logic                  legal,
-      output logic [ADDR_W-1:0]     offset);
-    int lo, hi, cnt;
+  // ============== Validate WSTRB against (size, address byte offset) ==========
+  // For a legal size-aligned AXI write, WSTRB must be asserted exactly on the
+  // (1<<size) contiguous byte lanes selected by the low address bits. We use
+  // this only to flag illegal/unsupported strobes (-> SLVERR); we never derive
+  // an address offset from the strobe (the AXI address is authoritative).
+  function automatic logic strb_legal_for(
+      input logic [DATA_BYTES-1:0] strb,
+      input logic [2:0]            axsize,
+      input logic [ADDR_W-1:0]     addr);
+    int lo, hi, cnt, nbytes, boff;
+    logic ok;
     begin
       lo = -1; hi = -1; cnt = 0;
-      for (int b = 0; b < DATA_BYTES; b++) begin
+      for (int b = 0; b < DATA_BYTES; b++)
         if (strb[b]) begin
           if (lo < 0) lo = b;
           hi  = b;
           cnt = cnt + 1;
         end
-      end
-      offset = 0;
       if (cnt == 0) begin
-        legal = 1'b1;             // no-op write, harmless
-        offset = 0;
+        ok = 1'b1;                        // no-op write is harmless
       end else begin
-        // contiguous? all bytes between lo..hi set, count == (hi-lo+1)
-        legal = (cnt == (hi - lo + 1)) && (cnt == (1 << axsize));
-        offset = lo[ADDR_W-1:0];
+        nbytes = (1 << axsize);
+        boff   = addr[$clog2(DATA_BYTES)-1:0];
+        // contiguous, exactly nbytes wide, and starting at the address offset
+        ok = (cnt == (hi - lo + 1)) &&    // contiguous
+             (cnt == nbytes)        &&    // matches size
+             (lo  == boff);               // aligned to the AXI address
       end
+      strb_legal_for = ok;
     end
   endfunction
 
@@ -211,10 +214,9 @@ module axi_write_engine #(
   // data phase has not yet completed. For AHB-Lite this is 0 or 1.
   logic              dphase_pend;
 
-  // strobe decode for the current W beat
-  logic              strb_legal;
-  logic [ADDR_W-1:0] strb_off;
-  always_comb strb_decode(wd_dout.strb, cur_size, strb_legal, strb_off);
+  // strobe legality for the current W beat (validation only)
+  logic strb_legal;
+  always_comb strb_legal = strb_legal_for(wd_dout.strb, cur_size, cur_addr);
 
   // we can present an address-phase beat when we have its W data available
   wire addr_beat_ready = (ws == WS_RUN) && !wd_empty;
@@ -224,7 +226,11 @@ module axi_write_engine #(
   assign wr_busy = (ws == WS_RUN) || (ws == WS_LAST);
 
   // AHB address-phase drive (valid while granted & presenting)
-  assign wr_haddr  = cur_addr + (cur_illegal ? '0 : strb_off);
+  // AHB address is taken DIRECTLY from the AXI address. The byte lane(s) being
+  // written are conveyed by HSIZE + the low address bits; we must NOT shift the
+  // address by a strobe-derived offset. (Doing so corrupted FIXED bursts: the
+  // address would appear to jump, e.g. 0x19E -> 0x1A0 -> 0x19E.)
+  assign wr_haddr  = cur_addr;
   assign wr_hsize  = cur_size;
   assign wr_hburst = cur_hburst;
   // HTRANS: only drive a real (NONSEQ/SEQ) transfer while we are actually
