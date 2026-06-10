@@ -38,6 +38,7 @@ task axi4_master_bk_write_wrap_burst_seq::body();
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awlen   == 1;
+                              req.araddr == 32'h11010110;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
   `uvm_fatal("axi4","Rand failed");
@@ -50,6 +51,7 @@ task axi4_master_bk_write_wrap_burst_seq::body();
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awlen   == 3;
+                              req.araddr == 32'h21010110;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
   `uvm_fatal("axi4","Rand failed");
@@ -61,6 +63,7 @@ task axi4_master_bk_write_wrap_burst_seq::body();
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awlen   == 7;
+                              req.araddr == 32'h31010110;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
   `uvm_fatal("axi4","Rand failed");
@@ -72,6 +75,7 @@ task axi4_master_bk_write_wrap_burst_seq::body();
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
                               req.awlen   == 15;
+                              req.araddr == 32'h61010110;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
   `uvm_fatal("axi4","Rand failed");

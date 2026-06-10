@@ -37,6 +37,7 @@ task axi4_master_bk_read_wrap_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 1;
+                            req.araddr == 32'h11010110;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -48,6 +49,7 @@ task axi4_master_bk_read_wrap_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 3;
+                            req.araddr == 32'h21010110;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -59,6 +61,7 @@ task axi4_master_bk_read_wrap_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 7;
+                            req.araddr == 32'h31010110;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -70,6 +73,7 @@ task axi4_master_bk_read_wrap_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 15;
+                            req.araddr == 32'h61010110;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
 

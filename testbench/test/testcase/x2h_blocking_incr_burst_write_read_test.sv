@@ -16,6 +16,7 @@ class x2h_blocking_incr_burst_write_read_test extends x2h_base_test;
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
   extern function new(string name = "x2h_blocking_incr_burst_write_read_test", uvm_component parent = null);
+  extern virtual function void setup_ahb_slave_agent_cfg();
   extern virtual task run_phase(uvm_phase phase);
 
 endclass : x2h_blocking_incr_burst_write_read_test
@@ -31,7 +32,10 @@ function x2h_blocking_incr_burst_write_read_test::new(string name = "x2h_blockin
                                  uvm_component parent = null);
   super.new(name, parent);
 endfunction : new
-
+function void x2h_blocking_incr_burst_write_read_test::setup_ahb_slave_agent_cfg();
+  super.setup_ahb_slave_agent_cfg();
+  ahb_env_config_h.ahb_slave_config_h[0].slave_resp = MEM_SLAVE;
+endfunction : setup_ahb_slave_agent_cfg
 //--------------------------------------------------------------------------------------------
 // Task: run_phase
 // Creates the x2h_virtual_incr_burst_write_seq sequence and starts the write and read virtual sequences

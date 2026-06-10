@@ -37,6 +37,7 @@ task axi4_master_bk_read_incr_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 1;
+                            req.araddr == 32'h11010110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -49,6 +50,7 @@ task axi4_master_bk_read_incr_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 7;
+                            req.araddr == 32'h11110110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -60,6 +62,7 @@ task axi4_master_bk_read_incr_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 15;
+                            req.araddr == 32'h11111110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -71,6 +74,7 @@ task axi4_master_bk_read_incr_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 127;
+                            req.araddr == 32'h21111110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -82,6 +86,7 @@ task axi4_master_bk_read_incr_burst_seq::body();
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arlen  == 255;
+                            req.araddr == 32'h22111110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -92,7 +97,8 @@ task axi4_master_bk_read_incr_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
-                            req.arlen  == 47;
+                            req.arlen  == 63;
+                            req.araddr == 32'h23111110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
@@ -104,7 +110,8 @@ task axi4_master_bk_read_incr_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
-                            req.arlen  == 201;
+                            req.arlen  == 101;
+                            req.araddr == 32'h2f111110;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
 
