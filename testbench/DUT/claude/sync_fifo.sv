@@ -29,9 +29,6 @@ module sync_fifo #(
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       wptr <= '0; rptr <= '0;
-      // Clear storage so dout is a defined value (0) before the first push,
-      // keeping waveforms free of X without affecting function.
-      for (int i = 0; i < DEPTH; i++) mem[i] <= '0;
     end else begin
       if (push && !full)  begin mem[wptr[AW-1:0]] <= din; wptr <= wptr + 1'b1; end
       if (pop  && !empty) rptr <= rptr + 1'b1;
