@@ -102,6 +102,7 @@ task ahb_slave_driver::wr_data_phase();
     ahb_slave_tx slv_addr_phase;
     ahb_slave_tx slv_data_tx;
     ahb_transfer_struct slv_data_struct;
+    int lane_active;
     @(posedge ahb_if_h.clk);
     forever begin
         `uvm_info(get_type_name(),$sformatf("Waiting for queue address phase valid"),UVM_HIGH);
@@ -164,10 +165,13 @@ task ahb_slave_driver::wr_data_phase();
                     end
                 end
                 if(ahb_slave_config_h.slave_resp == MEM_SLAVE) begin
-                    if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
-                        ahb_slave_memory_h.fifo_write(slv_data_tx.hwdata);
-                    end else begin
-                        ahb_slave_memory_h.mem_write(slv_addr_phase.haddr,slv_data_tx.hwdata);
+                    lane_active = slv_addr_phase.haddr % (ADDR_WIDTH / 8);
+                    for(int j = 0; j < 2**slv_addr_phase.hsize; j++) begin
+                        if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
+                            ahb_slave_memory_h.fifo_write(slv_data_tx.hwdata[8*(lane_active+j)+7 -: 8]);
+                        end else begin
+                            ahb_slave_memory_h.mem_write(slv_addr_phase.haddr + j,slv_data_tx.hwdata[8*(lane_active+j)+7 -: 8]);
+                        end
                     end
                 end
             end else if(slv_addr_phase.hwrite == HWRITE_READ) begin
@@ -177,10 +181,13 @@ task ahb_slave_driver::wr_data_phase();
                     @(posedge ahb_if_h.clk);
                 end
                 if(ahb_slave_config_h.slave_resp == MEM_SLAVE) begin
-                    if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
-                        ahb_slave_memory_h.fifo_read(slv_data_struct.hrdata);
-                    end else begin
-                        ahb_slave_memory_h.mem_read(slv_addr_phase.haddr,slv_data_struct.hrdata);
+                    lane_active = slv_addr_phase.haddr % (ADDR_WIDTH / 8);
+                    for(int j = 0; j < 2**slv_addr_phase.hsize; j++) begin
+                        if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
+                            ahb_slave_memory_h.fifo_read(slv_data_struct.hrdata[8*(lane_active+j)+7 -: 8]);
+                        end else begin
+                            ahb_slave_memory_h.mem_read(slv_addr_phase.haddr+j,slv_data_struct.hrdata[8*(lane_active+j)+7 -: 8]);
+                        end
                     end
                 end
                 if(slv_addr_phase.hexcl == HEXCL_NORMAL) begin
