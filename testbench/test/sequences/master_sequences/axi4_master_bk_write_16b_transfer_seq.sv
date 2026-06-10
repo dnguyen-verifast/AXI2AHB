@@ -38,7 +38,7 @@ task axi4_master_bk_write_16b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
-															req.awaddr <= 32'hfff;
+															req.awaddr == 32'h45000;
                               req.awlen   == 7;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_INCR;}) begin
@@ -53,7 +53,7 @@ task axi4_master_bk_write_16b_transfer_seq::body();
 start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
-															req.awaddr <= 32'h1fff;
+															req.awaddr == 32'h1fff000;
                               req.awlen   == 7;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_WRAP;}) begin
@@ -68,7 +68,7 @@ start_item(req);
 start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_2_BYTES;
                               req.tx_type == WRITE;
-															req.awaddr <= FIFO_ADDRESS;
+															req.awaddr == FIFO_ADDRESS;
                               req.awlen   == 7;
                               req.transfer_type == BLOCKING_WRITE;
                               req.awburst == WRITE_FIXED;}) begin

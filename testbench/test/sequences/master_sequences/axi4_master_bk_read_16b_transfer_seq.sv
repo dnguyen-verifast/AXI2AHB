@@ -37,11 +37,10 @@ task axi4_master_bk_read_16b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_2_BYTES;
                             req.tx_type == READ;
-                            req.araddr <= 32'hfff;
+                            req.araddr == 32'h45000;
                             req.arlen   == 7;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   `uvm_info(get_type_name(), $sformatf("master_seq \n%s",req.sprint()), UVM_NONE); 
@@ -50,7 +49,7 @@ task axi4_master_bk_read_16b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_2_BYTES;
                             req.tx_type == READ;
-                            req.araddr <= 32'h1fff;
+                            req.araddr == 32'h1fff000;
                             req.arlen   == 7;
                             req.arburst == READ_WRAP;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -63,7 +62,7 @@ task axi4_master_bk_read_16b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_2_BYTES;
                             req.tx_type == READ;
-                            req.araddr <= FIFO_ADDRESS;
+                            req.araddr == FIFO_ADDRESS;
                             req.arlen   == 7;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
