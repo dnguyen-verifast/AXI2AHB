@@ -37,7 +37,35 @@ task axi4_master_bk_read_32b_transfer_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.arlen   == 7;
+                            req.araddr  == 32'h3800_0010;
                             req.arburst == READ_INCR;
+                            req.transfer_type == BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);
+
+  start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.tx_type == READ;
+                            req.arlen   == 7;
+                            req.araddr  == 32'h3800_0010;
+                            req.arburst == READ_WRAP;
+                            req.transfer_type == BLOCKING_READ;}) begin
+
+    `uvm_fatal("axi4","Rand failed");
+  end
+  req.print();
+  finish_item(req);
+
+  start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.tx_type == READ;
+                            req.arlen   == 7;
+                            req.araddr  == FIFO_ADDRESS;
+                            req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
 
     `uvm_fatal("axi4","Rand failed");

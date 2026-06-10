@@ -31,7 +31,9 @@ module axi4_to_ahb_lite #(
   parameter int WR_OUTSTANDING = 8,   // pow2
   parameter int RD_OUTSTANDING = 8,   // pow2
   parameter int W_FIFO_DEPTH   = 16,  // pow2
-  parameter int R_FIFO_DEPTH   = 16   // pow2
+  parameter int R_FIFO_DEPTH   = 16,  // pow2
+  parameter bit NARROW_EN      = 1'b1,// support narrow transfers
+  parameter int TIMEOUT        = 0    // AHB wait-cycles before SLVERR (0=off)
 )(
   input  wire                         ACLK,
   input  wire                         ARESETn,
@@ -42,6 +44,8 @@ module axi4_to_ahb_lite #(
   input  wire [7:0]                   AWLEN,
   input  wire [2:0]                   AWSIZE,
   input  wire [1:0]                   AWBURST,
+  input  wire [2:0]                   AWPROT,
+  input  wire [3:0]                   AWCACHE,
   input  wire                         AWVALID,
   output wire                         AWREADY,
   input  wire [AXI_DATA_WIDTH-1:0]    WDATA,
@@ -58,6 +62,8 @@ module axi4_to_ahb_lite #(
   input  wire [7:0]                   ARLEN,
   input  wire [2:0]                   ARSIZE,
   input  wire [1:0]                   ARBURST,
+  input  wire [2:0]                   ARPROT,
+  input  wire [3:0]                   ARCACHE,
   input  wire                         ARVALID,
   output wire                         ARREADY,
   output wire [AXI_ID_WIDTH-1:0]      RID,
@@ -97,35 +103,37 @@ module axi4_to_ahb_lite #(
   wire [AXI_ADDR_WIDTH-1:0]  wr_haddr;
   wire [2:0]                 wr_hsize, wr_hburst;
   wire [1:0]                 wr_htrans;
+  wire [3:0]                 wr_hprot;
   wire [AXI_DATA_WIDTH-1:0]  wr_hwdata;
 
   wire                       rd_req, rd_busy, rd_grant;
   wire [AXI_ADDR_WIDTH-1:0]  rd_haddr;
   wire [2:0]                 rd_hsize, rd_hburst;
   wire [1:0]                 rd_htrans;
+  wire [3:0]                 rd_hprot;
 
   // ---- write engine ----
   axi_write_engine #(
     .ADDR_W(AXI_ADDR_WIDTH), .DATA_W(AXI_DATA_WIDTH), .ID_W(AXI_ID_WIDTH),
-    .AW_FIFO_DEPTH(WR_OUTSTANDING), .W_FIFO_DEPTH(W_FIFO_DEPTH)
+    .AW_FIFO_DEPTH(WR_OUTSTANDING), .W_FIFO_DEPTH(W_FIFO_DEPTH), .NARROW_EN(NARROW_EN), .TIMEOUT(TIMEOUT)
   ) u_wr (
     .clk(ACLK), .rstn(ARESETn),
-    .AWID, .AWADDR, .AWLEN, .AWSIZE, .AWBURST, .AWVALID, .AWREADY,
+    .AWID, .AWADDR, .AWLEN, .AWSIZE, .AWBURST, .AWPROT, .AWCACHE, .AWVALID, .AWREADY,
     .WDATA, .WSTRB, .WLAST, .WVALID, .WREADY,
     .BID, .BRESP, .BVALID, .BREADY,
-    .wr_req, .wr_busy, .wr_grant, .wr_haddr, .wr_hsize, .wr_hburst, .wr_htrans, .wr_hwdata,
+    .wr_req, .wr_busy, .wr_grant, .wr_haddr, .wr_hsize, .wr_hburst, .wr_htrans, .wr_hprot, .wr_hwdata,
     .ahb_hready(HREADY), .ahb_hresp(HRESP)
   );
 
   // ---- read engine ----
   axi_read_engine #(
     .ADDR_W(AXI_ADDR_WIDTH), .DATA_W(AXI_DATA_WIDTH), .ID_W(AXI_ID_WIDTH),
-    .AR_FIFO_DEPTH(RD_OUTSTANDING), .R_FIFO_DEPTH(R_FIFO_DEPTH)
+    .AR_FIFO_DEPTH(RD_OUTSTANDING), .R_FIFO_DEPTH(R_FIFO_DEPTH), .TIMEOUT(TIMEOUT)
   ) u_rd (
     .clk(ACLK), .rstn(ARESETn),
-    .ARID, .ARADDR, .ARLEN, .ARSIZE, .ARBURST, .ARVALID, .ARREADY,
+    .ARID, .ARADDR, .ARLEN, .ARSIZE, .ARBURST, .ARPROT, .ARCACHE, .ARVALID, .ARREADY,
     .RID, .RDATA, .RRESP, .RLAST, .RVALID, .RREADY,
-    .rd_req, .rd_busy, .rd_grant, .rd_haddr, .rd_hsize, .rd_hburst, .rd_htrans,
+    .rd_req, .rd_busy, .rd_grant, .rd_haddr, .rd_hsize, .rd_hburst, .rd_htrans, .rd_hprot,
     .ahb_hrdata(HRDATA), .ahb_hready(HREADY), .ahb_hresp(HRESP)
   );
 
@@ -144,6 +152,10 @@ module axi4_to_ahb_lite #(
   logic  prefer_read;
 
   // grant: combinational. The holder keeps its grant; if free, pick by priority.
+  // Per PG177 "Read and Write Ordering": when read and write are simultaneously
+  // requested, the READ is given higher priority. We keep a round-robin hint
+  // (prefer_read) only as an anti-starvation tie-break after a write ran; the
+  // default and the spec-mandated case both favor read.
   logic grant_wr_c, grant_rd_c;
   always_comb begin
     grant_wr_c = 1'b0;
@@ -151,14 +163,10 @@ module axi4_to_ahb_lite #(
     unique case (holder)
       HOLD_WR: grant_wr_c = 1'b1;
       HOLD_RD: grant_rd_c = 1'b1;
-      default: begin // HOLD_NONE -> arbitrate
-        if (prefer_read) begin
-          if (rd_req)      grant_rd_c = 1'b1;
-          else if (wr_req) grant_wr_c = 1'b1;
-        end else begin
-          if (wr_req)      grant_wr_c = 1'b1;
-          else if (rd_req) grant_rd_c = 1'b1;
-        end
+      default: begin // HOLD_NONE -> arbitrate (read-priority)
+        if (rd_req && (prefer_read || !wr_req)) grant_rd_c = 1'b1;
+        else if (wr_req)                        grant_wr_c = 1'b1;
+        else if (rd_req)                        grant_rd_c = 1'b1;
       end
     endcase
   end
@@ -175,13 +183,13 @@ module axi4_to_ahb_lite #(
     HTRANS    = HTRANS_IDLE;
     HWRITE    = 1'b0;
     HMASTLOCK = 1'b0;
-    HPROT     = 4'b0011;       // data, privileged, non-buf, non-cache
+    HPROT     = 4'b0011;       // default: data, privileged, non-buf, non-cache
     if (grant_wr_c) begin
       HADDR  = wr_haddr;  HSIZE = wr_hsize; HBURST = wr_hburst;
-      HTRANS = wr_htrans; HWRITE = 1'b1;
+      HTRANS = wr_htrans; HWRITE = 1'b1;    HPROT  = wr_hprot;
     end else if (grant_rd_c) begin
       HADDR  = rd_haddr;  HSIZE = rd_hsize; HBURST = rd_hburst;
-      HTRANS = rd_htrans; HWRITE = 1'b0;
+      HTRANS = rd_htrans; HWRITE = 1'b0;    HPROT  = rd_hprot;
     end
   end
 
@@ -193,7 +201,7 @@ module axi4_to_ahb_lite #(
   always_ff @(posedge ACLK or negedge ARESETn) begin
     if (!ARESETn) begin
       holder      <= HOLD_NONE;
-      prefer_read <= 1'b0;
+      prefer_read <= 1'b1;
     end else begin
       unique case (holder)
         HOLD_NONE: begin

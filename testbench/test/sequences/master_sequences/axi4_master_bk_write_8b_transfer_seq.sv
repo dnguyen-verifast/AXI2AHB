@@ -32,13 +32,15 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_8b_transfer_seq::body();
   super.body();
-    `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_8b_transfer_seq"), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_write_8b_transfer_seq"), UVM_NONE); 
 
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_1_BYTE;
                               req.tx_type == WRITE;
+                              req.awlen   == 7;
+                              req.awaddr  == 32'h3000_0010;
                               req.transfer_type == BLOCKING_WRITE;
-                              req.awburst == WRITE_FIXED;}) begin
+                              req.awburst == WRITE_INCR;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
   
@@ -46,6 +48,33 @@ task axi4_master_bk_write_8b_transfer_seq::body();
   finish_item(req);
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_8b_transfer_seq"), UVM_NONE); 
 
+start_item(req);
+  if(!req.randomize() with {req.awsize == WRITE_1_BYTE;
+                              req.tx_type == WRITE;
+                              req.awlen   == 7;
+                              req.awaddr  == 32'h3800_0010;
+                              req.transfer_type == BLOCKING_WRITE;
+                              req.awburst == WRITE_WRAP;}) begin
+    `uvm_fatal("axi4","Rand failed");
+  end
+  
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_8b_transfer_seq"), UVM_NONE);
+
+  start_item(req);
+  if(!req.randomize() with {req.awsize == WRITE_1_BYTE;
+                              req.tx_type == WRITE;
+                              req.awlen   == 7;
+                              req.awaddr  == FIFO_ADDRESS;
+                              req.transfer_type == BLOCKING_WRITE;
+                              req.awburst == WRITE_FIXED;}) begin
+    `uvm_fatal("axi4","Rand failed");
+  end
+  
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
+  finish_item(req);
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_write_8b_transfer_seq"), UVM_NONE);
 endtask : body
 
 `endif

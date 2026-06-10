@@ -32,7 +32,8 @@ module axi_read_engine #(
   parameter int DATA_W = 32,
   parameter int ID_W   = 4,
   parameter int AR_FIFO_DEPTH = 8,    // outstanding read commands (pow2)
-  parameter int R_FIFO_DEPTH  = 16    // streaming read-data buffer (pow2)
+  parameter int R_FIFO_DEPTH  = 16,   // streaming read-data buffer (pow2)
+  parameter int TIMEOUT       = 0     // AHB wait cycles before SLVERR (0=off)
 )(
   input  wire                 clk,
   input  wire                 rstn,
@@ -43,6 +44,8 @@ module axi_read_engine #(
   input  wire [7:0]           ARLEN,
   input  wire [2:0]           ARSIZE,
   input  wire [1:0]           ARBURST,
+  input  wire [2:0]           ARPROT,
+  input  wire [3:0]           ARCACHE,
   input  wire                 ARVALID,
   output wire                 ARREADY,
   // ---- AXI read data ----
@@ -61,6 +64,7 @@ module axi_read_engine #(
   output wire [2:0]           rd_hsize,
   output wire [2:0]           rd_hburst,
   output wire [1:0]           rd_htrans,
+  output wire [3:0]           rd_hprot,
   input  wire [DATA_W-1:0]    ahb_hrdata,
   input  wire                 ahb_hready,
   input  wire                 ahb_hresp
@@ -75,6 +79,8 @@ module axi_read_engine #(
     logic [7:0]        len;
     logic [2:0]        size;
     logic [1:0]        burst;
+    logic [2:0]        prot;
+    logic [3:0]        cache;
     logic              illegal;
   } arcmd_t;
 
@@ -86,6 +92,8 @@ module axi_read_engine #(
   assign arc_din.len     = ARLEN;
   assign arc_din.size    = ARSIZE;
   assign arc_din.burst   = ARBURST;
+  assign arc_din.prot    = ARPROT;
+  assign arc_din.cache   = ARCACHE;
   assign arc_din.illegal = ~size_legal(ARSIZE, DATA_BYTES);
 
   assign ARREADY  = ~arc_full;
@@ -139,9 +147,12 @@ module axi_read_engine #(
   logic [7:0]        cur_len;
   logic [2:0]        cur_size;
   logic [1:0]        cur_burst;
+  logic [2:0]        cur_prot;
+  logic [3:0]        cur_cache;
   logic [8:0]        cur_abeat, cur_nbeats;
   logic [2:0]        cur_hburst;
   logic              first_beat;
+  logic              restart_burst;  // this beat starts a new AHB burst (1KB split)
 
   // pending data-phase tracker (one outstanding on AHB-Lite)
   logic              dphase_pend;
@@ -157,24 +168,39 @@ module axi_read_engine #(
   assign rd_busy = (rs == RS_RUN) || (rs == RS_LAST);
   assign rd_haddr  = cur_addr;
   assign rd_hsize  = cur_size;
-  assign rd_hburst = cur_hburst;
+  assign rd_hburst = restart_burst ? HBURST_INCR : cur_hburst;
+  assign rd_hprot  = map_hprot(cur_prot, cur_cache);
   wire present_beat = (rs == RS_RUN) && fifo_has_space;
   assign rd_htrans = !present_beat ? HTRANS_IDLE
-                   : (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
-                   : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
+                   : (first_beat || restart_burst) ? HTRANS_NONSEQ
+                   : force_single_beats(cur_burst, cur_len) ? HTRANS_NONSEQ
+                   : HTRANS_SEQ;
 
   wire addr_accept = rd_req && rd_grant && ahb_hready;
   wire data_retire = dphase_pend && ahb_hready;
+
+  // ----- Bridge timeout (PG177): count cycles the AHB slave stalls while we
+  // are engaged. On reaching TIMEOUT, abort the read with SLVERR beats. -----
+  localparam int TOW = (TIMEOUT <= 1) ? 1 : $clog2(TIMEOUT+1);
+  logic [TOW-1:0] to_cnt;
+  wire engaged   = (rs == RS_RUN && rd_req && rd_grant) || (rs == RS_LAST && dphase_pend);
+  wire timed_out = (TIMEOUT != 0) && engaged && !ahb_hready && (to_cnt >= TOW'(TIMEOUT));
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       rs <= RS_IDLE;
       cur_id<='0; cur_addr<='0; cur_len<='0; cur_size<='0; cur_burst<='0;
+      cur_prot<=3'b000; cur_cache<=4'b0000;
       cur_abeat<=9'd0; cur_nbeats<=9'd0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1;
-      dphase_pend<=1'b0; dphase_id<='0; dphase_last<=1'b0;
+      restart_burst<=1'b0;
+      dphase_pend<=1'b0; dphase_id<='0; dphase_last<=1'b0; to_cnt<='0;
       arc_pop<=1'b0; rd_push<=1'b0; rd_din<='0;
     end else begin
       arc_pop<=1'b0; rd_push<=1'b0;
+
+      // ----- timeout counter -----
+      if (engaged && !ahb_hready) to_cnt <= to_cnt + 1'b1;
+      else                        to_cnt <= '0;
 
       // ----- a data phase returns: push HRDATA into R FIFO -----
       if (data_retire) begin
@@ -186,6 +212,18 @@ module axi_read_engine #(
         dphase_pend <= 1'b0;
       end
 
+      // ----- timeout abort: emit one SLVERR beat marked LAST and end the
+      // transaction (only if the R FIFO can take it). -----
+      if (timed_out && fifo_has_space && !data_retire) begin
+        rd_din.id   <= cur_id;
+        rd_din.data <= '0;
+        rd_din.resp <= AXI_RESP_SLVERR;
+        rd_din.last <= 1'b1;
+        rd_push     <= 1'b1;
+        dphase_pend <= 1'b0;
+        to_cnt      <= '0;
+        rs          <= RS_IDLE;
+      end else
       unique case (rs)
         // ---- pull next AR command ----
         RS_IDLE: begin
@@ -195,10 +233,13 @@ module axi_read_engine #(
             cur_len    <= arc_dout.len;
             cur_size   <= arc_dout.size;
             cur_burst  <= arc_dout.burst;
+            cur_prot   <= arc_dout.prot;
+            cur_cache  <= arc_dout.cache;
             cur_nbeats <= beats_of(arc_dout.len);
             cur_abeat  <= 9'd0;
             cur_hburst <= map_hburst(arc_dout.burst, arc_dout.len);
             first_beat <= 1'b1;
+            restart_burst <= 1'b0;
             arc_pop    <= 1'b1;
             rs         <= arc_dout.illegal ? RS_ILLEGAL : RS_RUN;
           end
@@ -213,6 +254,9 @@ module axi_read_engine #(
             dphase_last <= (cur_abeat + 9'd1 >= cur_nbeats);
             first_beat  <= 1'b0;
             cur_addr    <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
+            restart_burst <= (cur_burst == AXI_BURST_INCR) &&
+                             crosses_1kb(cur_addr,
+                                         axi_next_addr(cur_addr, cur_size, cur_len, cur_burst));
 
             if (cur_abeat + 9'd1 >= cur_nbeats) rs <= RS_LAST;
             else cur_abeat <= cur_abeat + 9'd1;

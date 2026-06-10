@@ -42,7 +42,9 @@ module axi_write_engine #(
   parameter int DATA_W = 32,
   parameter int ID_W   = 4,
   parameter int AW_FIFO_DEPTH = 8,   // outstanding write commands (pow2)
-  parameter int W_FIFO_DEPTH  = 16   // buffered write-data beats (pow2)
+  parameter int W_FIFO_DEPTH  = 16,  // buffered write-data beats (pow2)
+  parameter bit NARROW_EN     = 1'b1,// support narrow transfers
+  parameter int TIMEOUT       = 0    // AHB wait cycles before SLVERR (0=off)
 )(
   input  wire                 clk,
   input  wire                 rstn,
@@ -53,6 +55,8 @@ module axi_write_engine #(
   input  wire [7:0]           AWLEN,
   input  wire [2:0]           AWSIZE,
   input  wire [1:0]           AWBURST,
+  input  wire [2:0]           AWPROT,
+  input  wire [3:0]           AWCACHE,
   input  wire                 AWVALID,
   output wire                 AWREADY,
   // ---- AXI write data ----
@@ -75,6 +79,7 @@ module axi_write_engine #(
   output wire [2:0]           wr_hsize,
   output wire [2:0]           wr_hburst,
   output wire [1:0]           wr_htrans,
+  output wire [3:0]           wr_hprot,
   output wire [DATA_W-1:0]    wr_hwdata,
   input  wire                 ahb_hready,    // shared HREADY
   input  wire                 ahb_hresp      // shared HRESP
@@ -89,6 +94,8 @@ module axi_write_engine #(
     logic [7:0]        len;
     logic [2:0]        size;
     logic [1:0]        burst;
+    logic [2:0]        prot;
+    logic [3:0]        cache;
     logic              illegal;   // AWSIZE illegal -> SLVERR, skip AHB
   } awcmd_t;
 
@@ -100,6 +107,8 @@ module axi_write_engine #(
   assign awc_din.len     = AWLEN;
   assign awc_din.size    = AWSIZE;
   assign awc_din.burst   = AWBURST;
+  assign awc_din.prot    = AWPROT;
+  assign awc_din.cache   = AWCACHE;
   assign awc_din.illegal = ~size_legal(AWSIZE, DATA_BYTES);
 
   assign AWREADY  = ~awc_full;
@@ -182,6 +191,26 @@ module axi_write_engine #(
     end
   endfunction
 
+  // Derive HSIZE (log2 of contiguous active byte count) from WSTRB. Assumes a
+  // contiguous, aligned strobe (sparse/unaligned is unsupported and flagged by
+  // strb_legal_for). Returns the AXI size as fallback for an empty strobe.
+  function automatic logic [2:0] hsize_from_strb(
+      input logic [DATA_BYTES-1:0] strb,
+      input logic [2:0]            fallback_size);
+    int cnt;
+    begin
+      cnt = 0;
+      for (int b = 0; b < DATA_BYTES; b++) if (strb[b]) cnt = cnt + 1;
+      unique case (cnt)
+        1:  hsize_from_strb = 3'd0;
+        2:  hsize_from_strb = 3'd1;
+        4:  hsize_from_strb = 3'd2;
+        8:  hsize_from_strb = 3'd3;
+        default: hsize_from_strb = fallback_size; // 0 bytes or non-pow2
+      endcase
+    end
+  endfunction
+
   // ============== Write issue FSM ==============
   // AHB-Lite pipeline: the address phase of beat N+1 overlaps the data phase
   // of beat N. We present a new address every cycle HREADY=1, and HWDATA is
@@ -203,12 +232,15 @@ module axi_write_engine #(
   logic [7:0]        cur_len;
   logic [2:0]        cur_size;
   logic [1:0]        cur_burst;
+  logic [2:0]        cur_prot;
+  logic [3:0]        cur_cache;
   logic [8:0]        cur_abeat;     // index of beat being presented (addr phase)
   logic [8:0]        cur_nbeats;
   logic [1:0]        cur_resp;
   logic              cur_illegal;
   logic [2:0]        cur_hburst;
   logic              first_beat;
+  logic              restart_burst;  // this beat starts a new AHB burst (1KB split)
 
   // outstanding data-phase tracker: number of address phases accepted but whose
   // data phase has not yet completed. For AHB-Lite this is 0 or 1.
@@ -231,16 +263,24 @@ module axi_write_engine #(
   // address by a strobe-derived offset. (Doing so corrupted FIXED bursts: the
   // address would appear to jump, e.g. 0x19E -> 0x1A0 -> 0x19E.)
   assign wr_haddr  = cur_addr;
-  assign wr_hsize  = cur_size;
-  assign wr_hburst = cur_hburst;
+  // HSIZE: per PG177 narrow-transfer rules:
+  //   single transfer (nbeats==1) with narrow support -> derive from WSTRB
+  //   burst transfer                                   -> use AWSIZE
+  wire is_single = (cur_nbeats == 9'd1);
+  assign wr_hsize  = (NARROW_EN && is_single)
+                       ? hsize_from_strb(wd_dout.strb, cur_size)
+                       : cur_size;
+  assign wr_hburst = restart_burst ? HBURST_INCR : cur_hburst;
+  assign wr_hprot  = map_hprot(cur_prot, cur_cache);
   // HTRANS: only drive a real (NONSEQ/SEQ) transfer while we are actually
   // presenting a beat in WS_RUN with its W data available; otherwise IDLE so
   // we never present a spurious extra address (e.g. during WS_LAST while the
-  // final data phase drains).
+  // final data phase drains). A 1KB-cross restart forces NONSEQ.
   wire present_beat = (ws == WS_RUN) && !wd_empty && !cur_illegal;
   assign wr_htrans = !present_beat ? HTRANS_IDLE
-                   : (cur_burst == AXI_BURST_FIXED) ? HTRANS_NONSEQ
-                   : (first_beat ? HTRANS_NONSEQ : HTRANS_SEQ);
+                   : (first_beat || restart_burst) ? HTRANS_NONSEQ
+                   : force_single_beats(cur_burst, cur_len) ? HTRANS_NONSEQ
+                   : HTRANS_SEQ;
   // HWDATA: in AHB-Lite the write data is presented during the DATA phase,
   // one cycle after the matching address phase. We keep the W beat at the FIFO
   // head during its data phase and present it combinationally; the beat is
@@ -254,6 +294,13 @@ module axi_write_engine #(
   // a data phase retires this cycle when one was pending and the bus is ready
   wire data_retire = dphase_pend && ahb_hready;
 
+  // ----- Bridge timeout (PG177): count cycles the AHB slave stalls (HREADY low)
+  // while we are actively engaged. On reaching TIMEOUT, abort with SLVERR. -----
+  localparam int TOW = (TIMEOUT <= 1) ? 1 : $clog2(TIMEOUT+1);
+  logic [TOW-1:0] to_cnt;
+  wire engaged   = (ws == WS_RUN && wr_req && wr_grant) || (ws == WS_LAST && dphase_pend);
+  wire timed_out = (TIMEOUT != 0) && engaged && !ahb_hready && (to_cnt >= TOW'(TIMEOUT));
+
   // W data FIFO advances: on a legal address accept, or while draining an
   // illegal transaction. Combinational so the head is ready for the next beat.
   assign wd_pop = (ws == WS_RUN)   ? addr_accept :
@@ -263,12 +310,17 @@ module axi_write_engine #(
     if (!rstn) begin
       ws <= WS_IDLE;
       cur_id<='0; cur_addr<='0; cur_len<='0; cur_size<='0; cur_burst<='0;
+      cur_prot<=3'b001; cur_cache<=4'b0000;
       cur_abeat<=9'd0; cur_nbeats<=9'd0; cur_resp<=AXI_RESP_OKAY;
-      cur_illegal<=1'b0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1;
-      dphase_pend<=1'b0; hwdata_q<='0;
+      cur_illegal<=1'b0; cur_hburst<=HBURST_SINGLE; first_beat<=1'b1; restart_burst<=1'b0;
+      dphase_pend<=1'b0; hwdata_q<='0; to_cnt<='0;
       awc_pop<=1'b0; br_push<=1'b0; br_din<='0;
     end else begin
       awc_pop<=1'b0; br_push<=1'b0;
+
+      // ----- timeout counter: tick while engaged & stalled; clear otherwise ---
+      if (engaged && !ahb_hready) to_cnt <= to_cnt + 1'b1;
+      else                        to_cnt <= '0;
 
       // ----- retire a data phase (capture HRESP) -----
       if (data_retire) begin
@@ -276,6 +328,14 @@ module axi_write_engine #(
         dphase_pend <= 1'b0;
       end
 
+      // ----- timeout abort: respond SLVERR and drop the transaction. The
+      // arbiter will see wr_busy deassert and the HTRANS go IDLE. -----
+      if (timed_out) begin
+        cur_resp    <= AXI_RESP_SLVERR;
+        dphase_pend <= 1'b0;
+        to_cnt      <= '0;
+        ws          <= WS_RESP;
+      end else
       unique case (ws)
         // ---- pull next AW command ----
         WS_IDLE: begin
@@ -285,12 +345,15 @@ module axi_write_engine #(
             cur_len     <= awc_dout.len;
             cur_size    <= awc_dout.size;
             cur_burst   <= awc_dout.burst;
+            cur_prot    <= awc_dout.prot;
+            cur_cache   <= awc_dout.cache;
             cur_nbeats  <= beats_of(awc_dout.len);
             cur_abeat   <= 9'd0;
             cur_resp    <= awc_dout.illegal ? AXI_RESP_SLVERR : AXI_RESP_OKAY;
             cur_illegal <= awc_dout.illegal;
             cur_hburst  <= map_hburst(awc_dout.burst, awc_dout.len);
             first_beat  <= 1'b1;
+            restart_burst <= 1'b0;
             awc_pop     <= 1'b1;
             ws          <= awc_dout.illegal ? WS_ILLEG : WS_RUN;
           end
@@ -310,6 +373,12 @@ module axi_write_engine #(
             dphase_pend <= 1'b1;
             first_beat  <= 1'b0;
             cur_addr    <= axi_next_addr(cur_addr, cur_size, cur_len, cur_burst);
+            // 1KB-cross split: if the NEXT beat lands in a different 1KB region
+            // (only meaningful for incrementing bursts), it must restart as a
+            // new NONSEQ/INCR burst on AHB.
+            restart_burst <= (cur_burst == AXI_BURST_INCR) &&
+                             crosses_1kb(cur_addr,
+                                         axi_next_addr(cur_addr, cur_size, cur_len, cur_burst));
 
             if (cur_abeat + 9'd1 >= cur_nbeats) begin
               // last address phase presented; wait for its data phase

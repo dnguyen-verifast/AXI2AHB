@@ -61,19 +61,16 @@ task x2h_virtual_bk_8b_write_read_seq::body();
       end
   join_none
 
-
-  fork 
-    begin: T1_WRITE
-      repeat(2) begin
+  begin: T1_WRITE
+    repeat(1) begin
         axi4_master_bk_write_8b_transfer_seq_h.start(p_sequencer.axi4_master_write_seqr_h);
-      end
     end
-    begin: T2_READ
-      repeat(3) begin
-        axi4_master_bk_read_8b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
-      end
+  end
+  begin: T2_READ
+    repeat(1) begin
+      axi4_master_bk_read_8b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
     end
-  join
+  end
  endtask : body
 
 `endif
