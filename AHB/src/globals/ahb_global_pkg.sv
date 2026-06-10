@@ -6,11 +6,15 @@ package ahb_global_pkg;
     parameter int ADDR_WIDTH = 32;
     parameter int DATA_WIDTH = 32;
     parameter int HWSTRB = DATA_WIDTH/8;
-
+    parameter bit [ADDR_WIDTH-1:0] FIFO_ADDRESS = 32'h18000000
     // typedef enum bit {
     //     UVM_PASSTIVE = 1'b0,
     //     UVM_ACTIVE = 1'b1
     // } uvm_active_passive_enum;
+    typedef enum bit {
+        MEM_SLAVE = 1'b1,
+        RAND_SLAVE = 1'b0
+    } mem_response_mode_e;
 
     typedef enum bit {
         RANDOM_RESP = 1'b0,

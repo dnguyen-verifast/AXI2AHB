@@ -5,6 +5,7 @@ class ahb_slave_config extends uvm_object;
     uvm_active_passive_enum is_active=UVM_ACTIVE;
     bit has_coverage = 1;
     response_mode_e slave_response_mode = RANDOM_RESP;
+    mem_response_mode_e slave_resp = RAND_SLAVE;
 
     extern function new(string name="ahb_slave_config");
     extern function void do_print(uvm_printer printer);

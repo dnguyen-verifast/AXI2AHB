@@ -12,11 +12,12 @@ class ahb_slave_driver extends uvm_driver#(ahb_slave_tx);
     RSP rsp_write, rsp_read;
 
     virtual ahb_if ahb_if_h;
+
     ahb_slave_config ahb_slave_config_h;
+    ahb_slave_memory ahb_slave_memory_h;
 
     uvm_tlm_analysis_fifo #(ahb_slave_tx) pipeline_q;
     
-
     semaphore add_phase_key;
     semaphore data_phase_key;
 
@@ -43,6 +44,7 @@ function void ahb_slave_driver::build_phase(uvm_phase phase);
     if(!uvm_config_db #(virtual ahb_if)::get(this,"","ahb_if",ahb_if_h)) begin
         `uvm_fatal("DRIVER_MASTER","Fatal to get interface ahb_if");
     end
+    ahb_slave_memory_h = ahb_slave_memory::type_id::create("ahb_slave_memory_h",this);
 endfunction : build_phase
 
 function void ahb_slave_driver::end_of_elaboration_phase(uvm_phase phase);
@@ -161,11 +163,25 @@ task ahb_slave_driver::wr_data_phase();
                             ahb_if_h.hexokay   <= 0;
                     end
                 end
+                if(ahb_slave_config_h.slave_resp == MEM_SLAVE) begin
+                    if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
+                        ahb_slave_memory_h.fifo_write(slv_data_tx.hwdata);
+                    end else begin
+                        ahb_slave_memory_h.mem_write(slv_addr_phase.haddr,slv_data_tx.hwdata);
+                    end
+                end
             end else if(slv_addr_phase.hwrite == HWRITE_READ) begin
                 repeat(slv_data_tx.wait_state) begin
                     ahb_if_h.hreadyout <= 0;
                     `uvm_info("DRIVER_SLAVE","waiting for resolve a previous data phase HWRITE_READ",UVM_LOW)
                     @(posedge ahb_if_h.clk);
+                end
+                if(ahb_slave_config_h.slave_resp == MEM_SLAVE) begin
+                    if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
+                        ahb_slave_memory_h.fifo_read(slv_data_struct.hrdata);
+                    end else begin
+                        ahb_slave_memory_h.mem_read(slv_addr_phase.haddr,slv_data_struct.hrdata);
+                    end
                 end
                 if(slv_addr_phase.hexcl == HEXCL_NORMAL) begin
                     if(slv_data_tx.hresp == HRESP_ERROR) begin

@@ -111,6 +111,9 @@ function void ahb_slave_memory::fifo_write(input bit [DATA_WIDTH-1:0]data);
   fifo_memory.push_front(data);
 endfunction : fifo_write
 
+function void ahb_slave_memory::fifo_read(output bit [DATA_WIDTH-1:0]data);
+  data = fifo_memory.pop_back();
+endfunction : fifo_read
 //--------------------------------------------------------------------------------------------
 //Task : fifo_read
 //Used to store the slave data into the slave memory
