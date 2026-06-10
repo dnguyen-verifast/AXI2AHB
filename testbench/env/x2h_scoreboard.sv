@@ -90,7 +90,7 @@ class x2h_scoreboard extends uvm_scoreboard;
     extern virtual function queue_convert_w_axi2ahb convert_write_axi_packet_2_ahb_packet(input axi4_master_tx axi4_aw_tx, input axi4_master_tx axi4_w_tx);
     extern virtual task predict_result_read_axi2ahb();
     extern virtual function queue_convert_r_axi2ahb convert_read_axi_packet_2_ahb_packet(input axi4_master_tx axi4_ar_tx, input axi4_master_tx axi4_r_tx);
-    extern virtual function void compare_w(input queue_convert_w_axi2ahb expect_queue_w);
+    extern virtual function void compare_w(input queue_convert_w_axi2ahb expect_queue_w, input bresp_e bresp_e_h);
     extern virtual function void compare_r(input queue_convert_r_axi2ahb expect_queue_r);
     extern virtual function void check_phase (uvm_phase phase);
     extern virtual function void report_phase(uvm_phase phase);
@@ -202,7 +202,7 @@ task x2h_scoreboard::predict_result_write_axi2ahb();
     axi4_master_write_response_analysis_fifo.get(axi4_master_tx_h3);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel \n%s",axi4_master_tx_h3.sprint()),UVM_HIGH)
 
-    compare_w(expect_queue_w);
+    compare_w(expect_queue_w,axi4_master_tx_h3.bresp);
 
     axi4_master_tx_awaddr_count++;
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel count \n %0d",axi4_master_tx_awaddr_count),UVM_HIGH)
@@ -349,7 +349,12 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     convert_ahb.hwrite = HWRITE_READ; 
     convert_ahb.hwdata = 32'h0;
     convert_ahb.hrdata = axi4_r_tx.rdata[i];
-
+    if(axi4_r_tx.rresp == READ_SLVERR) begin
+      convert_ahb.hresp  = HRESP_ERROR;
+    end else begin 
+      convert_ahb.hresp  = HRESP_OKAY;
+    end
+    convert_ahb.hresp  = 
     if (axi4_ar_tx.arburst == READ_FIXED) begin
       convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
@@ -365,10 +370,12 @@ endfunction : convert_read_axi_packet_2_ahb_packet
 // Task: compare_w
 // Gets the master and slave read data and send it to the read data comparision task
 //--------------------------------------------------------------------------------------------
-function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_queue_w);
+function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_queue_w,input bresp_e bresp_e_h);
+
   ahb_slave_tx exp_tx;
   ahb_slave_tx act_addr_tx;
   ahb_slave_tx act_data_tx;
+  bresp_e bresp_e_exp = WRITE_OKAY;
 
   axi4_master_tx_wdata_count++;
   `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_data_channel count \n %0d", axi4_master_tx_wdata_count), UVM_HIGH)
@@ -386,6 +393,10 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
     if (!ahb_slave_data_phase_analysis_fifo.try_get(act_data_tx)) begin
       `uvm_error("COMPARE_W_FIFO_EMPTY", "Missing data in ahb_slave_data_phase_analysis_fifo!")
       return;
+    end
+
+    if (exp_tx.hresp == HRESP_ERROR) begin
+      bresp_e_exp = WRITE_SLVERR;
     end
 
     if (exp_tx.haddr !== act_addr_tx.haddr) begin
@@ -407,6 +418,12 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
     if (exp_tx.hsize !== act_addr_tx.hsize) begin
       `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
     end
+    if (exp_tx.hresp !== act_addr_tx.hresp) begin
+      `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+    end
+  end
+  if (bresp_e_exp !== bresp_e_h) begin
+    `uvm_error("MISMATCH_RRESP", $sformatf("RRESP mismatch! Exp: %0h, Act: %0h", bresp_e_exp, bresp_e_h))
   end
 endfunction : compare_w
 
