@@ -354,7 +354,6 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     end else begin 
       convert_ahb.hresp  = HRESP_OKAY;
     end
-    convert_ahb.hresp  = 
     if (axi4_ar_tx.arburst == READ_FIXED) begin
       convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
