@@ -21,12 +21,12 @@ class ahb_slave_memory extends uvm_object;
 
   extern function new(string name = "ahb_slave_memory");
 
-  extern virtual function void record_read_exclusive (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
-  extern virtual function bit check_exclusive_write (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
-  extern virtual function void clear_monitor_on_write (bit [ADDRESS_WIDTH-1:0] address); 
-  extern virtual function bit [ADDRESS_WIDTH-1:0] get_region_base_addr(bit [ADDRESS_WIDTH-1:0] base_addr, region_e region_id);  
-  extern virtual function void mem_write(input bit [ADDRESS_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
-  extern virtual function void mem_read (input bit [ADDRESS_WIDTH-1:0]slave_address, output bit [DATA_WIDTH-1:0]data);
+  extern virtual function void record_read_exclusive (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
+  extern virtual function bit check_exclusive_write (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
+  extern virtual function void clear_monitor_on_write (bit [ADDR_WIDTH-1:0] address); 
+  extern virtual function bit [ADDR_WIDTH-1:0] get_region_base_addr(bit [ADDR_WIDTH-1:0] base_addr, region_e region_id);  
+  extern virtual function void mem_write(input bit [ADDR_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
+  extern virtual function void mem_read (input bit [ADDR_WIDTH-1:0]slave_address, output bit [DATA_WIDTH-1:0]data);
   extern virtual function void fifo_write(input bit [DATA_WIDTH-1:0]data);
   extern virtual function void fifo_read (output bit [DATA_WIDTH-1:0]data);
 
@@ -43,12 +43,12 @@ function ahb_slave_memory::new(string name = "ahb_slave_memory");
 endfunction : new
 
 
-function void ahb_slave_memory::record_read_exclusive (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
+function void ahb_slave_memory::record_read_exclusive (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
   exclusive_monitor[address] = id;
   `uvm_info("EXCL_MON", $sformatf("Manager ID %0d granted exclusive tracking at Addr 32'h%0h", id, address), UVM_LOW)
 endfunction : record_read_exclusive
 
- function bit ahb_slave_memory::check_exclusive_write (bit [ADDRESS_WIDTH-1:0] address, bit [3:0] id);
+ function bit ahb_slave_memory::check_exclusive_write (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
   if(exclusive_monitor.exists(address) && exclusive_monitor[address] == id) begin
     exclusive_monitor.delete(id);
     return 1; 
@@ -59,7 +59,7 @@ endfunction : record_read_exclusive
   end
 endfunction : check_exclusive_write
 
- function void ahb_slave_memory::clear_monitor_on_write (bit [ADDRESS_WIDTH-1:0] address);
+ function void ahb_slave_memory::clear_monitor_on_write (bit [ADDR_WIDTH-1:0] address);
   bit [3:0] id_queue [$];
   foreach(exclusive_monitor[id]) begin
       if(exclusive_monitor[id] == address) begin
@@ -77,10 +77,10 @@ endfunction : clear_monitor_on_write
 //Task : mem_write
 //Used to store the slave data into the slave memory
 //Parameter :
-//slave_address - bit [ADDRESS_WIDTH-1 :0]
+//slave_address - bit [ADDR_WIDTH-1 :0]
 //data          - bit [DATA_WIDTH-1:0]
 //--------------------------------------------------------------------------------------------
-function void ahb_slave_memory::mem_write(input bit [ADDRESS_WIDTH-1 :0]slave_address, bit [DATA_WIDTH-1:0]data);
+function void ahb_slave_memory::mem_write(input bit [ADDR_WIDTH-1 :0]slave_address, bit [DATA_WIDTH-1:0]data);
   slave_memory[slave_address] = data;
 endfunction : mem_write
 
@@ -88,10 +88,10 @@ endfunction : mem_write
 //Task : mem_read
 //Used to store the slave data into the slave memory
 //Parameter :
-//slave_address - bit [ADDRESS_WIDTH-1 :0]
+//slave_address - bit [ADDR_WIDTH-1 :0]
 //data          - bit [DATA_WIDTH-1:0]
 //--------------------------------------------------------------------------------------------
-function void ahb_slave_memory::mem_read(input bit [ADDRESS_WIDTH-1 :0]slave_address, output bit [DATA_WIDTH-1:0]data);
+function void ahb_slave_memory::mem_read(input bit [ADDR_WIDTH-1 :0]slave_address, output bit [DATA_WIDTH-1:0]data);
    if(slave_memory.exists(slave_address)) begin
      data = slave_memory[slave_address];
    end else begin
@@ -123,9 +123,9 @@ endfunction : fifo_read
 //--------------------------------------------------------------------------------------------
 //Task : is_slave_addr_exists
 //Used to check the address exists are not in the memory
-//slave_address - bit [ADDRESS_WIDTH-1 :0]
+//slave_address - bit [ADDR_WIDTH-1 :0]
 //--------------------------------------------------------------------------------------------
-function bit ahb_slave_memory::is_slave_addr_exists(input bit [ADDRESS_WIDTH-1 :0]slave_address);
+function bit ahb_slave_memory::is_slave_addr_exists(input bit [ADDR_WIDTH-1 :0]slave_address);
   is_slave_addr_exists = slave_memory.exists(slave_address);
 endfunction: is_slave_addr_exists
 
