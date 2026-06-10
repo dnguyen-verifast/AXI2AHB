@@ -193,9 +193,11 @@ module axi4_to_ahb_lite #(
     end
   end
 
-  // HWDATA: only a write supplies data; the write engine already aligns it to
-  // the data phase, so forward it whenever a write currently holds the bus.
-  always_comb HWDATA = wr_hwdata;
+  // HWDATA: only a write supplies data. Drive the write engine's data while a
+  // write owns the bus (address + data phases of the burst); drive 0 otherwise
+  // so the bus is defined (no X) during reads or idle. AHB-Lite ignores HWDATA
+  // outside a write data phase, so this does not affect function.
+  always_comb HWDATA = (holder == HOLD_WR || grant_wr_c) ? wr_hwdata : '0;
 
   // holder tracking
   always_ff @(posedge ACLK or negedge ARESETn) begin
