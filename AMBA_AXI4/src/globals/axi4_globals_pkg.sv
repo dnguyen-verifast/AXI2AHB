@@ -157,20 +157,20 @@ package axi4_globals_pkg;
 
   //Enum: awcache_e
   //Used to declare enum type for write cache access
-  typedef enum bit [1:0] {
-    WRITE_BUFFERABLE,
-    WRITE_MODIFIABLE,
-    WRITE_OTHER_ALLOCATE,
-    WRITE_ALLOCATE
+  typedef enum bit [3:0] {
+    WRITE_BUFFERABLE= 4'b0000,
+    WRITE_MODIFIABLE= 4'b0001,
+    WRITE_OTHER_ALLOCATE= 4'b0010,
+    WRITE_ALLOCATE= 4'b0011
   } awcache_e;
 
   //Enum: arcache_e
   //Used to declare enum type for read cache access
-  typedef enum bit [1:0] {
-    READ_BUFFERABLE,
-    READ_MODIFIABLE,
-    READ_OTHER_ALLOCATE,
-    READ_ALLOCATE
+  typedef enum bit [3:0] {
+    READ_BUFFERABLE= 4'b0000,
+    READ_MODIFIABLE= 4'b0001,
+    READ_OTHER_ALLOCATE= 4'b0010,
+    READ_ALLOCATE= 4'b0011
   } arcache_e;
 
   //Enum: endian_e

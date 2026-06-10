@@ -48,6 +48,8 @@ axi4_to_ahb_lite #(
     .AWLEN      (axi_vif.awlen),
     .AWSIZE     (axi_vif.awsize),
     .AWBURST    (axi_vif.awburst),
+    .AWPROT     (axi_vif.awprot),
+    .AWCACHE    (axi_vif.awcache),
     .AWVALID    (axi_vif.awvalid),
     .AWREADY    (axi_vif.awready),
 
@@ -67,6 +69,8 @@ axi4_to_ahb_lite #(
     .ARLEN      (axi_vif.arlen),
     .ARSIZE     (axi_vif.arsize),
     .ARBURST    (axi_vif.arburst),
+    .ARPROT     (axi_vif.arprot),
+    .ARCACHE    (axi_vif.arcache),
     .ARVALID    (axi_vif.arvalid),
     .ARREADY    (axi_vif.arready),
 
