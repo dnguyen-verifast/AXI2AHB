@@ -34,7 +34,7 @@ task axi4_master_bk_read_slave_error_seq::body();
   super.body();
   
   start_item(req);
-  if(!req.randomize() with {req.arsize == READ_8_BYTES;
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin

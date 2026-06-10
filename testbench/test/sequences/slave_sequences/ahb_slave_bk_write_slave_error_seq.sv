@@ -33,10 +33,7 @@ endfunction : new
 task ahb_slave_bk_write_slave_error_seq::body();
   super.body();
   start_item(req_slv);
-  if(!req_slv.randomize() with {
-        hresp == HRESP_OKAY;
-        wait_state == 0;
-  }) 
+  if(!req_slv.randomize()) 
   begin
       `uvm_fatal("ahb_slave","Rand failed");
   end
