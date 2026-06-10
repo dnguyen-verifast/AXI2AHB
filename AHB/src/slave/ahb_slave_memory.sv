@@ -24,7 +24,6 @@ class ahb_slave_memory extends uvm_object;
   extern virtual function void record_read_exclusive (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
   extern virtual function bit check_exclusive_write (bit [ADDR_WIDTH-1:0] address, bit [3:0] id);
   extern virtual function void clear_monitor_on_write (bit [ADDR_WIDTH-1:0] address); 
-  extern virtual function bit [ADDR_WIDTH-1:0] get_region_base_addr(bit [ADDR_WIDTH-1:0] base_addr, region_e region_id);  
   extern virtual function void mem_write(input bit [ADDR_WIDTH-1:0]slave_address, bit [DATA_WIDTH-1:0]data);
   extern virtual function void mem_read (input bit [ADDR_WIDTH-1:0]slave_address, output bit [DATA_WIDTH-1:0]data);
   extern virtual function void fifo_write(input bit [DATA_WIDTH-1:0]data);
