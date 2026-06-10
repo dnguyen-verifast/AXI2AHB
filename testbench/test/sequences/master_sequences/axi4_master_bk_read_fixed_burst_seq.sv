@@ -36,6 +36,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 1;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -47,6 +48,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 15;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -58,6 +60,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 5;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -69,6 +72,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 3;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -80,6 +84,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 7;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin
@@ -91,6 +96,7 @@ task axi4_master_bk_read_fixed_burst_seq::body();
     start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.tx_type == READ;
+                            req.haddr   == FIFO_ADDRESS;
                             req.arlen  == 9;
                             req.arburst == READ_FIXED;
                             req.transfer_type == BLOCKING_READ;}) begin

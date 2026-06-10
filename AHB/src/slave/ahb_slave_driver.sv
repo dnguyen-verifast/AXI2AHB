@@ -103,6 +103,7 @@ task ahb_slave_driver::wr_data_phase();
     ahb_slave_tx slv_data_tx;
     ahb_transfer_struct slv_data_struct;
     int lane_active;
+    bit [ADDR_WIDTH-1:0] hrdata_mem;
     @(posedge ahb_if_h.clk);
     forever begin
         `uvm_info(get_type_name(),$sformatf("Waiting for queue address phase valid"),UVM_HIGH);
@@ -184,11 +185,12 @@ task ahb_slave_driver::wr_data_phase();
                     lane_active = slv_addr_phase.haddr % (ADDR_WIDTH / 8);
                     for(int j = 0; j < 2**slv_addr_phase.hsize; j++) begin
                         if(slv_addr_phase.haddr == FIFO_ADDRESS) begin
-                            ahb_slave_memory_h.fifo_read(slv_data_struct.hrdata[8*(lane_active+j)+7 -: 8]);
+                            ahb_slave_memory_h.fifo_read(hrdata_mem[8*(lane_active+j)+7 -: 8]);
                         end else begin
-                            ahb_slave_memory_h.mem_read(slv_addr_phase.haddr+j,slv_data_struct.hrdata[8*(lane_active+j)+7 -: 8]);
+                            ahb_slave_memory_h.mem_read(slv_addr_phase.haddr+j,hrdata_mem[8*(lane_active+j)+7 -: 8]);
                         end
                     end
+                    slv_data_struct.hrdata = hrdata_mem;
                 end
                 if(slv_addr_phase.hexcl == HEXCL_NORMAL) begin
                     if(slv_data_tx.hresp == HRESP_ERROR) begin
