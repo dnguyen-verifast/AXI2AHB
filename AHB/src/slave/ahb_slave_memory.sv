@@ -28,6 +28,7 @@ class ahb_slave_memory extends uvm_object;
   extern virtual function void mem_read (input bit [ADDR_WIDTH-1:0]slave_address, output bit [DATA_WIDTH-1:0]data);
   extern virtual function void fifo_write(input bit [DATA_WIDTH-1:0]data);
   extern virtual function void fifo_read (output bit [DATA_WIDTH-1:0]data);
+  extern virtual function bit is_slave_addr_exists(input bit [ADDR_WIDTH-1 :0]slave_address);
 
 endclass : ahb_slave_memory
 
