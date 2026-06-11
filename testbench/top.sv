@@ -31,7 +31,7 @@ axi4_to_ahb_lite #(
     .AXI_ADDR_WIDTH (32),
     .AXI_DATA_WIDTH (32),
     .AXI_ID_WIDTH   (4),
-    .TIMEOUT        (32),
+    .TIMEOUT        (32)
 ) dut (
 
     //=================================================
