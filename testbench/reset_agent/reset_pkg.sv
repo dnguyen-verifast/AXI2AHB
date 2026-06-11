@@ -4,7 +4,6 @@
 package reset_pkg;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
-  `include "reset_if.sv"
   `include "reset_item.sv"
   `include "reset_sequencer.sv"
   `include "reset_driver.sv"
