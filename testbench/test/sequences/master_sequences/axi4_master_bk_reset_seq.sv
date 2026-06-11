@@ -5,7 +5,7 @@
 // Class: axi4_master_bk_reset_seq
 // Extends the axi4_master_bk_base_seq and randomises the req item for reset scenario
 //--------------------------------------------------------------------------------------------
-class axi4_master_bk_reset_seq extends uvm_sequence#(reset_item);
+class axi4_master_bk_reset_seq extends uvm_sequence #(reset_item);
   `uvm_object_utils(axi4_master_bk_reset_seq)
 
   //-------------------------------------------------------
@@ -31,7 +31,7 @@ endfunction : new
 // Creates the req of type master_bk transaction and performs reset scenario
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_reset_seq::body();
-  req = reset_item::type_id::create("req",this);
+  req = reset_item::type_id::create("req");
   start_item(req);
   if(!req.randomize()) begin
     `uvm_fatal("axi4","Rand failed");
