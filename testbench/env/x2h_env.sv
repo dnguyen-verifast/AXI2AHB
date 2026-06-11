@@ -10,6 +10,8 @@ class x2h_env extends uvm_scoreboard;
     ahb_env ahb_env_h;
 
 
+    reset_agent reset_agent_h;
+
     x2h_env_config x2h_env_config_h;
     x2h_scoreboard x2h_scoreboard_h;
     x2h_virtual_sequencer x2h_virtual_sequencer_h;
@@ -38,13 +40,15 @@ function void x2h_env::build_phase(uvm_phase phase);
     end else begin  
       uvm_config_db #(ahb_env_config)::set(this,"*","ahb_env_config",ahb_env_config_h);
     end
-
+    reset_agent_h = reset_agent::type_id::create("reset_agent_h",this);
     x2h_scoreboard_h = x2h_scoreboard::type_id::create("x2h_scoreboard_h",this);
     x2h_virtual_sequencer_h = x2h_virtual_sequencer::type_id::create("x2h_virtual_sequencer_h",this);
 endfunction : build_phase
 
 function void x2h_env::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
+
+  x2h_virtual_sequencer_h.reset_sequencer_h = reset_agent_h.rst_sqr;
   foreach(axi4_env_h.axi4_master_agent_h[i]) begin
     x2h_virtual_sequencer_h.axi4_master_write_seqr_h = axi4_env_h.axi4_master_agent_h[i].axi4_master_write_seqr_h;
     x2h_virtual_sequencer_h.axi4_master_read_seqr_h = axi4_env_h.axi4_master_agent_h[i].axi4_master_read_seqr_h;

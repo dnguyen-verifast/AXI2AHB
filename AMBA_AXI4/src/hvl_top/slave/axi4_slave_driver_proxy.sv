@@ -161,12 +161,20 @@ task axi4_slave_driver_proxy::run_phase(uvm_phase phase);
 
   //wait for system reset
   axi4_slave_drv_bfm_h.wait_for_system_reset();
-
-  fork 
-    axi4_write_task();
-    axi4_read_task();
-  join
-
+  forever begin
+    fork
+      begin
+        fork 
+          axi4_write_task();
+          axi4_read_task();
+        join
+      end
+      begin
+        axi4_slave_drv_bfm_h.wait_for_system_reset();
+      end
+    join_any
+    disable fork;
+  end
 
 endtask : run_phase 
 

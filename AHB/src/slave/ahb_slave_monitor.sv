@@ -46,15 +46,23 @@ function void ahb_slave_monitor::end_of_elaboration_phase(uvm_phase phase);
 endfunction: end_of_elaboration_phase
 
 task ahb_slave_monitor::run_phase(uvm_phase phase);
-    @(negedge ahb_if_h.resetn);
-    `uvm_info("FROM slave MON BFM",$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH) 
-    @(posedge ahb_if_h.resetn);
-    `uvm_info("FROM slave MON BFM",$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
-
-    fork
-        ahb_slave_data_phase();
-        ahb_slave_addr_phase(); 
-    join
+    forever begin
+        `uvm_info("FROM slave MON BFM",$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH)
+        @(posedge ahb_if_h.resetn);
+        `uvm_info("FROM slave MON BFM",$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
+        fork
+            begin : main_phase  
+                fork
+                    ahb_slave_data_phase();
+                    ahb_slave_addr_phase(); 
+                join
+            end
+            begin : reset_phase
+                @(negedge ahb_if_h.resetn);
+            end
+        join_any
+        disable fork; 
+    end
 endtask : run_phase
 
 task ahb_slave_monitor::ahb_slave_addr_phase();

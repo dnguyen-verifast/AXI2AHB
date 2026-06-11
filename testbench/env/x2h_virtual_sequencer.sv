@@ -24,6 +24,8 @@ class x2h_virtual_sequencer extends uvm_sequencer#(uvm_sequence_item);
   // Declaring slave read sequencer handle
   axi4_slave_read_sequencer axi4_slave_read_seqr_h;
 
+  reset_sequencer reset_sequencer_h;
+
   
   ahb_master_sequencer ahb_master_sequencer_h;
   ahb_slave_sequencer ahb_slave_sequencer_h;

@@ -13,23 +13,19 @@ module top;
   parameter  ADDR_WIDTHS = 32;
   parameter DATA_WIDTHS = 32;
   logic aclk;
-  logic aresetn;
   logic hclk;
-  logic hresetn;
-
-  logic        hbusreq_dummy;
-  logic        hlock_dummy;
-  logic        hgrant_dummy;
 
   axi4_if axi_vif (
     .aclk(aclk), 
-    .aresetn(aresetn)
+    .aresetn(reset_vif.rst_n)
   );
 
   ahb_if ahb_vif (
     .clk(hclk), 
-    .resetn(hresetn)
+    .resetn(reset_vif.rst_n)
   );
+
+  reset_if reset_vif(.clk(aclk));
 
 axi4_to_ahb_lite #(
     .AXI_ADDR_WIDTH (32),
@@ -41,7 +37,7 @@ axi4_to_ahb_lite #(
     // AXI
     //=================================================
     .ACLK       (aclk),
-    .ARESETn    (aresetn),
+    .ARESETn    (reset_vif.rst_n),
 
     .AWID       (axi_vif.awid),
     .AWADDR     (axi_vif.awaddr),
@@ -111,15 +107,11 @@ axi4_to_ahb_lite #(
   end
 
   initial begin
-    aresetn = 1;
-    hresetn = 1;
+    reset_vif.rst_n = 1;
     #10
-    aresetn = 0;
-    hresetn = 0;
-    hgrant_dummy = 1;
+    reset_vif.rst_n = 0;
     #20;
-    aresetn = 1;
-    hresetn = 1;
+    reset_vif.rst_n = 1;
   end
 
 
@@ -136,6 +128,7 @@ axi4_to_ahb_lite #(
   endgenerate
   initial begin
     uvm_config_db#(virtual ahb_if)::set(null, "*", "ahb_if", ahb_vif);
+    uvm_config_db#(virtual reset_if)::set(null, "*", "rst_vif", reset_vif);
     run_test();
   end
 

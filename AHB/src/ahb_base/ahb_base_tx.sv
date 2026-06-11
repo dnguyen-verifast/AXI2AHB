@@ -23,7 +23,7 @@ class ahb_base_tx extends uvm_sequence_item;
     
     rand bit                        hsel;
 
-    rand bit [2:0]                  wait_state;
+    rand bit [7:0]                  wait_state;
 //    rand bit                        has_convert_waitstate;
     compare_phase_e                 compare_phase;
     extern function new(string name = "ahb_base_tx");

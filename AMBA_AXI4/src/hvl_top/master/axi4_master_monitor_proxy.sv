@@ -125,15 +125,23 @@ endfunction : end_of_elaboration_phase
 task axi4_master_monitor_proxy::run_phase(uvm_phase phase);
 
   axi4_master_mon_bfm_h.wait_for_aresetn();
-
-  fork 
-    axi4_write_address();
-    axi4_write_data();
-    axi4_write_response();
-    axi4_read_address();
-    axi4_read_data();
-  join
-
+  forever begin
+    fork
+      begin
+        fork 
+          axi4_write_address();
+          axi4_write_data();
+          axi4_write_response();
+          axi4_read_address();
+          axi4_read_data();
+        join
+      end
+      begin
+        axi4_master_mon_bfm_h.wait_for_aresetn();
+      end
+    join_any
+    disable fork;
+  end
 endtask : run_phase
 
 //--------------------------------------------------------------------------------------------

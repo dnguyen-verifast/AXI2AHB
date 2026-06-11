@@ -53,23 +53,31 @@ endfunction : end_of_elaboration_phase
 
 task ahb_slave_driver::run_phase(uvm_phase phase);
     `uvm_info("DRIVER_SLAVE", "Inside run_phase of AHB Driver slave", UVM_LOW)
-
-    wait_ahb_for_resetn();
-    fork
-        wr_addr_phase();
-        wr_data_phase();
-    join
+    forever begin
+        wait_ahb_for_resetn();
+        @(posedge ahb_if_h.resetn);
+        fork
+            begin : main_phase  
+                fork
+                    wr_addr_phase();
+                    wr_data_phase();
+                join
+            end
+            begin : reset_phase
+               @(negedge ahb_if_h.resetn);
+            end
+        join_any
+        disable fork; 
+    end
 
 endtask : run_phase
 
 task ahb_slave_driver::wait_ahb_for_resetn();
-    @(negedge ahb_if_h.resetn);
     `uvm_info("DRIVER_SLAVE",$sformatf("SYSTEM RESET DETECTED"),UVM_HIGH)
     ahb_if_h.hrdata    <= '0;
     ahb_if_h.hreadyout <= '1;
     ahb_if_h.hresp     <= '0;
     ahb_if_h.hexokay   <= '0;
-    @(posedge ahb_if_h.resetn);
     `uvm_info("DRIVER_SLAVE",$sformatf("SYSTEM RESET DEACTIVATED"),UVM_HIGH)
 endtask : wait_ahb_for_resetn
 

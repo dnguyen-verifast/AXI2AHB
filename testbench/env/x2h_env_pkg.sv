@@ -4,6 +4,7 @@
 package x2h_env_pkg;
     import uvm_pkg::*;
     import axi4_globals_pkg::*;
+    import reset_pkg::*;
     import axi4_master_pkg::*;
     import axi4_slave_pkg::*;
     import axi4_env_pkg::*;

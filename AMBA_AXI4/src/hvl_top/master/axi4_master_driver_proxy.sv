@@ -143,12 +143,20 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
   //waiting for system reset
   `uvm_info("AXI4_MASTER_DRIVER","waiting for system reset", UVM_MEDIUM);
   axi4_master_drv_bfm_h.wait_for_aresetn();
-
-  fork 
-    axi4_write_task();
-    axi4_read_task();
-  join
-
+  forever begin
+    fork
+      begin
+        fork 
+          axi4_write_task();
+          axi4_read_task();
+        join
+      end
+      begin
+        axi4_master_drv_bfm_h.wait_for_aresetn();
+      end
+    join_any
+    disable fork;
+  end
 endtask : run_phase
 
 //--------------------------------------------------------------------------------------------
