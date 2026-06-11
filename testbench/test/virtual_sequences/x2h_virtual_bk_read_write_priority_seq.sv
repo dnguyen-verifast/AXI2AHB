@@ -42,7 +42,7 @@ endfunction : new
 task x2h_virtual_bk_read_write_priority_seq::body();
   axi4_master_bk_read_priority_seq_h = axi4_master_bk_read_priority_seq::type_id::create("axi4_master_bk_read_priority_seq_h");
   axi4_master_bk_write_priority_seq_h = axi4_master_bk_write_priority_seq::type_id::create("axi4_master_bk_write_priority_seq_h");
-  ahb_slave_bk_read_write_priority_seq_h = ahb_slave_bk_read_write_priority_seq_h::type_id::create("ahb_slave_bk_read_write_priority_seq_h");
+  ahb_slave_bk_read_write_priority_seq_h = ahb_slave_bk_read_write_priority_seq::type_id::create("ahb_slave_bk_read_write_priority_seq_h");
 
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside x2h_virtual_bk_read_write_priority_seq"), UVM_NONE); 
 
