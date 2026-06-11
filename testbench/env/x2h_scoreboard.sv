@@ -412,7 +412,7 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
     end
     if((act_data_tx.time_out_cnt > 32) || (act_addr_tx.time_out_cnt > 32)) begin
       if(bresp_e_h != READ_SLVERR) begin
-        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0s, Act: READ_SLVERR", rresp_e_h))
+        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: READ_SLVERR, Act: %0s", bresp_e_h))
       end
       break;
     end else begin 
