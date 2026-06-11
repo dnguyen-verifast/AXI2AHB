@@ -105,7 +105,8 @@ task ahb_slave_monitor::ahb_slave_addr_phase();
         end else begin
             time_out_cnt++;
             if(time_out_cnt > 32) begin
-                mon_tx_add.time_out_cnt = time_out_cnt;
+                slv_tx_add.time_out_cnt = time_out_cnt;
+                ahb_slave_seq_item_converter::to_class(slv_tx_add,mon_tx_add);
                 `uvm_info("SLAVE MON",$sformatf("Time_out count from interface in data_phase"),UVM_HIGH)
                 ahb_slave_addr_analysis_port.write(mon_tx_add);
                 time_out_cnt = 0;
@@ -137,7 +138,8 @@ task ahb_slave_monitor::ahb_slave_data_phase();
             end else begin
                 time_out_cnt++;
                 if(time_out_cnt > 32) begin
-                    mon_tx_data.time_out_cnt = time_out_cnt;
+                    slv_tx_data.time_out_cnt = time_out_cnt;
+                    ahb_slave_seq_item_converter::to_class(slv_tx_data,mon_tx_data);
                     `uvm_info("SLAVE MON",$sformatf("Time_out count from interface in data_phase"),UVM_HIGH)
                     ahb_slave_data_analysis_port.write(mon_tx_data);
                     time_out_cnt = 0;
