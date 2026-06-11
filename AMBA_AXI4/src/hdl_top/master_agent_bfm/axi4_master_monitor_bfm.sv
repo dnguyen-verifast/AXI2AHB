@@ -191,7 +191,6 @@ interface axi4_master_monitor_bfm(input bit aclk, input bit aresetn,
       // Wait for valid and ready to be high
       do begin
         @(posedge aclk);
-        time_out_cnt++;
       end while((rvalid!==1 || rready!==1));
   
       req.rid      = rid;
