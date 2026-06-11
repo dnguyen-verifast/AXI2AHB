@@ -56,6 +56,16 @@ package x2h_slave_seq_pkg;
   `include "ahb_slave_bk_read_fixed_burst_seq.sv"
   `include "ahb_slave_bk_read_outstanding_transfer_seq.sv"
   `include "ahb_slave_bk_read_cross_seq.sv"
+  
+  `include "ahb_slave_bk_1kb_cross_incr_read_seq.sv"
+  `include "ahb_slave_bk_1kb_cross_incr_write_seq.sv"
+  `include "ahb_slave_bk_read_timeout_seq.sv"
+  `include "ahb_slave_bk_write_timeout_seq.sv"
+  `include "ahb_slave_bk_read_write_priority_seq.sv"
+  `include "ahb_slave_bk_hprot_instruction_bufferable_seq.sv"
+  `include "ahb_slave_bk_reset_seq.sv"
+  `include "ahb_slave_bk_back_to_back_write_read_seq.sv"
+  `include "ahb_slave_bk_hprot_privileged_data_seq.sv"
 
 
   // `include "ahb_slave_nbk_base_seq.sv"

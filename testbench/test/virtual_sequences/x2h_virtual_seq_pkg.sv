@@ -56,6 +56,16 @@ package x2h_virtual_seq_pkg;
   `include "x2h_virtual_bk_outstanding_transfer_write_read_seq.sv"
   `include "x2h_virtual_bk_cross_write_read_seq.sv"
   
+  `include "x2h_virtual_bk_1kb_cross_incr_read_seq.sv"
+  `include "x2h_virtual_bk_1kb_cross_incr_write_seq.sv"
+  `include "x2h_virtual_bk_read_timeout_seq.sv"
+  `include "x2h_virtual_bk_write_timeout_seq.sv"
+  `include "x2h_virtual_bk_read_write_priority_seq.sv"
+  `include "x2h_virtual_bk_hprot_instruction_bufferable_seq.sv"
+  `include "x2h_virtual_bk_reset_seq.sv"
+  `include "x2h_virtual_bk_back_to_back_write_read_seq.sv"
+  `include "x2h_virtual_bk_hprot_privileged_data_seq.sv"
+
 
 
   // `include "x2h_virtual_nbk_8b_write_data_seq.sv"

@@ -35,6 +35,7 @@ task ahb_slave_bk_write_fixed_burst_seq::body();
   start_item(req_slv);
   if(!req_slv.randomize() with {
         hresp == HRESP_OKAY;
+        wait_state == 0;
   }) 
   begin
       `uvm_fatal("ahb_slave","Rand failed");
