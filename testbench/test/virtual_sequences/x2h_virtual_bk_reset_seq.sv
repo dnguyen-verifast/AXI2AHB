@@ -59,10 +59,10 @@ task x2h_virtual_bk_reset_seq::body();
 
   fork 
     begin: T1_RESET
+    #120;
       axi4_master_bk_reset_seq_h.start(p_sequencer.reset_sequencer_h);
     end
     begin : T2_RESET
-      #120;
       axi4_master_bk_read_32b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
     end
   join_any
