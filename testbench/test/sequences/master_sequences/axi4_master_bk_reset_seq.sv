@@ -32,14 +32,12 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_reset_seq::body();
   req = reset_item::type_id::create("req",this);
-begin
   start_item(req);
   if(!req.randomize()) begin
     `uvm_fatal("axi4","Rand failed");
   end
   finish_item(req);
 
-end
 endtask : body
 
 `endif

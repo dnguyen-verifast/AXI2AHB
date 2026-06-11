@@ -31,15 +31,13 @@ endfunction : new
 // Creates the req of type master_bk transaction and randomises the req for timeout scenario
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_write_timeout_seq::body();
-  super.body(); 
-begin
+  super.body();
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES;
-                            req.awlen  == 10; 
+                            req.awlen  == 10;
                             req.tx_type == WRITE;
                             req.awburst == WRITE_INCR;
                             req.transfer_type == BLOCKING_WRITE;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
@@ -48,7 +46,6 @@ begin
   // Wait to trigger timeout
   #100us;
 
-end
 endtask : body
 
 `endif

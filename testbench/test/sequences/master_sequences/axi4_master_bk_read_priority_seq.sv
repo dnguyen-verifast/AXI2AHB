@@ -31,21 +31,18 @@ endfunction : new
 // Creates the req of type master_bk transaction and randomises the req for priority testing
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_read_priority_seq::body();
-  super.body();  
-  begin
-    // First send read request
-    start_item(req);
-    if(!req.randomize() with {req.arsize == READ_4_BYTES;
-                              req.arlen  == 4; 
-                              req.tx_type == READ;
-                              req.arburst == READ_INCR;
-                              req.transfer_type == BLOCKING_READ;}) begin
-
-      `uvm_fatal("axi4","Rand failed");
-    end
-    req.print();
-    finish_item(req);
+  super.body();
+  // First send read request
+  start_item(req);
+  if(!req.randomize() with {req.arsize == READ_4_BYTES;
+                            req.arlen  == 4;
+                            req.tx_type == READ;
+                            req.arburst == READ_INCR;
+                            req.transfer_type == BLOCKING_READ;}) begin
+    `uvm_fatal("axi4","Rand failed");
   end
+  req.print();
+  finish_item(req);
 endtask : body
 
 `endif

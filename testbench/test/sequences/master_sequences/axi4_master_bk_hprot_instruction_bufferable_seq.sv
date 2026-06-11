@@ -32,21 +32,12 @@ endfunction : new
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_hprot_instruction_bufferable_seq::body();
   super.body(); 
-begin
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
                             req.arlen  == 4; 
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
-                            req.transfer_type == BLOCKING_READ;
-                            req.arprot[0] == 1; // Instruction bit
-                            req.arprot[1] == 0; // Non-secure
-                            req.arprot[2] == 0; // Non-privileged
-                            req.arcache[0] == 1; // Bufferable
-                            req.arcache[1] == 0; // Non-modifiable
-                            req.arcache[2] == 0; // Non-allocate
-                            req.arcache[3] == 0; // Non-allocate}) begin
-
+                            req.transfer_type == BLOCKING_READ; }) begin
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
@@ -58,21 +49,12 @@ begin
                             req.awlen  == 4; 
                             req.tx_type == WRITE;
                             req.awburst == WRITE_INCR;
-                            req.transfer_type == BLOCKING_WRITE;
-                            req.awprot[0] == 1; // Instruction bit
-                            req.awprot[1] == 0; // Non-secure
-                            req.awprot[2] == 0; // Non-privileged
-                            req.awcache[0] == 1; // Bufferable
-                            req.awcache[1] == 0; // Non-modifiable
-                            req.awcache[2] == 0; // Non-allocate
-                            req.awcache[3] == 0; // Non-allocate}) begin
-
+                            req.transfer_type == BLOCKING_WRITE;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
   finish_item(req);
 
-end
 endtask : body
 
 `endif

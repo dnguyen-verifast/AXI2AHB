@@ -31,16 +31,14 @@ endfunction : new
 // Creates the req of type master_bk transaction and sends back-to-back write/read requests
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_back_to_back_write_read_seq::body();
-  super.body(); 
-begin
+  super.body();
   // Send write request immediately
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES;
-                            req.awlen  == 4; 
+                            req.awlen  == 4;
                             req.tx_type == WRITE;
                             req.awburst == WRITE_INCR;
                             req.transfer_type == BLOCKING_WRITE;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
@@ -49,17 +47,15 @@ begin
   // Send read request immediately after write
   start_item(req);
   if(!req.randomize() with {req.arsize == READ_4_BYTES;
-                            req.arlen  == 4; 
+                            req.arlen  == 4;
                             req.tx_type == READ;
                             req.arburst == READ_INCR;
                             req.transfer_type == BLOCKING_READ;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
   finish_item(req);
 
-end
 endtask : body
 
 `endif

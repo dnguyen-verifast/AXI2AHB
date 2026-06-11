@@ -31,22 +31,19 @@ endfunction : new
 // Creates the req of type master_bk transaction and randomises the req for 1KB transfer
 //--------------------------------------------------------------------------------------------
 task axi4_master_bk_1kb_cross_incr_write_seq::body();
-  super.body(); 
-begin
+  super.body();
   start_item(req);
   if(!req.randomize() with {req.awsize == WRITE_4_BYTES;
                             req.awlen  == 255;
-                            req.awaddr  == 32'h18000ff0; 
+                            req.awaddr  == 32'h18000ff0;
                             req.tx_type == WRITE;
                             req.awburst == WRITE_INCR;
                             req.transfer_type == BLOCKING_WRITE;}) begin
-
     `uvm_fatal("axi4","Rand failed");
   end
   req.print();
   finish_item(req);
 
-end
 endtask : body
 
 `endif
