@@ -8,8 +8,8 @@
 +incdir+../test/testcase/
 +incdir+${DUT_PATH}/
 +incdir+../
-../env/x2h_env_pkg.sv
 ../reset_agent/reset_pkg.sv
+../env/x2h_env_pkg.sv
 ../test/sequences/master_sequences/x2h_master_seq_pkg.sv
 ../test/sequences/slave_sequences/x2h_slave_seq_pkg.sv
 ../test/virtual_sequences/x2h_virtual_seq_pkg.sv
