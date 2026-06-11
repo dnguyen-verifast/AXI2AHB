@@ -259,6 +259,7 @@ function queue_convert_w_axi2ahb x2h_scoreboard::convert_write_axi_packet_2_ahb_
   int        burst_len     = axi4_aw_tx.awlen + 1;
   bit [31:0] aligned_addr  = (start_addr / number_bytes) * number_bytes;
   bit [31:0] current_addr;
+  bit [31:0] previous_addr;
  
   bit [31:0] wrap_boundary = (start_addr / (number_bytes * burst_len)) * (number_bytes * burst_len);
   bit [31:0] high_boundary = wrap_boundary + (number_bytes * burst_len);
@@ -292,13 +293,19 @@ function queue_convert_w_axi2ahb x2h_scoreboard::convert_write_axi_packet_2_ahb_
     end else begin
       convert_ahb.hwdata = 0;
     end
-
+    // checking fixed burst and cross 1kb boundary addr
     if (axi4_aw_tx.awburst == WRITE_FIXED) begin
       convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
-      convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ;
+      if(previous_addr[31:10] != current_addr[31:10]) begin
+        convert_ahb.htrans = HTRANS_NONSEQ;
+      end else begin
+        convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ;
+      end
+      
     end
     convert_queue.push_back(convert_ahb);
+    previous_addr = current_addr;
   end
 
   return convert_queue;
@@ -319,6 +326,7 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
   int        burst_len     = axi4_ar_tx.arlen + 1;   
   bit [31:0] aligned_addr  = (start_addr / number_bytes) * number_bytes; 
   bit [31:0] current_addr;
+  bit [31:0] previous_addr;
   
   bit [31:0] wrap_boundary = (start_addr / (number_bytes * burst_len)) * (number_bytes * burst_len);
   bit [31:0] high_boundary = wrap_boundary + (number_bytes * burst_len);
@@ -349,18 +357,26 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     convert_ahb.hwrite = HWRITE_READ; 
     convert_ahb.hwdata = 32'h0;
     convert_ahb.hrdata = axi4_r_tx.rdata[i];
+
     if(axi4_r_tx.rresp == READ_SLVERR) begin
       convert_ahb.hresp  = HRESP_ERROR;
     end else begin 
       convert_ahb.hresp  = HRESP_OKAY;
     end
+
+    // checking fixed burst and cross 1kb boundary addr
     if (axi4_ar_tx.arburst == READ_FIXED) begin
       convert_ahb.htrans = HTRANS_NONSEQ; 
     end else begin
-      convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ;
+      if(previous_addr[31:10] != current_addr[31:10]) begin
+        convert_ahb.htrans = HTRANS_NONSEQ;
+      end else begin 
+        convert_ahb.htrans = (i == 0) ? HTRANS_NONSEQ : HTRANS_SEQ; 
+      end
     end
 
     convert_queue.push_back(convert_ahb);
+    previous_addr = current_addr;
   end
   return convert_queue;
 endfunction : convert_read_axi_packet_2_ahb_packet
