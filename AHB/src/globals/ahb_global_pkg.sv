@@ -120,6 +120,7 @@ typedef enum bit [2:0] {
         bit                       hexokay;
         bit                       hready;
         bit                       hsel;
+        int                       time_out_cnt;
     } ahb_transfer_struct ;
 
 endpackage

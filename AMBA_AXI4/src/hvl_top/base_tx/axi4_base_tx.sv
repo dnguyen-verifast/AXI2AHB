@@ -209,6 +209,8 @@ class axi4_base_tx extends uvm_sequence_item;
   //Variable: outstanding_write_tx
   //Used to determine the outstanding write tx count
   int outstanding_read_tx;
+
+  int time_out_cnt;
   
   extern function new (string name = "axi4_base_tx");
   extern function void do_copy(uvm_object rhs);

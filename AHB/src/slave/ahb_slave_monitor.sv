@@ -66,6 +66,7 @@ task ahb_slave_monitor::run_phase(uvm_phase phase);
 endtask : run_phase
 
 task ahb_slave_monitor::ahb_slave_addr_phase();
+    int time_out_cnt = 0;
     forever begin
         ahb_slave_tx mon_tx_add;
         ahb_transfer_struct slv_tx_add;
@@ -100,11 +101,21 @@ task ahb_slave_monitor::ahb_slave_addr_phase();
                     `uvm_error("MON_CHK_1KB", $sformatf("FATAL! Burst crossed 1KB boundary. Prev: %0h, Curr: %0h", pre_haddr, ahb_if_h.haddr))
                 end
             end
-        end 
+            time_out_cnt = 0;
+        end else begin
+            time_out_cnt++;
+            if(time_out_cnt > 32) begin
+                mon_tx_add.time_out_cnt = time_out_cnt;
+                `uvm_info("SLAVE MON",$sformatf("Time_out count from interface in data_phase"),UVM_HIGH)
+                ahb_slave_addr_analysis_port.write(mon_tx_add);
+                time_out_cnt = 0;
+            end
+        end
     end
 endtask : ahb_slave_addr_phase
 
 task ahb_slave_monitor::ahb_slave_data_phase();
+    int time_out_cnt = 0;
     forever begin
         ahb_slave_tx mon_tx_data;
         ahb_transfer_struct slv_tx_data;
@@ -122,6 +133,15 @@ task ahb_slave_monitor::ahb_slave_data_phase();
                 ahb_slave_seq_item_converter::to_class(slv_tx_data,mon_tx_data);
                 ahb_slave_data_analysis_port.write(mon_tx_data);
                 `uvm_info("SLAVE MON",$sformatf("data_phase write object to scoreboard mon_tx_data = %s \n",mon_tx_data.sprint()),UVM_LOW)
+                time_out_cnt = 0;
+            end else begin
+                time_out_cnt++;
+                if(time_out_cnt > 32) begin
+                    mon_tx_data.time_out_cnt = time_out_cnt;
+                    `uvm_info("SLAVE MON",$sformatf("Time_out count from interface in data_phase"),UVM_HIGH)
+                    ahb_slave_data_analysis_port.write(mon_tx_data);
+                    time_out_cnt = 0;
+                end
             end
 //        end else begin @(posedge ahb_if_h.clk); end
     end

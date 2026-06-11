@@ -27,6 +27,7 @@ class x2h_scoreboard extends uvm_scoreboard;
     uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_address_analysis_fifo;
     uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_data_analysis_fifo;
     uvm_tlm_analysis_fifo#(axi4_master_tx) axi4_master_write_response_analysis_fifo;
+
     uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_read_address_analysis_fifo;
     uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_read_data_analysis_fifo;
     uvm_tlm_analysis_fifo#(axi4_slave_tx) axi4_slave_write_address_analysis_fifo;
@@ -91,7 +92,7 @@ class x2h_scoreboard extends uvm_scoreboard;
     extern virtual task predict_result_read_axi2ahb();
     extern virtual function queue_convert_r_axi2ahb convert_read_axi_packet_2_ahb_packet(input axi4_master_tx axi4_ar_tx, input axi4_master_tx axi4_r_tx);
     extern virtual function void compare_w(input queue_convert_w_axi2ahb expect_queue_w, input bresp_e bresp_e_h);
-    extern virtual function void compare_r(input queue_convert_r_axi2ahb expect_queue_r);
+    extern virtual function void compare_r(input queue_convert_r_axi2ahb expect_queue_r,input rresp_e rresp_e_h);
     extern virtual function void check_phase (uvm_phase phase);
     extern virtual function void report_phase(uvm_phase phase);
 endclass : x2h_scoreboard
@@ -229,7 +230,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
     expect_queue_r = convert_read_axi_packet_2_ahb_packet(axi4_master_tx_h4,axi4_master_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's expect_queue_r = \n%p",expect_queue_r),UVM_LOW)
-    compare_r(expect_queue_r);
+    compare_r(expect_queue_r, axi4_master_tx_h5.rresp);
 
     axi4_master_tx_araddr_count++;
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel count \n %0d",axi4_master_tx_araddr_count),UVM_HIGH)
@@ -409,32 +410,38 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
       `uvm_error("COMPARE_W_FIFO_EMPTY", "Missing data in ahb_slave_data_phase_analysis_fifo!")
       return;
     end
+    if((act_data_tx.time_out_cnt > 32) || (act_addr_tx.time_out_cnt > 32)) begin
+      if(bresp_e_h != READ_SLVERR) begin
+        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0s, Act: READ_SLVERR", rresp_e_h))
+      end
+      break;
+    end else begin 
+      if (exp_tx.hresp == HRESP_ERROR) begin
+        bresp_e_exp = WRITE_SLVERR;
+      end
 
-    if (exp_tx.hresp == HRESP_ERROR) begin
-      bresp_e_exp = WRITE_SLVERR;
-    end
+      if (exp_tx.haddr !== act_addr_tx.haddr) begin
+        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0h, Act: %0h", exp_tx.haddr, act_addr_tx.haddr))
+      end
 
-    if (exp_tx.haddr !== act_addr_tx.haddr) begin
-      `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0h, Act: %0h", exp_tx.haddr, act_addr_tx.haddr))
-    end
+      if (exp_tx.hwdata !== act_data_tx.hwdata) begin
+        `uvm_error("MISMATCH_HWDATA", $sformatf("HWDATA mismatch at addr %0h! Exp: %0h, Act: %0h", exp_tx.haddr, exp_tx.hwdata, act_data_tx.hwdata))
+      end
 
-    if (exp_tx.hwdata !== act_data_tx.hwdata) begin
-      `uvm_error("MISMATCH_HWDATA", $sformatf("HWDATA mismatch at addr %0h! Exp: %0h, Act: %0h", exp_tx.haddr, exp_tx.hwdata, act_data_tx.hwdata))
-    end
+      if (exp_tx.hwrite !== act_addr_tx.hwrite) begin
+        `uvm_error("MISMATCH_HWRITE", $sformatf("HWRITE mismatch at addr %0h! Exp: %0b, Act: %0b", exp_tx.haddr, exp_tx.hwrite, act_addr_tx.hwrite))
+      end
 
-    if (exp_tx.hwrite !== act_addr_tx.hwrite) begin
-      `uvm_error("MISMATCH_HWRITE", $sformatf("HWRITE mismatch at addr %0h! Exp: %0b, Act: %0b", exp_tx.haddr, exp_tx.hwrite, act_addr_tx.hwrite))
-    end
+      if (exp_tx.htrans !== act_addr_tx.htrans) begin
+        `uvm_error("MISMATCH_HTRANS", $sformatf("HTRANS mismatch at addr %0h! Exp: %0s, Act: %0s", exp_tx.haddr, exp_tx.htrans.name(), act_addr_tx.htrans.name())) 
+      end
 
-    if (exp_tx.htrans !== act_addr_tx.htrans) begin
-      `uvm_error("MISMATCH_HTRANS", $sformatf("HTRANS mismatch at addr %0h! Exp: %0s, Act: %0s", exp_tx.haddr, exp_tx.htrans.name(), act_addr_tx.htrans.name())) 
-    end
-
-    if (exp_tx.hsize !== act_addr_tx.hsize) begin
-      `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
-    end
-    if (exp_tx.hresp !== act_addr_tx.hresp) begin
-      `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+      if (exp_tx.hsize !== act_addr_tx.hsize) begin
+        `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+      end
+      if (exp_tx.hresp !== act_addr_tx.hresp) begin
+        `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+      end
     end
   end
   if (bresp_e_exp !== bresp_e_h) begin
@@ -442,7 +449,7 @@ function void x2h_scoreboard::compare_w(input queue_convert_w_axi2ahb expect_que
   end
 endfunction : compare_w
 
-function void x2h_scoreboard::compare_r(input queue_convert_r_axi2ahb expect_queue_r);
+function void x2h_scoreboard::compare_r(input queue_convert_r_axi2ahb expect_queue_r,input rresp_e rresp_e_h);
   ahb_slave_tx exp_tx;
   ahb_slave_tx act_addr_tx;
   ahb_slave_tx act_data_tx;
@@ -464,25 +471,31 @@ function void x2h_scoreboard::compare_r(input queue_convert_r_axi2ahb expect_que
       `uvm_error("COMPARE_R_FIFO_EMPTY", "Missing data in ahb_slave_data_phase_analysis_fifo!")
       return;
     end
+    if((act_data_tx.time_out_cnt > 32) || (act_addr_tx.time_out_cnt > 32)) begin
+      if(rresp_e_h != READ_SLVERR) begin
+        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0s, Act: READ_SLVERR", rresp_e_h))
+      end
+      break;
+    end else begin 
+      if (exp_tx.haddr !== act_addr_tx.haddr) begin
+        `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0h, Act: %0h", exp_tx.haddr, act_addr_tx.haddr))
+      end
 
-    if (exp_tx.haddr !== act_addr_tx.haddr) begin
-      `uvm_error("MISMATCH_HADDR", $sformatf("HADDR mismatch! Exp: %0h, Act: %0h", exp_tx.haddr, act_addr_tx.haddr))
-    end
+      if (exp_tx.hrdata !== act_data_tx.hrdata) begin
+        `uvm_error("MISMATCH_HRDATA", $sformatf("HRDATA mismatch at addr %0h! Exp: %0h, Act: %0h", exp_tx.haddr, exp_tx.hrdata, act_data_tx.hrdata))
+      end
 
-    if (exp_tx.hrdata !== act_data_tx.hrdata) begin
-      `uvm_error("MISMATCH_HRDATA", $sformatf("HRDATA mismatch at addr %0h! Exp: %0h, Act: %0h", exp_tx.haddr, exp_tx.hrdata, act_data_tx.hrdata))
-    end
+      if (exp_tx.hwrite !== act_addr_tx.hwrite) begin
+        `uvm_error("MISMATCH_HWRITE", $sformatf("HWRITE mismatch at addr %0h! Exp: %0b, Act: %0b", exp_tx.haddr, exp_tx.hwrite, act_addr_tx.hwrite))
+      end
 
-    if (exp_tx.hwrite !== act_addr_tx.hwrite) begin
-      `uvm_error("MISMATCH_HWRITE", $sformatf("HWRITE mismatch at addr %0h! Exp: %0b, Act: %0b", exp_tx.haddr, exp_tx.hwrite, act_addr_tx.hwrite))
-    end
+      if (exp_tx.htrans !== act_addr_tx.htrans) begin
+        `uvm_error("MISMATCH_HTRANS", $sformatf("HTRANS mismatch at addr %0h! Exp: %0s, Act: %0s", exp_tx.haddr, exp_tx.htrans.name(), act_addr_tx.htrans.name())) 
+      end
 
-    if (exp_tx.htrans !== act_addr_tx.htrans) begin
-      `uvm_error("MISMATCH_HTRANS", $sformatf("HTRANS mismatch at addr %0h! Exp: %0s, Act: %0s", exp_tx.haddr, exp_tx.htrans.name(), act_addr_tx.htrans.name())) 
-    end
-
-    if (exp_tx.hsize !== act_addr_tx.hsize) begin
-      `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+      if (exp_tx.hsize !== act_addr_tx.hsize) begin
+        `uvm_error("MISMATCH_HSIZE", $sformatf("HSIZE mismatch at addr %0h! Exp: %0d, Act: %0d", exp_tx.haddr, exp_tx.hsize, act_addr_tx.hsize))
+      end
     end
   end
 
