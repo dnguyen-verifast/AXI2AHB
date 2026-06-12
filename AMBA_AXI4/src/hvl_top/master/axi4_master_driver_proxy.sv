@@ -392,8 +392,9 @@ task axi4_master_driver_proxy::axi4_write_task();
       `uvm_info(get_type_name(), $sformatf("WRITE_TASK :: Out of fork_join : After await write_address.status()=%s",
                                             write_address_process.status()), UVM_FULL); 
     end
-    axi_write_seq_item_port.item_done();
     wr_item_obtained = 1;
+    axi_write_seq_item_port.item_done();
+    
   end
 endtask : axi4_write_task
 
@@ -545,8 +546,8 @@ task axi4_master_driver_proxy::axi4_read_task();
       `uvm_info(get_type_name(), $sformatf("READ_TASK :: Out of fork_join : After await read_addr.status()=%s ",
                                             read_addr_process.status()), UVM_FULL); 
     end
-    axi_read_seq_item_port.item_done();
     rd_item_obtained = 1;
+    axi_read_seq_item_port.item_done();
   end
 endtask : axi4_read_task
 
