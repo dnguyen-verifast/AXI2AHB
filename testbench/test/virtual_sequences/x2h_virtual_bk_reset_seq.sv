@@ -69,6 +69,12 @@ task x2h_virtual_bk_reset_seq::body();
   join_any
   axi4_master_bk_read_32b_transfer_seq_h.kill();
   disable fork;
+  // Reset may have aborted a driver while it was blocked inside get_next_item
+  // (empty req fifo) - the driver flag cleanup cannot item_done() that case.
+  // Reset both sequencers' handshake state so traffic restarts cleanly without
+  // "Get_next_item called twice without item_done".
+  p_sequencer.axi4_master_read_seqr_h.stop_sequences();
+  p_sequencer.ahb_slave_sequencer_h.stop_sequences();
   #20;
   axi4_master_bk_read_32b_transfer_seq_h = axi4_master_bk_read_32b_transfer_seq::type_id::create("axi4_master_bk_read_32b_transfer_seq_h");
   fork

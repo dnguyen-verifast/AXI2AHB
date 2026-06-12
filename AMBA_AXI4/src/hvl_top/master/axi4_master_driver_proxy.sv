@@ -46,12 +46,12 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Declaration of RSP handles
   RSP rsp_wr, rsp_rd;
 
-  //Variable: wr_in_progress, rd_in_progress
-  //Track whether a write/read item has been pulled (get_next_item) but not yet
-  //item_done'd, so a reset that aborts the task mid-item can close the dangling
-  //sequencer handshake and avoid "get_next_item called twice without item_done".
-  bit wr_in_progress;
-  bit rd_in_progress;
+  //Reset-safe handshake tracking. *_get_called marks get_next_item() entered
+  //(may still be blocked with an empty req fifo -> item_done would FATAL);
+  //*_item_obtained marks get_next_item() returned an item (req fifo HAS it ->
+  //item_done() is safe). On reset cleanup we only item_done() when obtained.
+  bit wr_get_called, wr_item_obtained;
+  bit rd_get_called, rd_item_obtained;
       
   //Variable: axi4_master_agent_cfg_h
   //Declaring handle for axi4_master agent config class 
@@ -164,17 +164,17 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     join_any
     disable fork;
 
-    // Reset aborted the drive tasks mid-item: close any dangling sequencer
-    // handshake so the next get_next_item after reset does not error with
-    // "Get_next_item called twice without item_done".
-    if (wr_in_progress) begin
+    // Reset aborted the drive tasks. Only close the handshake when an item was
+    // actually obtained (req fifo non-empty); calling item_done() while merely
+    // blocked inside get_next_item would FATAL "no outstanding requests".
+    if (wr_item_obtained) begin
       axi_write_seq_item_port.item_done();
-      wr_in_progress = 0;
     end
-    if (rd_in_progress) begin
+    if (rd_item_obtained) begin
       axi_read_seq_item_port.item_done();
-      rd_in_progress = 0;
     end
+    wr_item_obtained = 0; wr_get_called = 0;
+    rd_item_obtained = 0; rd_get_called = 0;
   end
 endtask : run_phase
 
@@ -190,8 +190,9 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_write_transfer_char_s struct_write_packet;
 
-    wr_in_progress = 1;
+    wr_get_called = 1;
     axi_write_seq_item_port.get_next_item(req_wr);
+    wr_item_obtained = 1;
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -394,7 +395,8 @@ task axi4_master_driver_proxy::axi4_write_task();
     end
 
     axi_write_seq_item_port.item_done();
-    wr_in_progress = 0;
+    wr_item_obtained = 0;
+    wr_get_called    = 0;
   end
 endtask : axi4_write_task
 
@@ -410,8 +412,9 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
-    rd_in_progress = 1;
+    rd_get_called = 1;
     axi_read_seq_item_port.get_next_item(req_rd);
+    rd_item_obtained = 1;
     `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -547,7 +550,8 @@ task axi4_master_driver_proxy::axi4_read_task();
     end
 
     axi_read_seq_item_port.item_done();
-    rd_in_progress = 0;
+    rd_item_obtained = 0;
+    rd_get_called    = 0;
   end
 endtask : axi4_read_task
 
