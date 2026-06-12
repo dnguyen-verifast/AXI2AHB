@@ -34,6 +34,10 @@ interface ahb_if(input clk, input resetn);
 
     assign hready = hreadyout;
 
+    property p_signal_when_resetn;
+        @(posedge clk) (resetn == 1'b0) |-> (haddr == 0) && (hburst == 0);
+    endproperty : p_signal_when_resetn
+
     property signal_always_valid;
         @(posedge clk) disable iff(!resetn) 
         (!$isunknown(htrans)) && (!$isunknown(haddr)) && (!$isunknown(hmastlock)) && (!$isunknown(hreadyout)) && (!$isunknown(hresp));

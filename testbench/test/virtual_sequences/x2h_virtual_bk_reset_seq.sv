@@ -49,9 +49,10 @@ task x2h_virtual_bk_reset_seq::body();
 
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside x2h_virtual_bk_reset_seq"), UVM_NONE); 
 
-  fork 
+  fork
     begin : T1_SL_RESET
       forever begin
+        ahb_slave_bk_reset_seq_h = ahb_slave_bk_reset_seq::type_id::create("ahb_slave_bk_reset_seq_h");
         ahb_slave_bk_reset_seq_h.start(p_sequencer.ahb_slave_sequencer_h);
       end
     end
@@ -68,11 +69,16 @@ task x2h_virtual_bk_reset_seq::body();
   join_any
   axi4_master_bk_read_32b_transfer_seq_h.kill();
   disable fork;
+  // Reset left the driver's get_next_item dangling (item_done never called);
+  // flush the sequencer handshake before restarting traffic to avoid
+  // "Get_next_item called twice without item_done".
+  p_sequencer.axi4_master_read_seqr_h.stop_sequences();
   #20;
   axi4_master_bk_read_32b_transfer_seq_h = axi4_master_bk_read_32b_transfer_seq::type_id::create("axi4_master_bk_read_32b_transfer_seq_h");
-  fork 
+  fork
     begin : T2_SL_RESET
       forever begin
+        ahb_slave_bk_reset_seq_h = ahb_slave_bk_reset_seq::type_id::create("ahb_slave_bk_reset_seq_h");
         ahb_slave_bk_reset_seq_h.start(p_sequencer.ahb_slave_sequencer_h);
       end
     end
