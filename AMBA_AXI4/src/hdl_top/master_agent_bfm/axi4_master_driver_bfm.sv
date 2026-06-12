@@ -95,11 +95,42 @@ interface axi4_master_driver_bfm(input bit                      aclk,
     `uvm_info(name,$sformatf("WAITING SYSTEM RESET DETECTED"),UVM_LOW)
     @(negedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DETECTED"),UVM_LOW)
-    awvalid <= 1'b0;
-    wvalid  <= 1'b0;
-    bready  <= 1'b0;
-    arvalid <= 1'b0;
-    rready  <= 1'b0;
+        awid     <= 0;
+        awaddr   <= 0;
+        awlen    <= 0;
+        awsize   <= 0;
+        awburst  <= 0;
+        awlock   <= 0;
+        awcache  <= 0;
+        awprot   <= 0;
+        awqos    <= 0;
+        awregion <= 0;
+        awuser   <= 0;
+        awvalid  <= 0;
+
+        wdata    <= 0;
+        wstrb    <= 0;
+        wlast    <= 0;
+        wuser    <= 0;
+        wvalid   <= 0;
+
+        bready   <= 0;
+
+        arid     <= 0;
+        araddr   <= 0;
+        arlen    <= 0;
+        arsize   <= 0;
+        arburst  <= 0;
+        arlock   <= 0;
+        arcache  <= 0;
+        arprot   <= 0;
+        arqos    <= 0;
+        arregion <= 0;
+        aruser   <= 0;
+        arvalid  <= 0;
+        
+        rready   <= 0;
+
     @(posedge aresetn);
     `uvm_info(name,$sformatf("SYSTEM RESET DEACTIVATED"),UVM_LOW)
   endtask : wait_for_aresetn
