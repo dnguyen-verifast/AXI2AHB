@@ -74,6 +74,7 @@ task ahb_slave_driver::run_phase(uvm_phase phase);
             end
             begin : reset_phase
                @(negedge ahb_if_h.resetn);
+               pipeline_q.flush();
             end
         join_any
         // Reset aborted wr_data_phase. Only close the handshake when an item was
