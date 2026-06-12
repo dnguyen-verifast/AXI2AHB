@@ -11,6 +11,11 @@ class ahb_slave_driver extends uvm_driver#(ahb_slave_tx);
     REQ req_write, req_read;
     RSP rsp_write, rsp_read;
 
+    //Tracks whether a data-phase item has been pulled (get_next_item) but not yet
+    //item_done'd, so a reset that aborts wr_data_phase mid-item can close the
+    //dangling handshake and avoid "Get_next_item called twice without item_done".
+    bit data_in_progress;
+
     virtual ahb_if ahb_if_h;
 
     ahb_slave_config ahb_slave_config_h;
@@ -67,7 +72,15 @@ task ahb_slave_driver::run_phase(uvm_phase phase);
                @(negedge ahb_if_h.resetn);
             end
         join_any
-        disable fork; 
+        disable fork;
+
+        // Reset aborted wr_data_phase mid-item: close any dangling sequencer
+        // handshake so the next get_next_item after reset does not error with
+        // "Get_next_item called twice without item_done".
+        if (data_in_progress) begin
+            ahb_slave_seq_item_port.item_done();
+            data_in_progress = 0;
+        end
     end
 
 endtask : run_phase
@@ -125,6 +138,7 @@ task ahb_slave_driver::wr_data_phase();
             @(posedge ahb_if_h.clk);
         end else begin
             ahb_slave_seq_item_port.get_next_item(slv_data_tx);
+            data_in_progress = 1;
             `uvm_info(get_type_name(),$sformatf("ADDRESS PHASE::Before Sending_req_write_packet = \n %s",slv_data_tx.sprint()),UVM_HIGH);
             ahb_slave_seq_item_converter::from_class(slv_data_tx,slv_data_struct);
             if(slv_addr_phase.hwrite == HWRITE_WRITE) begin
@@ -238,6 +252,7 @@ task ahb_slave_driver::wr_data_phase();
                 end
             end
             ahb_slave_seq_item_port.item_done();
+            data_in_progress = 0;
         end
     end
 endtask : wr_data_phase
