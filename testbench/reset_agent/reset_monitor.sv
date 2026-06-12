@@ -35,8 +35,9 @@ endfunction: end_of_elaboration_phase
 task reset_monitor::run_phase(uvm_phase phase);
     uvm_event reset_ev = uvm_event_pool::get_global("RESET_EVENT");
     forever begin
-        @(negedge reset_if_h.rst_n); // Monitor là người nhìn ngó phần cứng
-        reset_ev.trigger();    // Phát loa thông báo cho toàn testbench!
+        @(negedge reset_if_h.rst_n);
+        @(posedge reset_if_h.clk); 
+        reset_ev.trigger();
         @(posedge reset_if_h.rst_n);
     end
 endtask : run_phase
