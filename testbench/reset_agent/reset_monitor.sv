@@ -36,7 +36,6 @@ task reset_monitor::run_phase(uvm_phase phase);
     uvm_event reset_ev = uvm_event_pool::get_global("RESET_EVENT");
     forever begin
         @(negedge reset_if_h.rst_n);
-        @(posedge reset_if_h.clk); 
         reset_ev.trigger();
         @(posedge reset_if_h.rst_n);
     end
