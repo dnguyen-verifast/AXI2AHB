@@ -153,10 +153,10 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
   forever begin
     fork
       begin
-        fork 
           axi4_write_task();
+      end
+      begin
           axi4_read_task();
-        join
       end
       begin
         axi4_master_drv_bfm_h.wait_for_aresetn();
