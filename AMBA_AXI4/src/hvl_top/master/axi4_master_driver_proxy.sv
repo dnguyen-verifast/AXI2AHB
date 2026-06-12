@@ -162,19 +162,16 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
         axi4_master_drv_bfm_h.wait_for_aresetn();
       end
     join_any
-    disable fork;
-
     // Reset aborted the drive tasks. Only close the handshake when an item was
     // actually obtained (req fifo non-empty); calling item_done() while merely
     // blocked inside get_next_item would FATAL "no outstanding requests".
-    if (wr_item_obtained) begin
+    if (wr_get_called) begin
       axi_write_seq_item_port.item_done();
     end
-    if (rd_item_obtained) begin
+    if (rd_get_called) begin
       axi_read_seq_item_port.item_done();
     end
-    wr_item_obtained = 0; wr_get_called = 0;
-    rd_item_obtained = 0; rd_get_called = 0;
+    disable fork;
   end
 endtask : run_phase
 
@@ -190,9 +187,9 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_write_transfer_char_s struct_write_packet;
 
-    wr_get_called = 1;
+    wr_get_called = 0;
     axi_write_seq_item_port.get_next_item(req_wr);
-    wr_item_obtained = 1;
+    wr_get_called = 1;
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -395,8 +392,6 @@ task axi4_master_driver_proxy::axi4_write_task();
     end
 
     axi_write_seq_item_port.item_done();
-    wr_item_obtained = 0;
-    wr_get_called    = 0;
   end
 endtask : axi4_write_task
 
@@ -412,9 +407,9 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
-    rd_get_called = 1;
+    rd_get_called = 0;
     axi_read_seq_item_port.get_next_item(req_rd);
-    rd_item_obtained = 1;
+    rd_get_called = 1;
     `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -548,10 +543,7 @@ task axi4_master_driver_proxy::axi4_read_task();
       `uvm_info(get_type_name(), $sformatf("READ_TASK :: Out of fork_join : After await read_addr.status()=%s ",
                                             read_addr_process.status()), UVM_FULL); 
     end
-
     axi_read_seq_item_port.item_done();
-    rd_item_obtained = 0;
-    rd_get_called    = 0;
   end
 endtask : axi4_read_task
 

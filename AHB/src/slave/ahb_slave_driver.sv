@@ -17,7 +17,7 @@ class ahb_slave_driver extends uvm_driver#(ahb_slave_tx);
     // data_item_obtained : get_next_item() returned an item (req fifo HAS it ->
     //                      item_done() is safe).
     //On reset cleanup we only call item_done() when an item was truly obtained.
-    bit data_get_called;
+    bit data_get_called = 0;
     bit data_item_obtained;
 
     virtual ahb_if ahb_if_h;
@@ -76,16 +76,13 @@ task ahb_slave_driver::run_phase(uvm_phase phase);
                @(negedge ahb_if_h.resetn);
             end
         join_any
-        disable fork;
-
         // Reset aborted wr_data_phase. Only close the handshake when an item was
         // actually obtained (req fifo non-empty); calling item_done() while merely
         // blocked inside get_next_item would FATAL "no outstanding requests".
-        if (data_item_obtained) begin
+        if (data_get_called) begin
             ahb_slave_seq_item_port.item_done();
         end
-        data_item_obtained = 0;
-        data_get_called    = 0;
+        disable fork;
     end
 
 endtask : run_phase
@@ -142,9 +139,8 @@ task ahb_slave_driver::wr_data_phase();
             `uvm_info(get_type_name(),$sformatf("Trans ilde or busy ignore"),UVM_NONE);
             @(posedge ahb_if_h.clk);
         end else begin
-            data_get_called = 1;
             ahb_slave_seq_item_port.get_next_item(slv_data_tx);
-            data_item_obtained = 1;
+            data_get_called = 1;
             `uvm_info(get_type_name(),$sformatf("ADDRESS PHASE::Before Sending_req_write_packet = \n %s",slv_data_tx.sprint()),UVM_HIGH);
             ahb_slave_seq_item_converter::from_class(slv_data_tx,slv_data_struct);
             if(slv_addr_phase.hwrite == HWRITE_WRITE) begin
@@ -258,7 +254,6 @@ task ahb_slave_driver::wr_data_phase();
                 end
             end
             ahb_slave_seq_item_port.item_done();
-            data_item_obtained = 0;
             data_get_called = 0;
         end
     end
