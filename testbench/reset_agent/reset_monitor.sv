@@ -19,7 +19,7 @@ endfunction : new
 
 function void reset_monitor::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db #(virtual reset_if)::get(this,"","reset_if",reset_if_h)) begin
+    if(!uvm_config_db #(virtual reset_if)::get(this,"","rst_vif",reset_if_h)) begin
         `uvm_fatal("MONITOR_slave","Dont get interface reset_if_h");
     end
 endfunction :build_phase
