@@ -3,6 +3,7 @@ class reset_agent extends uvm_agent;
 
   reset_sequencer rst_sqr;
   reset_driver    rst_drv;
+  reset_monitor reset_monitor_h;
 
   function new(string name, uvm_component parent);
     super.new(name, parent);
@@ -12,6 +13,7 @@ class reset_agent extends uvm_agent;
     super.build_phase(phase);
       rst_sqr = reset_sequencer::type_id::create("rst_sqr", this);
       rst_drv = reset_driver::type_id::create("rst_drv", this);
+      reset_monitor_h = reset_monitor::type_id::create("reset_monitor_h",this);
   endfunction
 
   function void connect_phase(uvm_phase phase);

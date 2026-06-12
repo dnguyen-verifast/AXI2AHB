@@ -72,11 +72,14 @@ class x2h_scoreboard extends uvm_scoreboard;
   //slave tx count
   int axi4_slave_tx_rresp_count;
 
-    semaphore write_address_key;
-    semaphore write_data_key;
-    semaphore write_response_key;
-    semaphore read_address_key;
-    semaphore read_data_key;
+  semaphore write_address_key;
+  semaphore write_data_key;
+  semaphore write_response_key;
+  semaphore read_address_key;
+  semaphore read_data_key;
+
+  bit flag_write;
+  bit flag_read;
 
     //-------------------------------------------------------
     // Externally defined Tasks and Functions
@@ -176,14 +179,27 @@ endfunction : start_of_simulation_phase
 //  phase - uvm phase
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::run_phase(uvm_phase phase);
-
   super.run_phase(phase);
-
+  uvm_event reset_ev = uvm_event_pool::get_global("RESET_EVENT");
   fork
     predict_result_write_axi2ahb();
     predict_result_read_axi2ahb();
-  join
+  join_none
 
+  forever begin
+    reset_ev.wait_trigger();
+    `uvm_info("SB", "Reset valid!", UVM_LOW)
+    axi4_master_write_address_analysis_fifo.flush();
+    axi4_master_write_data_analysis_fifo.flush();
+    axi4_master_write_response_analysis_fifo.flush();
+    axi4_master_read_address_analysis_fifo.flush();
+    axi4_master_read_data_analysis_fifo.flush(); 
+    ahb_slave_data_phase_analysis_fifo.flush();
+    ahb_slave_addr_phase_analysis_fifo.flush();
+    ahb_data_phase_analysis_fifo_expect.flush();
+    if(flag_write == 1)  write_address_key.put(1);
+    if(flag_read == 1)   write_response_key.put(1); 
+  end
 endtask : run_phase
 
 //--------------------------------------------------------------------------------------------
@@ -194,6 +210,7 @@ task x2h_scoreboard::predict_result_write_axi2ahb();
   forever begin
     queue_convert_w_axi2ahb expect_queue_w;
     write_address_key.get(1);
+    flag_write = 1;
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_address_channel \n%s",axi4_master_tx_h1.sprint()),UVM_HIGH)
     axi4_master_write_data_analysis_fifo.get(axi4_master_tx_h2);
@@ -212,6 +229,7 @@ task x2h_scoreboard::predict_result_write_axi2ahb();
     axi4_master_tx_bresp_count++;
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_write_response_channel count \n %0d",axi4_master_tx_bresp_count),UVM_HIGH)
     write_address_key.put(1);
+    flag_write = 0;
   end
 
 endtask : predict_result_write_axi2ahb
@@ -224,6 +242,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
   forever begin
     queue_convert_r_axi2ahb expect_queue_r;
     write_response_key.get(1);
+    flag_read = 1; 
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
@@ -239,7 +258,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
     axi4_master_tx_rresp_count++;
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_response_channel count \n %0d",axi4_master_tx_rresp_count),UVM_HIGH)
     write_response_key.put(1);
-
+    flag_read = 0; 
   end
 
 endtask : predict_result_read_axi2ahb
