@@ -190,8 +190,8 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi4_transfer_cfg_s        struct_cfg;
     axi4_write_transfer_char_s struct_write_packet;
 
-    axi_write_seq_item_port.get_next_item(req_wr);
     wr_in_progress = 1;
+    axi_write_seq_item_port.get_next_item(req_wr);
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -410,8 +410,8 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
-    axi_read_seq_item_port.get_next_item(req_rd);
     rd_in_progress = 1;
+    axi_read_seq_item_port.get_next_item(req_rd);
     `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
