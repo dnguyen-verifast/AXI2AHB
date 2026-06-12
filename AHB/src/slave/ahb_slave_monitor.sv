@@ -59,9 +59,10 @@ task ahb_slave_monitor::run_phase(uvm_phase phase);
             end
             begin : reset_phase
                 @(negedge ahb_if_h.resetn);
-                pipeline_monitor_l.delete();
+                
             end
         join_any
+        pipeline_monitor_l.delete();
         disable fork; 
     end
 endtask : run_phase
