@@ -166,12 +166,12 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     // Reset aborted the drive tasks. Only close the handshake when an item was
     // actually obtained (req fifo non-empty); calling item_done() while merely
     // blocked inside get_next_item would FATAL "no outstanding requests".
-    if (wr_get_called == 1 && wr_item_obtained == 0) begin
-      axi_write_seq_item_port.item_done();
-    end
-    if (rd_get_called == 1 && rd_item_obtained == 0) begin
-      axi_read_seq_item_port.item_done();
-    end
+    // if (wr_get_called == 1 && wr_item_obtained == 0) begin
+    //   axi_write_seq_item_port.item_done();
+    // end
+    // if (rd_get_called == 1 && rd_item_obtained == 0) begin
+    //   axi_read_seq_item_port.item_done();
+    // end
   end
 endtask : run_phase
 

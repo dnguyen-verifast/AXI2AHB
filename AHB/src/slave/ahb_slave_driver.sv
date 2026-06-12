@@ -79,9 +79,9 @@ task ahb_slave_driver::run_phase(uvm_phase phase);
         // Reset aborted wr_data_phase. Only close the handshake when an item was
         // actually obtained (req fifo non-empty); calling item_done() while merely
         // blocked inside get_next_item would FATAL "no outstanding requests".
-        if (data_get_called) begin
-            ahb_slave_seq_item_port.item_done();
-        end
+        // if (data_get_called) begin
+        //     ahb_slave_seq_item_port.item_done();
+        // end
         disable fork;
     end
 
