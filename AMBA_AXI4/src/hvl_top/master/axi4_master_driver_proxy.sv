@@ -162,6 +162,7 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
         axi4_master_drv_bfm_h.wait_for_aresetn();
       end
     join_any
+    disable fork;
     // Reset aborted the drive tasks. Only close the handshake when an item was
     // actually obtained (req fifo non-empty); calling item_done() while merely
     // blocked inside get_next_item would FATAL "no outstanding requests".
@@ -171,7 +172,6 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     if (rd_get_called == 1 && rd_item_obtained == 0) begin
       axi_read_seq_item_port.item_done();
     end
-    disable fork;
   end
 endtask : run_phase
 
