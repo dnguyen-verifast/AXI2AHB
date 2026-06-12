@@ -45,6 +45,13 @@ class axi4_master_driver_proxy extends uvm_driver#(axi4_master_tx);
   //Variable: rsp_wr, rsp_rd
   //Declaration of RSP handles
   RSP rsp_wr, rsp_rd;
+
+  //Variable: wr_in_progress, rd_in_progress
+  //Track whether a write/read item has been pulled (get_next_item) but not yet
+  //item_done'd, so a reset that aborts the task mid-item can close the dangling
+  //sequencer handshake and avoid "get_next_item called twice without item_done".
+  bit wr_in_progress;
+  bit rd_in_progress;
       
   //Variable: axi4_master_agent_cfg_h
   //Declaring handle for axi4_master agent config class 
@@ -156,6 +163,18 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
       end
     join_any
     disable fork;
+
+    // Reset aborted the drive tasks mid-item: close any dangling sequencer
+    // handshake so the next get_next_item after reset does not error with
+    // "Get_next_item called twice without item_done".
+    if (wr_in_progress) begin
+      axi_write_seq_item_port.item_done();
+      wr_in_progress = 0;
+    end
+    if (rd_in_progress) begin
+      axi_read_seq_item_port.item_done();
+      rd_in_progress = 0;
+    end
   end
 endtask : run_phase
 
@@ -172,7 +191,8 @@ task axi4_master_driver_proxy::axi4_write_task();
     axi4_write_transfer_char_s struct_write_packet;
 
     axi_write_seq_item_port.get_next_item(req_wr);
-    `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE); 
+    wr_in_progress = 1;
+    `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
@@ -374,6 +394,7 @@ task axi4_master_driver_proxy::axi4_write_task();
     end
 
     axi_write_seq_item_port.item_done();
+    wr_in_progress = 0;
   end
 endtask : axi4_write_task
 
@@ -390,7 +411,8 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi4_transfer_cfg_s       struct_cfg;
 
     axi_read_seq_item_port.get_next_item(req_rd);
-    `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE); 
+    rd_in_progress = 1;
+    `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
     axi4_master_cfg_converter::from_class(axi4_master_agent_cfg_h,struct_cfg);
@@ -525,6 +547,7 @@ task axi4_master_driver_proxy::axi4_read_task();
     end
 
     axi_read_seq_item_port.item_done();
+    rd_in_progress = 0;
   end
 endtask : axi4_read_task
 
