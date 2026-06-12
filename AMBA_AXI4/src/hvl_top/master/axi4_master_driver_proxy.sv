@@ -165,7 +165,7 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     // Reset aborted the drive tasks. Only close the handshake when an item was
     // actually obtained (req fifo non-empty); calling item_done() while merely
     // blocked inside get_next_item would FATAL "no outstanding requests".
-    if (wr_get_called) begin
+    if (wr_get_called == 1 && wr_item_obtained == 0) begin
       axi_write_seq_item_port.item_done();
     end
     if (rd_get_called == 1 && rd_item_obtained == 0) begin
@@ -190,6 +190,8 @@ task axi4_master_driver_proxy::axi4_write_task();
     wr_get_called = 0;
     axi_write_seq_item_port.get_next_item(req_wr);
     wr_get_called = 1;
+    wr_item_obtained = 0;
+
     `uvm_info(get_type_name(),$sformatf("WRITE_TASK::Before Sending_req_write_packet = \n %s",req_wr.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -390,8 +392,8 @@ task axi4_master_driver_proxy::axi4_write_task();
       `uvm_info(get_type_name(), $sformatf("WRITE_TASK :: Out of fork_join : After await write_address.status()=%s",
                                             write_address_process.status()), UVM_FULL); 
     end
-
     axi_write_seq_item_port.item_done();
+    wr_item_obtained = 1;
   end
 endtask : axi4_write_task
 
