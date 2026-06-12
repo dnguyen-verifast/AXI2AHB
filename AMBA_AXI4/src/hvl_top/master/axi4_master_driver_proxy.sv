@@ -407,8 +407,8 @@ task axi4_master_driver_proxy::axi4_read_task();
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
 
-    rd_get_called = 1;
     axi_read_seq_item_port.get_next_item(req_rd);
+    rd_get_called = 1;
     `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
