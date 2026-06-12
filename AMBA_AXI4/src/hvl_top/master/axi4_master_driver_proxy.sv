@@ -168,7 +168,7 @@ task axi4_master_driver_proxy::run_phase(uvm_phase phase);
     if (wr_get_called) begin
       axi_write_seq_item_port.item_done();
     end
-    if (rd_get_called) begin
+    if (rd_get_called == 1 && rd_item_obtained == 0) begin
       axi_read_seq_item_port.item_done();
     end
     disable fork;
@@ -406,9 +406,10 @@ task axi4_master_driver_proxy::axi4_read_task();
     //axi4_master_tx local_master_read_tx;
     axi4_read_transfer_char_s struct_read_packet;
     axi4_transfer_cfg_s       struct_cfg;
-
+    rd_get_called = 0;
     axi_read_seq_item_port.get_next_item(req_rd);
     rd_get_called = 1;
+    rd_item_obtained = 0;
     `uvm_info(get_type_name(),$sformatf("READ_TASK:: Before Sending_req_read_packet = \n %s",req_rd.sprint()),UVM_NONE);
 
     //Converting configurations into struct config type
@@ -542,8 +543,8 @@ task axi4_master_driver_proxy::axi4_read_task();
       `uvm_info(get_type_name(), $sformatf("READ_TASK :: Out of fork_join : After await read_addr.status()=%s ",
                                             read_addr_process.status()), UVM_FULL); 
     end
-    rd_get_called = 0;
     axi_read_seq_item_port.item_done();
+    rd_item_obtained = 1;
   end
 endtask : axi4_read_task
 
