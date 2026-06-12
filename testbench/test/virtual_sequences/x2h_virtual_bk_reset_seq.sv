@@ -59,7 +59,7 @@ task x2h_virtual_bk_reset_seq::body();
 
   fork 
     begin: T1_RESET
-    #120;
+    #100;
       axi4_master_bk_reset_seq_h.start(p_sequencer.reset_sequencer_h);
     end
     begin : T2_RESET
@@ -70,6 +70,13 @@ task x2h_virtual_bk_reset_seq::body();
   disable fork;
   #20;
   axi4_master_bk_read_32b_transfer_seq_h = axi4_master_bk_read_32b_transfer_seq::type_id::create("axi4_master_bk_read_32b_transfer_seq_h");
+  fork 
+    begin : T2_SL_RESET
+      forever begin
+        ahb_slave_bk_reset_seq_h.start(p_sequencer.ahb_slave_sequencer_h);
+      end
+    end
+  join_none
   axi4_master_bk_read_32b_transfer_seq_h.start(p_sequencer.axi4_master_read_seqr_h);
 
 endtask : body
