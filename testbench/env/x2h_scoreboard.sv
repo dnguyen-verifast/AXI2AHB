@@ -81,6 +81,7 @@ class x2h_scoreboard extends uvm_scoreboard;
   bit flag_write;
   bit flag_read;
 
+  uvm_event reset_ev;
     //-------------------------------------------------------
     // Externally defined Tasks and Functions
     //-------------------------------------------------------
@@ -148,6 +149,7 @@ endfunction : build_phase
 //--------------------------------------------------------------------------------------------
 function void x2h_scoreboard::connect_phase(uvm_phase phase);
   super.connect_phase(phase);
+  reset_ev = uvm_event_pool::get_global("RESET_EVENT");
 endfunction : connect_phase
 
 //--------------------------------------------------------------------------------------------
@@ -180,13 +182,11 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::run_phase(uvm_phase phase);
   super.run_phase(phase);
-  uvm_event reset_ev = uvm_event_pool::get_global("RESET_EVENT");
+  forever begin
   fork
     predict_result_write_axi2ahb();
     predict_result_read_axi2ahb();
   join_none
-
-  forever begin
     reset_ev.wait_trigger();
     `uvm_info("SB", "Reset valid!", UVM_LOW)
     axi4_master_write_address_analysis_fifo.flush();
