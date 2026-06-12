@@ -33,18 +33,6 @@ interface ahb_if(input clk, input resetn);
     logic                       hready;
 
     assign hready = hreadyout;
-ahb_if_h.haddr     <= '0;
-    ahb_if_h.hburst    <= '0;
-    ahb_if_h.hmastlock <= '0;
-    ahb_if_h.hprot     <= '0;
-    ahb_if_h.hsize     <= '0;
-    ahb_if_h.hnonsec   <= '0;
-    ahb_if_h.hexcl     <= '0;
-    ahb_if_h.hmaster   <= '0;
-    ahb_if_h.htrans    <= '0;
-    ahb_if_h.hwdata    <= '0;
-    ahb_if_h.hwstrb    <= '0;
-    ahb_if_h.hwrite    <= '0;
     property p_signal_when_resetn;
         @(posedge clk) (resetn == 1'b0) |-> (haddr == 0) && (hburst == 0) && (hsize == 0) && (htrans == 0);
     endproperty : p_signal_when_resetn
