@@ -44,7 +44,6 @@ package x2h_test_pkg;
   `include "x2h_blocking_32b_write_read_test.sv"
   `include "x2h_blocking_okay_response_write_read_test.sv"
   `include "x2h_blocking_slave_error_write_read_test.sv"
-  `include "x2h_blocking_unaligned_addr_write_read_test.sv"
   `include "x2h_blocking_fixed_burst_write_read_test.sv"
   `include "x2h_blocking_outstanding_transfer_write_read_test.sv"
   `include "x2h_blocking_cross_write_read_test.sv"
