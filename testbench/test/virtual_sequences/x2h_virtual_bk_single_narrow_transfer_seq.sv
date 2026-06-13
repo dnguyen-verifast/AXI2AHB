@@ -37,13 +37,13 @@ endfunction : new
 task x2h_virtual_bk_single_narrow_transfer_seq::body();
 
   axi4_master_bk_single_narrow_transfer_h = axi4_master_bk_single_narrow_transfer::type_id::create("axi4_master_bk_single_narrow_transfer_h");
-  ahb_slave_bk_single_narrow_transfer = ahb_slave_bk_write_unaligned_addr_seq::type_id::create("ahb_slave_bk_single_narrow_transfer");
+  ahb_slave_bk_single_narrow_transfer_h = ahb_slave_bk_single_narrow_transfer::type_id::create("ahb_slave_bk_single_narrow_transfer_h");
 
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside x2h_virtual_bk_single_narrow_transfer_seq"), UVM_NONE); 
 
   fork 
       forever begin
-        ahb_slave_bk_single_narrow_transfer.start(p_sequencer.ahb_slave_sequencer_h);
+        ahb_slave_bk_single_narrow_transfer_h.start(p_sequencer.ahb_slave_sequencer_h);
       end
   join_none
 
