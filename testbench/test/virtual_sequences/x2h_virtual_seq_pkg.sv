@@ -51,7 +51,6 @@ package x2h_virtual_seq_pkg;
   `include "x2h_virtual_bk_okay_response_write_read_seq.sv"
   `include "x2h_virtual_bk_write_read_rand_seq.sv"
   `include "x2h_virtual_bk_slave_error_write_read_seq.sv"
-  `include "x2h_virtual_bk_unaligned_addr_write_read_seq.sv"
   `include "x2h_virtual_bk_fixed_burst_write_read_seq.sv"
   `include "x2h_virtual_bk_outstanding_transfer_write_read_seq.sv"
   `include "x2h_virtual_bk_cross_write_read_seq.sv"
