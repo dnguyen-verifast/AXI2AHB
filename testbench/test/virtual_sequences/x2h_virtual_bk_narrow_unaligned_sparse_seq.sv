@@ -1,12 +1,12 @@
-`ifndef X2H_VIRTUAL_BK_UNALIGNED_ADDR_WRITE_READ_SEQ_INCLUDED_
-`define X2H_VIRTUAL_BK_UNALIGNED_ADDR_WRITE_READ_SEQ_INCLUDED_
+`ifndef x2h_virtual_bk_narrow_unaligned_sparse_seq_INCLUDED_
+`define x2h_virtual_bk_narrow_unaligned_sparse_seq_INCLUDED_
 
 //--------------------------------------------------------------------------------------------
-// Class: x2h_virtual_bk_unaligned_addr_write_read_seq
+// Class: x2h_virtual_bk_narrow_unaligned_sparse_seq
 // Creates and starts the master and slave sequences
 //--------------------------------------------------------------------------------------------
-class x2h_virtual_bk_unaligned_addr_write_read_seq extends x2h_virtual_base_seq;
-  `uvm_object_utils(x2h_virtual_bk_unaligned_addr_write_read_seq)
+class x2h_virtual_bk_narrow_unaligned_sparse_seq extends x2h_virtual_base_seq;
+  `uvm_object_utils(x2h_virtual_bk_narrow_unaligned_sparse_seq)
 
   //Variable: axi4_master_write_unaligned_addr_seq_h
   //Instantiation of axi4_master_write_unaligned_addr_seq handle
@@ -27,9 +27,9 @@ class x2h_virtual_bk_unaligned_addr_write_read_seq extends x2h_virtual_base_seq;
   //-------------------------------------------------------
   // Externally defined Tasks and Functions
   //-------------------------------------------------------
-  extern function new(string name = "x2h_virtual_bk_unaligned_addr_write_read_seq");
+  extern function new(string name = "x2h_virtual_bk_narrow_unaligned_sparse_seq");
   extern task body();
-endclass : x2h_virtual_bk_unaligned_addr_write_read_seq
+endclass : x2h_virtual_bk_narrow_unaligned_sparse_seq
 
 //--------------------------------------------------------------------------------------------
 // Construct: new
@@ -38,7 +38,7 @@ endclass : x2h_virtual_bk_unaligned_addr_write_read_seq
 // Parameters:
 //  name - axi4_virtual_bk_maximum_write_read_seq
 //--------------------------------------------------------------------------------------------
-function x2h_virtual_bk_unaligned_addr_write_read_seq::new(string name = "x2h_virtual_bk_unaligned_addr_write_read_seq");
+function x2h_virtual_bk_narrow_unaligned_sparse_seq::new(string name = "x2h_virtual_bk_narrow_unaligned_sparse_seq");
   super.new(name);
 endfunction : new
 
@@ -46,14 +46,14 @@ endfunction : new
 // Task - body
 // Creates and starts the data of master and slave sequences
 //--------------------------------------------------------------------------------------------
-task x2h_virtual_bk_unaligned_addr_write_read_seq::body();
+task x2h_virtual_bk_narrow_unaligned_sparse_seq::body();
   axi4_master_bk_write_unaligned_addr_seq_h = axi4_master_bk_write_unaligned_addr_seq::type_id::create("axi4_master_bk_write_unaligned_addr_seq_h");
 
   axi4_master_bk_read_unaligned_addr_seq_h = axi4_master_bk_read_unaligned_addr_seq::type_id::create("axi4_master_bk_read_unaligned_addr_seq_h");
   ahb_slave_bk_write_unaligned_addr_seq_h = ahb_slave_bk_write_unaligned_addr_seq::type_id::create("ahb_slave_bk_write_unaligned_addr_seq_h");
 
   ahb_slave_bk_read_unaligned_addr_seq_h = ahb_slave_bk_read_unaligned_addr_seq::type_id::create("ahb_slave_bk_read_unaligned_addr_seq_h");
-  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside x2h_virtual_bk_unaligned_addr_write_read_seq"), UVM_NONE); 
+  `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: Inside x2h_virtual_bk_narrow_unaligned_sparse_seq"), UVM_NONE); 
 
   fork 
       forever begin

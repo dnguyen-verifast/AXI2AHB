@@ -67,6 +67,8 @@ package x2h_test_pkg;
   `include "x2h_blocking_back_to_back_write_read_test.sv"
   `include "x2h_blocking_hprot_privileged_data_test.sv"
   
+  `include "x2h_blocking_single_narrow_transfer_test.sv"
+  `include "x2h_blocking_unaligned_addr_read_test.sv"
   // `include "x2h_non_blocking_8b_write_data_test.sv"
   // `include "x2h_non_blocking_16b_write_data_test.sv"
   // `include "x2h_non_blocking_32b_write_data_test.sv"

@@ -34,12 +34,12 @@ task axi4_master_bk_read_unaligned_addr_seq::body();
   super.body();
   req.transfer_type=BLOCKING_READ;
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: BEFORE axi4_master_bk_read_unaligned_addr_seq"), UVM_NONE); 
-
+  repeat(10) begin
   start_item(req);
   if(!req.randomize() with {req.araddr % 4 !=0;
-                             // req.arsize == READ_2_BYTES;
+                              req.arsize == READ_4_BYTES;
                               req.tx_type == READ;
-                              req.arburst == READ_FIXED;
+                              req.arlen   <= 15;
                               req.transfer_type == BLOCKING_READ;}) begin
     `uvm_fatal("axi4","Rand failed");
   end
@@ -47,7 +47,7 @@ task axi4_master_bk_read_unaligned_addr_seq::body();
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: master_seq \n%s",req.sprint()), UVM_NONE); 
   finish_item(req);
   `uvm_info(get_type_name(), $sformatf("DEBUG_MSHA :: AFTER axi4_master_bk_read_unaligned_addr_seq"), UVM_NONE); 
-
+  end
 endtask : body
 
 `endif

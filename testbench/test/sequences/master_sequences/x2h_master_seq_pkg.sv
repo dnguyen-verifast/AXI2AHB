@@ -70,6 +70,7 @@ package x2h_master_seq_pkg;
   `include "axi4_master_bk_hprot_privileged_data_seq.sv"
   `include "axi4_master_bk_reset_seq.sv"
   `include "axi4_master_bk_back_to_back_write_read_seq.sv"
+  `include "axi4_master_bk_single_narrow_transfer.sv"
 
   `include "axi4_master_nbk_write_8b_transfer_seq.sv"
   `include "axi4_master_nbk_write_16b_transfer_seq.sv"

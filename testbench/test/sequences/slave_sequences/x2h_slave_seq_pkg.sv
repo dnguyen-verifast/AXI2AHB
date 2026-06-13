@@ -66,6 +66,7 @@ package x2h_slave_seq_pkg;
   `include "ahb_slave_bk_reset_seq.sv"
   `include "ahb_slave_bk_back_to_back_write_read_seq.sv"
   `include "ahb_slave_bk_hprot_privileged_data_seq.sv"
+  `include "ahb_slave_bk_single_narrow_transfer.sv"
 
 
   // `include "ahb_slave_nbk_base_seq.sv"

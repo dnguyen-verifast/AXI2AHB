@@ -66,6 +66,9 @@ package x2h_virtual_seq_pkg;
   `include "x2h_virtual_bk_back_to_back_write_read_seq.sv"
   `include "x2h_virtual_bk_hprot_privileged_data_seq.sv"
 
+  `include "x2h_virtual_bk_narrow_unaligned_sparse_seq.sv"
+  `include "x2h_virtual_bk_single_narrow_transfer_seq.sv"
+  `include "x2h_virtual_bk_unaligned_addr_read_seq.sv"
 
 
   // `include "x2h_virtual_nbk_8b_write_data_seq.sv"
