@@ -258,7 +258,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
     axi4_master_tx_rdata_count++;
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel count \n %0d",axi4_master_tx_rdata_count),UVM_HIGH)
     axi4_master_tx_rresp_count++;
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_response_channel count \n %0d",axi4_master_tx_rresp_count),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_response_channel count \n %0d",axi4_master_tx_rresp_count),UVM_LOW)
     write_response_key.put(1);
     flag_read = 0; 
   end
