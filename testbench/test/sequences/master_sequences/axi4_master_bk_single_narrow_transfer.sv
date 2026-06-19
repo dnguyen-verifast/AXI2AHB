@@ -38,7 +38,7 @@ task axi4_master_bk_single_narrow_transfer::body();
   repeat(5) begin
     start_item(req);
     if(!req.randomize() with {req.araddr % 4 !=0;
-                                req.arsize == READ_1_BYTES;
+                                req.arsize == READ_1_BYTE;
                                 req.tx_type == READ;
                                 req.arlen == 0;
                                 req.arburst == READ_INCR;
