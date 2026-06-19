@@ -82,6 +82,10 @@ class x2h_scoreboard extends uvm_scoreboard;
   bit flag_read;
 
   uvm_event reset_ev;
+  
+  queue_convert_w_axi2ahb expect_queue_w;
+  queue_convert_r_axi2ahb expect_queue_r;
+
     //-------------------------------------------------------
     // Externally defined Tasks and Functions
     //-------------------------------------------------------
@@ -208,7 +212,6 @@ endtask : run_phase
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::predict_result_write_axi2ahb();
   forever begin
-    queue_convert_w_axi2ahb expect_queue_w;
     write_address_key.get(1);
     flag_write = 1;
     axi4_master_write_address_analysis_fifo.get(axi4_master_tx_h1);
@@ -240,7 +243,6 @@ endtask : predict_result_write_axi2ahb
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::predict_result_read_axi2ahb();
   forever begin
-    queue_convert_r_axi2ahb expect_queue_r;
     write_response_key.get(1);
     flag_read = 1; 
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
