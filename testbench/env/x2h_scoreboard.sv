@@ -240,8 +240,8 @@ endtask : predict_result_write_axi2ahb
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::predict_result_read_axi2ahb();
   forever begin
-    queue_convert_r_axi2ahb expect_queue_r;
     write_response_key.get(1);
+    queue_convert_r_axi2ahb expect_queue_r;
     flag_read = 1; 
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_LOW)
