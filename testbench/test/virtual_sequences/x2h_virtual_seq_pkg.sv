@@ -64,6 +64,11 @@ package x2h_virtual_seq_pkg;
   `include "x2h_virtual_bk_reset_seq.sv"
   `include "x2h_virtual_bk_back_to_back_write_read_seq.sv"
   `include "x2h_virtual_bk_hprot_privileged_data_seq.sv"
+  `include "x2h_virtual_bk_illegal_axsize_slverr_seq.sv"
+  `include "x2h_virtual_bk_1kb_cross_wrap_seq.sv"
+  `include "x2h_virtual_bk_outstanding_same_id_inorder_seq.sv"
+  `include "x2h_virtual_bk_outstanding_write_data_before_addr_seq.sv"
+  `include "x2h_virtual_bk_hprot_all_encodings_seq.sv"
 
   `include "x2h_virtual_bk_narrow_unaligned_sparse_seq.sv"
   `include "x2h_virtual_bk_single_narrow_transfer_seq.sv"

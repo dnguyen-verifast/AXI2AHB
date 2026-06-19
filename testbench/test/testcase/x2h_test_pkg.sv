@@ -68,6 +68,11 @@ package x2h_test_pkg;
   
   `include "x2h_blocking_single_narrow_transfer_test.sv"
   `include "x2h_blocking_unaligned_addr_read_test.sv"
+  `include "x2h_blocking_illegal_axsize_slverr_test.sv"
+  `include "x2h_blocking_1kb_cross_wrap_test.sv"
+  `include "x2h_outstanding_same_id_inorder_test.sv"
+  `include "x2h_outstanding_write_data_before_addr_test.sv"
+  `include "x2h_hprot_all_encodings_test.sv"
   // `include "x2h_non_blocking_8b_write_data_test.sv"
   // `include "x2h_non_blocking_16b_write_data_test.sv"
   // `include "x2h_non_blocking_32b_write_data_test.sv"
