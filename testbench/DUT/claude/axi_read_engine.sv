@@ -229,7 +229,11 @@ module axi_read_engine #(
         RS_IDLE: begin
           if (!arc_empty) begin
             cur_id     <= arc_dout.id;
-            cur_addr   <= arc_dout.addr;
+            // Align the first-beat address to the transfer size on the AHB-Lite
+            // interface. AXI4 permits an unaligned start address, but the bridge
+            // must present a size-aligned HADDR (subsequent beats are already
+            // aligned by axi_next_addr).
+            cur_addr   <= (arc_dout.addr >> arc_dout.size) << arc_dout.size;
             cur_len    <= arc_dout.len;
             cur_size   <= arc_dout.size;
             cur_burst  <= arc_dout.burst;

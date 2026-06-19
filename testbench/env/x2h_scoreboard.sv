@@ -355,11 +355,12 @@ function queue_convert_r_axi2ahb x2h_scoreboard::convert_read_axi_packet_2_ahb_p
     convert_ahb = ahb_slave_tx::type_id::create($sformatf("convert_ahb_r_%0d", i));
     
     if (i == 0) begin
-      current_addr = start_addr; 
-    end 
+      // Bridge aligns the first-beat address to the size on the AHB-Lite side.
+      current_addr = aligned_addr;
+    end
     else begin
       if(axi4_ar_tx.arburst == READ_FIXED) begin
-        current_addr = start_addr; 
+        current_addr = aligned_addr;
       end
       else if(axi4_ar_tx.arburst == READ_INCR) begin
         current_addr = aligned_addr + (i * number_bytes);
