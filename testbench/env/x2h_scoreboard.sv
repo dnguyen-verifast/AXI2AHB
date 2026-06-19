@@ -244,7 +244,7 @@ task x2h_scoreboard::predict_result_read_axi2ahb();
     write_response_key.get(1);
     flag_read = 1; 
     axi4_master_read_address_analysis_fifo.get(axi4_master_tx_h4);
-    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_HIGH)
+    `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_address_channel \n%s",axi4_master_tx_h4.sprint()),UVM_LOW)
     axi4_master_read_data_analysis_fifo.get(axi4_master_tx_h5);
     `uvm_info(get_type_name(),$sformatf("scoreboard's axi4_master_read_data_channel \n%s",axi4_master_tx_h5.sprint()),UVM_HIGH)
     expect_queue_r = convert_read_axi_packet_2_ahb_packet(axi4_master_tx_h4,axi4_master_tx_h5);
