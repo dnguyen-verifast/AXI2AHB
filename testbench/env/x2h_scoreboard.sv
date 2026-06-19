@@ -186,11 +186,11 @@ endfunction : start_of_simulation_phase
 //--------------------------------------------------------------------------------------------
 task x2h_scoreboard::run_phase(uvm_phase phase);
   super.run_phase(phase);
-  fork
-    predict_result_write_axi2ahb();
-    predict_result_read_axi2ahb();
-  join_none
   forever begin
+    fork : sb_phase
+      predict_result_write_axi2ahb();
+      predict_result_read_axi2ahb();
+    join_none
     reset_ev.wait_trigger();
     `uvm_info("SB", "Reset valid!", UVM_LOW)
     axi4_master_write_address_analysis_fifo.flush();
@@ -202,7 +202,8 @@ task x2h_scoreboard::run_phase(uvm_phase phase);
     ahb_slave_addr_phase_analysis_fifo.flush();
     ahb_data_phase_analysis_fifo_expect.flush();
     if(flag_write == 1)  write_address_key.put(1);
-    if(flag_read == 1)   read_address_key.put(1); 
+    if(flag_read == 1)   read_address_key.put(1);
+    disable sb_phase;
   end
 endtask : run_phase
 
